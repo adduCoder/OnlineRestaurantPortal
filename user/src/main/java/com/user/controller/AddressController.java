@@ -1,9 +1,8 @@
 package com.user.controller;
 
-import com.user.entity.Address;
-import com.user.inDto.AddressRequest;
-import com.user.outDto.AddressResponse;
-import com.user.repository.AddressRepo;
+import com.user.indto.AddressRequest;
+import com.user.indto.UpdateAddressRequest;
+import com.user.outdto.AddressResponse;
 import com.user.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,26 +27,32 @@ public class AddressController {
   private AddressService addressService;
 
   @PostMapping("/add")
-  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressRequest addressRequest){
-    AddressResponse addressResponse= addressService.createAddress(addressRequest);
-    return  new ResponseEntity<>(addressResponse,HttpStatus.CREATED);
+  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressRequest addressRequest) {
+    AddressResponse addressResponse = addressService.createAddress(addressRequest);
+    return new ResponseEntity<>(addressResponse, HttpStatus.CREATED);
   }
 
   @GetMapping("/get/{userId}")
-  public ResponseEntity<?> getAddressByUserId(@PathVariable Integer userId){
-   List<AddressResponse> addressResponseList=addressService.getAddressByUserId(userId);
-   return new ResponseEntity<>(addressResponseList,HttpStatus.OK);
+  public ResponseEntity<?> getAddressByUserId(@PathVariable Integer userId) {
+    List<AddressResponse> addressResponseList = addressService.getAddressByUserId(userId);
+    return new ResponseEntity<>(addressResponseList, HttpStatus.OK);
   }
 
   @DeleteMapping("/delete/{addressId}")
-  public ResponseEntity<?> deleteAddress(@PathVariable Integer addressId){
-    String res=addressService.deleteAddress(addressId);
-    return new ResponseEntity<>(res,HttpStatus.OK);
+  public ResponseEntity<?> deleteAddress(@PathVariable Integer addressId) {
+    String result = addressService.deleteAddress(addressId);
+    return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-//  @PutMapping("/update/{addressId}")
-//  public ResponseEntity<?> updateAddress(){
-//
-//  }
+  @PutMapping("/update/{addressId}")
+  public ResponseEntity<?> updateAddress(@PathVariable Integer addressId,
+                                         @Valid @RequestBody UpdateAddressRequest updateAddressRequest) {
+    AddressResponse addressResponse = addressService.updateAddress(addressId, updateAddressRequest);
+    return new ResponseEntity<>(addressResponse, HttpStatus.OK);
+  }
 
 }
+
+
+
+

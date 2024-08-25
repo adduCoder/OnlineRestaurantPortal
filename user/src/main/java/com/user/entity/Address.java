@@ -27,3 +27,4 @@ public class Address {
   private Integer userId;
 
 }
+

@@ -1,14 +1,15 @@
 package com.user.service;
 
-import com.user.dtoConversion.DtoConversion;
+import com.user.dtoconversion.DtoConversion;
 import com.user.entity.User;
-import com.user.exceptionHandler.NoCustomerFound;
-import com.user.exceptionHandler.UserAlreadyExisted;
-import com.user.inDto.LoginInDto;
-import com.user.inDto.UserInDto;
-import com.user.outDto.UserOutDto;
+import com.user.exceptionhandler.NoCustomerFound;
+import com.user.exceptionhandler.UserAlreadyExisted;
+import com.user.indto.LoginInDto;
+import com.user.indto.UserInDto;
+import com.user.outdto.UserOutDto;
 import com.user.repository.UserRepo;
 import com.user.util.PasswordEncoder;
+import com.user.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,7 @@ public class UserService {
     if (existedUser.isPresent()) {
       throw new UserAlreadyExisted();
     }
+    if (newUser.getRole().equals(Role.OWNER)) newUser.setWalletBalance(null);
     userRepo.save(newUser);
     return newUser.getId();
   }
@@ -89,3 +91,4 @@ public class UserService {
     return "Password Mismatched";
   }
 }
+

@@ -1,8 +1,8 @@
 package com.user.controller;
 
-import com.user.inDto.LoginInDto;
-import com.user.inDto.UserInDto;
-import com.user.outDto.UserOutDto;
+import com.user.indto.LoginInDto;
+import com.user.indto.UserInDto;
+import com.user.outdto.UserOutDto;
 import com.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +42,7 @@ public class UserController {
   public ResponseEntity<?> addUser(@Valid @RequestBody UserInDto userInDto) {
     Integer createdUser = userService.addUser(userInDto);
     if (createdUser == null) return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    return new ResponseEntity<>(createdUser,HttpStatus.CREATED);
+    return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
   }
 
 
@@ -65,3 +65,5 @@ public class UserController {
   }
 
 }
+
+
