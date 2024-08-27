@@ -46,12 +46,12 @@ public class UserController {
 
   @PostMapping("/add")
   public ResponseEntity<?> addUser(@Valid @RequestBody UserInDto userInDto) {
-     log.info("Adding new user with email: {}", userInDto.getEmail());
-     Integer createdUser = userService.addUser(userInDto);
-     if (createdUser == null) {
-       log.error("Failed to add user with email: {}", userInDto.getEmail());
-       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-     }
+    log.info("Adding new user with email: {}", userInDto.getEmail());
+    Integer createdUser = userService.addUser(userInDto);
+    if (createdUser == null) {
+      log.error("Failed to add user with email: {}", userInDto.getEmail());
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     log.info("User added successfully with ID: {}", createdUser);
     return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
   }

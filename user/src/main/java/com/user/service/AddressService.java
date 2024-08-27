@@ -24,7 +24,7 @@ public class AddressService {
   public AddressResponse createAddress(AddressRequest addressRequest) {
     log.info("Creating address for userId: {}", addressRequest.getUserId());
     Address address = DtoConversion.requestToAddress(addressRequest);
-    Integer userId = address.getUserId();
+    //Integer userId = address.getUserId();
     addressRepo.save(address);
     log.info("Address created successfully for userId: {}", addressRequest.getUserId());
     return DtoConversion.addressToResponse(address);
@@ -33,7 +33,7 @@ public class AddressService {
   public List<AddressResponse> getAddressByUserId(Integer userId) {
     //just to check whether user existed with that userId
     log.info("Fetching addresses for userId: {}", userId);
-     List<Address> addressList = addressRepo.findAllByUserId(userId);
+    List<Address> addressList = addressRepo.findAllByUserId(userId);
     List<AddressResponse> addressResponseList = new ArrayList<>();
     for (Address address:addressList) {
       addressResponseList.add(DtoConversion.addressToResponse(address));

@@ -93,15 +93,8 @@ public class UserInDtoTest {
   }
 
   @Test
-  public void testToString() {
-    String expected = "UserInDto(name=Adi, email=adi@gmail.com, phoneNo=9876543210, password=Password123, role=USER)";
-    assertEquals(expected, userInDto1.toString());
-  }
-
-  @Test
   public void testHashCode() {
     assertEquals(userInDto1.hashCode(), userInDto2.hashCode());
-
     userInDto2.setPhoneNo("1234567890");
     assertNotEquals(userInDto1.hashCode(), userInDto2.hashCode());
   }

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Data
 public class UserInDto {
@@ -30,4 +31,30 @@ public class UserInDto {
 
   @NotNull(message = "Role cannot be blank")
   private Role role;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof UserInDto)) return false;
+    UserInDto userInDto = (UserInDto) o;
+    return Objects.equals(name, userInDto.name) && Objects.equals(email, userInDto.email) &&
+      Objects.equals(phoneNo, userInDto.phoneNo) && Objects.equals(password, userInDto.password) &&
+      role == userInDto.role;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, email, phoneNo, password, role);
+  }
+
+  @Override
+  public String toString() {
+    return "UserInDto{" +
+      "name='" + name + '\'' +
+      ", email='" + email + '\'' +
+      ", phoneNo='" + phoneNo + '\'' +
+      ", password='" + password + '\'' +
+      ", role=" + role +
+      '}';
+  }
 }

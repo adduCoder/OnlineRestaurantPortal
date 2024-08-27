@@ -1,7 +1,6 @@
 package com.user.service;
 
 import com.user.dtoconversion.DtoConversion;
-import com.user.entity.Address;
 import com.user.entity.User;
 import com.user.exceptionhandler.NoCustomerFound;
 import com.user.exceptionhandler.UserAlreadyExisted;
@@ -93,11 +92,11 @@ public class UserService {
       throw new NoCustomerFound();
     }
     User user = optionalUser.get();
-    List<AddressResponse> addressList=addressService.getAddressByUserId(userId);
-    for(AddressResponse addressResponse:addressList){
+    List<AddressResponse> addressList = addressService.getAddressByUserId(userId);
+    for (AddressResponse addressResponse:addressList) {
       addressService.deleteAddress(addressResponse.getAddressId());
     }
-     userRepo.delete(user);
+    userRepo.delete(user);
     log.info("User deleted successfully: {}", user);
     return DtoConversion.userToResponse(user);
   }
@@ -113,7 +112,7 @@ public class UserService {
     }
     User user = existedUser.get();
     String existedPassword = PasswordEncoder.decodePassword(user.getPassword());
-    if (existedPassword.equals(password)){
+    if (existedPassword.equals(password)) {
       log.info("Login successful for user with email: {}", loginInDto.getEmail());
       return "Login Success";
     }
