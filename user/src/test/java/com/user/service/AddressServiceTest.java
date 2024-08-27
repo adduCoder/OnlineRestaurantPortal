@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +36,8 @@ class AddressServiceTest {
 
   @InjectMocks
   private AddressService addressService;
+
+  private List<Address> addressList;
 
   private Address address;
   private AddressRequest addressRequest;
@@ -66,6 +71,15 @@ class AddressServiceTest {
     addressResponse.setState("MP");
     addressResponse.setPinCode(452001);
     addressResponse.setUserId(1);
+
+    addressList = new ArrayList<>();
+    Address address = new Address();
+    address.setUserId(1);
+    address.setStreet("Tower Square");
+    address.setCity("Indore");
+    address.setState("MP");
+    address.setPinCode(452001);
+    addressList.add(address);
   }
 
   @Test
@@ -76,19 +90,21 @@ class AddressServiceTest {
 //    verify(userService, times(1)).getUser(anyInt());
     verify(addressRepo, times(1)).save(any(Address.class));
   }
-/*
+
   @Test
   void testGetAddressByUserId() {
-    when(userService.getUser(anyInt())).thenReturn(new UserOutDto());
-   // when(addressRepo.findAllByUserId(anyInt())).thenReturn(List.of(address));
+    when(addressRepo.findAllByUserId(anyInt())).thenReturn(addressList);
+
     List<AddressResponse> responses = addressService.getAddressByUserId(1);
-    //assertEquals(1, responses.size());
-    assertEquals(addressResponse, responses.get(0));
-    verify(userService, times(1)).getUser(anyInt());
+
+    assertEquals(1, responses.size());
+    assertEquals("Tower Square", responses.get(0).getStreet());
+    assertEquals("Indore", responses.get(0).getCity());
+    assertEquals("MP", responses.get(0).getState());
+    assertEquals(452001, responses.get(0).getPinCode());
+
     verify(addressRepo, times(1)).findAllByUserId(anyInt());
   }
-
- */
 
   @Test
   void testDeleteAddress() {

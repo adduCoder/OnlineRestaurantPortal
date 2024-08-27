@@ -19,11 +19,11 @@ public class UserInDto {
 
   @NotBlank(message = "Email cannot be blank")
   @Email(message = "Email should be valid")
-  @Pattern(regexp = ".*\\.com$", message = "Email should end with '.com'")
+  @Pattern(regexp = ".*@(gmail\\.com|nucleusteq\\.com)$", message = "Email should end with '@gmail.com' or '@nucleusteq.com'")
   private String email;
 
   @NotBlank(message = "Phone number cannot be blank")
-  @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
+  @Pattern(regexp = "^[7896]\\d{9}$", message = "Phone number must be exactly 10 digits and start with 7, 8, 9, or 6")
   private String phoneNo;
 
   @NotBlank(message = "Password cannot be blank")
