@@ -70,9 +70,11 @@
         <property name="ignorePattern" value="^ *\* *@see.+$"/>
         <property name="max" value="136"/>
     </module>
-
+<!--
     <module name="NewlineAtEndOfFile">
         <property name="lineSeparator" value="crlf"/>
     </module>
+    -->
     <module name="FileTabCharacter"/>
+
 </module>

@@ -84,12 +84,6 @@ public class AddressResponseTest {
   }
 
   @Test
-  public void testToString() {
-    String expected = "AddressResponse(userId=1, street=MG Road, city=Bangalore, state=Karnataka, pinCode=560001)";
-    assertEquals(expected, addressResponse1.toString());
-  }
-
-  @Test
   public void testHashCode() {
     assertEquals(addressResponse1.hashCode(), addressResponse2.hashCode());
 

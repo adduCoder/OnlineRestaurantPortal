@@ -7,7 +7,10 @@ import com.user.indto.UserInDto;
 import com.user.outdto.AddressResponse;
 import com.user.outdto.UserOutDto;
 
-public class DtoConversion {
+public final class DtoConversion {
+  private DtoConversion() {
+
+  }
   public static User requestToUser(UserInDto userInDto) {
     User newUser = new User();
     newUser.setEmail(userInDto.getEmail());
@@ -41,6 +44,7 @@ public class DtoConversion {
 
   public static AddressResponse addressToResponse(Address address) {
     AddressResponse addressResponse = new AddressResponse();
+    addressResponse.setAddressId(address.getId());
     addressResponse.setUserId(address.getUserId());
     addressResponse.setStreet(address.getStreet());
     addressResponse.setCity(address.getCity());
