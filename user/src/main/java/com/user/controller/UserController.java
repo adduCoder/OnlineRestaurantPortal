@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Controller for managing users.
+ * Provides endpoints for user management operations including creation, retrieval, update, deletion, and login.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -29,6 +33,12 @@ public class UserController {
   @Autowired
   private UserService userService;
 
+  /**
+   * Fetches a user by their ID.
+   *
+   * @param userId the ID of the user to fetch
+   * @return ResponseEntity containing the user details and HTTP status
+   */
   @GetMapping("/get/{userId}")
   public ResponseEntity<?> getUser(@PathVariable Integer userId) {
     log.info("Fetching user with ID: {}", userId);
@@ -36,6 +46,11 @@ public class UserController {
     return new ResponseEntity<>(userOutDto, HttpStatus.OK);
   }
 
+  /**
+   * Retrieves all users.
+   *
+   * @return ResponseEntity containing a list of all users and HTTP status
+   */
   @GetMapping("/getAll")
   public ResponseEntity<?> getAllUser() {
     log.info("Getting All Users");
@@ -44,6 +59,12 @@ public class UserController {
     return new ResponseEntity<>(allUserOutDto, HttpStatus.OK);
   }
 
+  /**
+   * Adds a new user.
+   *
+   * @param userInDto the user information to add
+   * @return ResponseEntity containing the ID of the created user and HTTP status
+   */
   @PostMapping("/add")
   public ResponseEntity<?> addUser(@Valid @RequestBody UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
@@ -56,7 +77,13 @@ public class UserController {
     return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
   }
 
-
+  /**
+   * Updates an existing user.
+   *
+   * @param userId the ID of the user to update
+   * @param userInDto the new user information
+   * @return ResponseEntity containing the updated user details and HTTP status
+   */
   @PutMapping("/update/{userId}")
   public ResponseEntity<?> updateUser(@PathVariable Integer userId, @Valid @RequestBody UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
@@ -65,6 +92,12 @@ public class UserController {
     return new ResponseEntity<>(userOutDto, HttpStatus.OK);
   }
 
+  /**
+   * Deletes a user by their ID.
+   *
+   * @param userId the ID of the user to delete
+   * @return ResponseEntity containing the deleted user details and HTTP status
+   */
   @DeleteMapping("/delete/{userId}")
   public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
     log.info("Deleting user with ID: {}", userId);
@@ -73,6 +106,12 @@ public class UserController {
     return new ResponseEntity<>(userOutDto, HttpStatus.OK);
   }
 
+  /**
+   * Logs in a user.
+   *
+   * @param loginInDto the login credentials
+   * @return ResponseEntity containing a login response and HTTP status
+   */
   @PostMapping("/login")
   public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
     log.info("Attempting login for user with email: {}", loginInDto.getEmail());

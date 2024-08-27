@@ -18,6 +18,16 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+/**
+ * Service class for managing users.
+ * <p>
+ * This service provides methods for creating, retrieving, updating, deleting users, and handling user logins.
+ * It interacts with the {@link UserRepo} repository to perform CRUD operations and uses
+ * {@link DtoConversion} for converting between DTOs and entity objects. It also interacts with
+ * {@link AddressService} for managing user addresses.
+ * </p>
+ */
 @Slf4j
 @Service
 public class UserService {
@@ -28,6 +38,13 @@ public class UserService {
   @Autowired
   private AddressService addressService;
 
+  /**
+   * Retrieves a user by their ID.
+   *
+   * @param userId the ID of the user to retrieve
+   * @return a {@link UserOutDto} representing the user with the specified ID
+   * @throws NoCustomerFound if no user with the given ID is found
+   */
   public UserOutDto getUser(Integer userId) {
     log.info("Fetching user with ID: {}", userId);
     Optional<User> optionalUser = userRepo.findById(userId);
@@ -40,6 +57,11 @@ public class UserService {
     return DtoConversion.userToResponse(user);
   }
 
+  /**
+   * Retrieves all users.
+   *
+   * @return a list of {@link UserOutDto} representing all users
+   */
   public List<UserOutDto> getAllUser() {
     log.info("Fetching all users");
     List<User> userList = userRepo.findAll();
@@ -51,6 +73,13 @@ public class UserService {
     return userOutDtoList;
   }
 
+  /**
+   * Adds a new user.
+   *
+   * @param userInDto the request containing the details of the user to be added
+   * @return the ID of the newly added user
+   * @throws UserAlreadyExisted if a user with the given email already exists
+   */
   public Integer addUser(UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
     User newUser = DtoConversion.requestToUser(userInDto);
@@ -67,6 +96,14 @@ public class UserService {
     return newUser.getId();
   }
 
+  /**
+   * Updates an existing user.
+   *
+   * @param userId the ID of the user to be updated
+   * @param userInDto the request containing updated user details
+   * @return a {@link UserOutDto} representing the updated user
+   * @throws NoCustomerFound if no user with the given ID is found
+   */
   public UserOutDto updateUser(Integer userId, UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
     Optional<User> optionalUser = userRepo.findById(userId);
@@ -83,7 +120,13 @@ public class UserService {
     return DtoConversion.userToResponse(user);
   }
 
-
+  /**
+   * Deletes a user by their ID.
+   *
+   * @param userId the ID of the user to be deleted
+   * @return a {@link UserOutDto} representing the deleted user
+   * @throws NoCustomerFound if no user with the given ID is found
+   */
   public UserOutDto deleteUser(Integer userId) {
     log.info("Deleting user with ID: {}", userId);
     Optional<User> optionalUser = userRepo.findById(userId);
@@ -101,6 +144,12 @@ public class UserService {
     return DtoConversion.userToResponse(user);
   }
 
+  /**
+   * Attempts to log in a user.
+   *
+   * @param loginInDto the login request containing email and password
+   * @return a message indicating the result of the login attempt
+   */
   public String loginUser(LoginInDto loginInDto) {
     log.info("Attempting login for user with email: {}", loginInDto.getEmail());
     String email = loginInDto.getEmail();
