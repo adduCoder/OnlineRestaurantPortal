@@ -14,12 +14,13 @@ import java.util.Objects;
 public class UserInDto {
   @NotBlank(message = "Name cannot be blank")
   @Size(min = 3, message = "Name must be at least 3 characters long")
+  @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabets")
   private String name;
-
 
   @NotBlank(message = "Email cannot be blank")
   @Email(message = "Email should be valid")
-  @Pattern(regexp = ".*@(gmail\\.com|nucleusteq\\.com)$", message = "Email should end with '@gmail.com' or '@nucleusteq.com'")
+  @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9._%+-]+@(?:gmail\\.com|nucleusteq\\.com)$",
+    message = "Email must contain at least one alphabetic character before '@gmail.com' or '@nucleusteq.com'")
   private String email;
 
   @NotBlank(message = "Phone number cannot be blank")
