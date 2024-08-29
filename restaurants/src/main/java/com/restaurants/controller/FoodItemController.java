@@ -3,6 +3,7 @@ package com.restaurants.controller;
 import com.restaurants.indto.FoodItemInDto;
 import com.restaurants.outdto.FoodItemOutDto;
 import com.restaurants.service.FoodItemService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
  * Controller for managing food items in a restaurant.
  * Provides endpoints for food item management operations including retrieval, creation, and update.
  */
+@Slf4j
 @RestController
 @RequestMapping("/foodItem")
 public class FoodItemController {
@@ -35,7 +37,9 @@ public class FoodItemController {
    */
   @GetMapping("/getAll/{restaurantId}")
   public ResponseEntity<?> getAllFoodItem(@PathVariable Integer restaurantId) {
+    log.info("Fetching all food items for restaurant with ID: {}", restaurantId);
     List<FoodItemOutDto> foodItemOutDtoList = foodItemService.getAll(restaurantId);
+    log.info("Retrieved food items: {}", foodItemOutDtoList);
     return new ResponseEntity<>(foodItemOutDtoList, HttpStatus.OK);
   }
 
@@ -47,7 +51,9 @@ public class FoodItemController {
    */
   @PostMapping("/add")
   public ResponseEntity<?> addFoodItem(@RequestBody FoodItemInDto foodItemInDto) {
+    log.info("Adding new food item: {}", foodItemInDto);
     FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto);
+    log.info("Added food item: {}", foodItemOutDto);
     return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
   }
 
@@ -60,7 +66,9 @@ public class FoodItemController {
    */
   @PutMapping("/update/{foodItemId}")
   public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId, @RequestBody FoodItemInDto foodItemInDto) {
+    log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
     FoodItemOutDto foodItemOutDto = foodItemService.updateFoodItem(foodItemId, foodItemInDto);
+    log.info("Updated food item: {}", foodItemOutDto);
     return new ResponseEntity<>(foodItemOutDto, HttpStatus.OK);
   }
 }

@@ -4,6 +4,7 @@ package com.restaurants.controller;
 import com.restaurants.indto.RestaurantInDto;
 import com.restaurants.outdto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
  * Controller for managing restaurant operations.
  * Provides endpoints for adding and retrieving restaurant information.
  */
+@Slf4j
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
@@ -37,10 +39,13 @@ public class RestaurantController {
    */
   @PostMapping("/add")
   public ResponseEntity<?> addRestaurant(@Valid @RequestBody RestaurantInDto restaurantInDto) {
+    log.info("Adding new restaurant with details: {}", restaurantInDto);
     RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto);
     if (restaurantOutDto == null) {
+      log.warn("Failed to add restaurant with details: {}", restaurantInDto);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    log.info("Successfully added restaurant: {}", restaurantOutDto);
     return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
   }
 
@@ -52,7 +57,9 @@ public class RestaurantController {
    */
   @GetMapping("/get/{userId}")
   public ResponseEntity<?> getAllRestaurant(@PathVariable Integer userId) {
+    log.info("Fetching all restaurants for user with ID: {}", userId);
     List<RestaurantOutDto> restaurantOutDtoList = restaurantService.getAll(userId);
+    log.info("Retrieved restaurants: {}", restaurantOutDtoList);
     return new ResponseEntity<>(restaurantOutDtoList, HttpStatus.OK);
   }
 }

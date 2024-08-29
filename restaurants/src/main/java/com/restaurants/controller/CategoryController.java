@@ -3,6 +3,7 @@ package com.restaurants.controller;
 import com.restaurants.indto.CategoryInDto;
 import com.restaurants.outdto.CategoryOutDto;
 import com.restaurants.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
  * Controller for managing restaurant categories.
  * Provides endpoints for category management operations including retrieval, creation, and update.
  */
+@Slf4j
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -35,7 +37,9 @@ public class CategoryController {
    */
   @GetMapping("/get/{id}")
   public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
+    log.info("Fetching category with ID: {}", id);
     CategoryOutDto categoryOutDto = categoryService.getCategory(id);
+    log.info("Retrieved category: {}", categoryOutDto);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
   }
 
@@ -47,7 +51,9 @@ public class CategoryController {
    */
   @GetMapping("/getAll/{restaurantId}")
   public ResponseEntity<?> getAllCategory(@PathVariable Integer restaurantId) {
+    log.info("Fetching all categories for restaurant with ID: {}", restaurantId);
     List<CategoryOutDto> categoryOutDtoList = categoryService.getAllCategory(restaurantId);
+    log.info("Retrieved categories: {}", categoryOutDtoList);
     return new ResponseEntity<>(categoryOutDtoList, HttpStatus.OK);
   }
 
@@ -59,10 +65,13 @@ public class CategoryController {
    */
   @PostMapping("/add")
   public ResponseEntity<?> addCategory(@RequestBody CategoryInDto categoryInDto) {
+    log.info("Adding new category: {}", categoryInDto);
     CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
     if (categoryOutDto == null) {
+      log.error("Failed to add category: {}", categoryInDto);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    log.info("Added category: {}", categoryOutDto);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.CREATED);
   }
 
@@ -75,8 +84,9 @@ public class CategoryController {
    */
   @PutMapping("/update/{categoryId}")
   public ResponseEntity<?> updateCategory(@PathVariable Integer categoryId, @RequestBody CategoryInDto categoryInDto) {
+    log.info("Updating category with ID: {} with data: {}", categoryId, categoryInDto);
     CategoryOutDto categoryOutDto = categoryService.updateCategory(categoryId, categoryInDto);
+    log.info("Updated category: {}", categoryOutDto);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
-
   }
 }
