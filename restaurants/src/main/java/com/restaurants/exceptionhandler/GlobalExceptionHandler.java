@@ -19,23 +19,23 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
   /**
-   * Handles {@link NoRestaurantFound} exceptions.
+   * Handles {@link RestaurantNotFound} exceptions.
    *
    * @param ex the exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
    */
-  @ExceptionHandler(NoRestaurantFound.class)
+  @ExceptionHandler(RestaurantNotFound.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleNoCustomerFound(NoRestaurantFound ex) {
+  public ErrorResponse handleNoCustomerFound(RestaurantNotFound ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
   @ExceptionHandler(CategoryNotFound.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleCategoryNotFound(CategoryNotFound ex){
-    return new ErrorResponse(HttpStatus.CONFLICT.value(),ex.getMessage());
+  public ErrorResponse handleCategoryNotFound(CategoryNotFound ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
   /**

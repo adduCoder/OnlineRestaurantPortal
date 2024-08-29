@@ -15,9 +15,9 @@ public class Category {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name="rest_id" , nullable = false)
+  @Column(name = "rest_id", nullable = false)
   private Integer restaurantId;
 
-  @Column(name="name" , nullable = false)
+  @Column(name = "name", nullable = false)
   private String name;
 }

@@ -11,11 +11,11 @@ import com.restaurants.outdto.FoodItemOutDto;
 import com.restaurants.outdto.RestaurantOutDto;
 
 public final class DtoConversion {
-  private DtoConversion(){
+  private DtoConversion() {
 
   }
-  public static Restaurant mapToRestaurant(RestaurantInDto restaurantInDto){
-    Restaurant restaurant=new Restaurant();
+  public static Restaurant mapToRestaurant(RestaurantInDto restaurantInDto) {
+    Restaurant restaurant = new Restaurant();
     restaurant.setUserId(restaurantInDto.getUserId());
     restaurant.setRestaurantName(restaurantInDto.getRestaurantName());
     restaurant.setAddress(restaurantInDto.getAddress());
@@ -25,8 +25,8 @@ public final class DtoConversion {
     return restaurant;
   }
 
-  public static RestaurantOutDto mapToRestaurantOutDto(Restaurant restaurant){
-    RestaurantOutDto restaurantOutDto=new RestaurantOutDto();
+  public static RestaurantOutDto mapToRestaurantOutDto(Restaurant restaurant) {
+    RestaurantOutDto restaurantOutDto = new RestaurantOutDto();
     restaurantOutDto.setId(restaurant.getId());
     restaurantOutDto.setUserId(restaurant.getUserId());
     restaurantOutDto.setRestaurantName(restaurant.getRestaurantName());
@@ -37,41 +37,44 @@ public final class DtoConversion {
     return restaurantOutDto;
   }
 
-  public static Category mapToCategory(CategoryInDto categoryInDto){
-    Category category=new Category();
+  public static Category mapToCategory(CategoryInDto categoryInDto) {
+    Category category = new Category();
     category.setName(categoryInDto.getName());
     category.setRestaurantId(categoryInDto.getRestaurantId());
     return category;
   }
 
-  public static CategoryOutDto mapToCategoryOutDto(Category category){
-    CategoryOutDto categoryOutDto=new CategoryOutDto();
+  public static CategoryOutDto mapToCategoryOutDto(Category category) {
+    CategoryOutDto categoryOutDto = new CategoryOutDto();
     categoryOutDto.setId(category.getId());
     categoryOutDto.setName(category.getName());
     categoryOutDto.setResturantId(category.getRestaurantId());
     return categoryOutDto;
   }
 
-  public static FoodItemOutDto mapToFoodItemOutDto(FoodItem foodItem){
-    FoodItemOutDto foodItemOutDto=new FoodItemOutDto();
+  public static FoodItemOutDto mapToFoodItemOutDto(FoodItem foodItem, String restaurantName,
+                                                   String categoryName) {
+    FoodItemOutDto foodItemOutDto = new FoodItemOutDto();
     foodItemOutDto.setId(foodItem.getId());
     foodItemOutDto.setFoodName(foodItem.getFoodName());
     foodItemOutDto.setPrice(foodItem.getPrice());
     foodItemOutDto.setIsAvailable(foodItem.getIsAvailable());
     foodItemOutDto.setDescription(foodItem.getDescription());
-    foodItemOutDto.setRestaurantId(foodItem.getRestaurantId());
-    foodItemOutDto.setCategoryId(foodItem.getCategoryId());
+    foodItemOutDto.setRestaurantName(restaurantName);
+    foodItemOutDto.setCategoryName(categoryName);
+    foodItemOutDto.setImageUrl(foodItem.getImageUrl());
     return foodItemOutDto;
   }
 
-  public static FoodItem mapToFoodItem(FoodItemInDto foodItemInDto){
-    FoodItem foodItem=new FoodItem();
+  public static FoodItem mapToFoodItem(FoodItemInDto foodItemInDto) {
+    FoodItem foodItem = new FoodItem();
     foodItem.setFoodName(foodItemInDto.getFoodName());
     foodItem.setPrice(foodItemInDto.getPrice());
     foodItem.setCategoryId(foodItemInDto.getCategoryId());
     foodItem.setRestaurantId(foodItemInDto.getRestaurantId());
     foodItem.setDescription(foodItemInDto.getDescription());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
+    foodItem.setImageUrl(foodItemInDto.getImageUrl());
     return foodItem;
   }
 

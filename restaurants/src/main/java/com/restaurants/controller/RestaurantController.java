@@ -26,17 +26,17 @@ public class RestaurantController {
   private RestaurantService restaurantService;
 
   @PostMapping("/add")
-  public ResponseEntity<?> addRestaurant(@Valid @RequestBody RestaurantInDto restaurantInDto){
-    RestaurantOutDto restaurantOutDto=restaurantService.addRestaurant(restaurantInDto);
-    if(restaurantOutDto==null){
+  public ResponseEntity<?> addRestaurant(@Valid @RequestBody RestaurantInDto restaurantInDto) {
+    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto);
+    if (restaurantOutDto == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
   }
 
   @GetMapping("/get/{userId}")
-  public ResponseEntity<?> getAllRestaurant(@PathVariable Integer userId){
-    List<RestaurantOutDto> restaurantOutDtoList=restaurantService.getAll(userId);
-    return new ResponseEntity<>(restaurantOutDtoList,HttpStatus.OK);
+  public ResponseEntity<?> getAllRestaurant(@PathVariable Integer userId) {
+    List<RestaurantOutDto> restaurantOutDtoList = restaurantService.getAll(userId);
+    return new ResponseEntity<>(restaurantOutDtoList, HttpStatus.OK);
   }
 }

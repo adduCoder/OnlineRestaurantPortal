@@ -16,15 +16,15 @@ public class RestaurantService {
   @Autowired
   private RestaurantRepo restaurantRepo;
   public RestaurantOutDto addRestaurant(RestaurantInDto restaurantInDto) {
-    Restaurant restaurant= DtoConversion.mapToRestaurant(restaurantInDto);
+    Restaurant restaurant = DtoConversion.mapToRestaurant(restaurantInDto);
     restaurantRepo.save(restaurant);
     return DtoConversion.mapToRestaurantOutDto(restaurant);
   }
 
   public List<RestaurantOutDto> getAll(Integer userId) {
-    List<Restaurant> restaurantList=restaurantRepo.findByUserId(userId);
-    List<RestaurantOutDto> restaurantOutDtoList=new ArrayList<>();
-    for(Restaurant restaurant:restaurantList){
+    List<Restaurant> restaurantList = restaurantRepo.findByUserId(userId);
+    List<RestaurantOutDto> restaurantOutDtoList = new ArrayList<>();
+    for (Restaurant restaurant:restaurantList) {
       restaurantOutDtoList.add(DtoConversion.mapToRestaurantOutDto(restaurant));
     }
     return restaurantOutDtoList;

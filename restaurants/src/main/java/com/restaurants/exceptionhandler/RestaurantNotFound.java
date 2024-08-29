@@ -7,11 +7,11 @@ package com.restaurants.exceptionhandler;
  * in the system. It extends {@link RuntimeException} and provides a default error message.
  * </p>
  */
-public class NoRestaurantFound extends RuntimeException {
+public class RestaurantNotFound extends RuntimeException {
   /**
-   * Constructs a new {@link NoRestaurantFound} exception with a default error message.
+   * Constructs a new {@link RestaurantNotFound} exception with a default error message.
    */
-  public NoRestaurantFound() {
+  public RestaurantNotFound() {
     super("No Customer Found Exception");
   }
 }
