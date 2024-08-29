@@ -18,6 +18,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+/**
+ * Controller for managing restaurant operations.
+ * Provides endpoints for adding and retrieving restaurant information.
+ */
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
@@ -25,6 +29,12 @@ public class RestaurantController {
   @Autowired
   private RestaurantService restaurantService;
 
+  /**
+   * Adds a new restaurant.
+   *
+   * @param restaurantInDto the information of the restaurant to add
+   * @return ResponseEntity containing the details of the added restaurant and HTTP status
+   */
   @PostMapping("/add")
   public ResponseEntity<?> addRestaurant(@Valid @RequestBody RestaurantInDto restaurantInDto) {
     RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto);
@@ -34,6 +44,12 @@ public class RestaurantController {
     return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
   }
 
+  /**
+   * Retrieves all restaurants associated with a specific user.
+   *
+   * @param userId the ID of the user for which to fetch restaurants
+   * @return ResponseEntity containing a list of restaurants and HTTP status
+   */
   @GetMapping("/get/{userId}")
   public ResponseEntity<?> getAllRestaurant(@PathVariable Integer userId) {
     List<RestaurantOutDto> restaurantOutDtoList = restaurantService.getAll(userId);

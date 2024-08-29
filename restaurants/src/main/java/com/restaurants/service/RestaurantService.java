@@ -15,12 +15,22 @@ import java.util.List;
 public class RestaurantService {
   @Autowired
   private RestaurantRepo restaurantRepo;
+  /**
+   * Adds a new restaurant.
+   * @param restaurantInDto The DTO containing restaurant details.
+   * @return The DTO of the added restaurant.
+   */
   public RestaurantOutDto addRestaurant(RestaurantInDto restaurantInDto) {
     Restaurant restaurant = DtoConversion.mapToRestaurant(restaurantInDto);
     restaurantRepo.save(restaurant);
     return DtoConversion.mapToRestaurantOutDto(restaurant);
   }
 
+  /**
+   * Retrieves all restaurants for a given user.
+   * @param userId The ID of the user.
+   * @return A list of DTOs for the user's restaurants.
+   */
   public List<RestaurantOutDto> getAll(Integer userId) {
     List<Restaurant> restaurantList = restaurantRepo.findByUserId(userId);
     List<RestaurantOutDto> restaurantOutDtoList = new ArrayList<>();

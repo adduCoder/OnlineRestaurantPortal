@@ -6,5 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CategoryRepo extends JpaRepository<Category, Integer> {
+  /**
+   * Finds all categories for a given restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a list of categories for the specified restaurant
+   */
   List<Category> findAllByRestaurantId(Integer restaurantId);
 }

@@ -38,7 +38,12 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
-  /**
+  @ExceptionHandler(FoodItemNotFound.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleFoodItemNotFound(FoodItemNotFound ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
 
    /**
    * Handles {@link MethodArgumentNotValidException} exceptions.
@@ -60,6 +65,7 @@ public class GlobalExceptionHandler {
     String errorMessage = "Validation failed: " + String.join(", ", errorMessages);
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }
+
 
   /**
    * Class representing the error response returned by the exception handlers.
