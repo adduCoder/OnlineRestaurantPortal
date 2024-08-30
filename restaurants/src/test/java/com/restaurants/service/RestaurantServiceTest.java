@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ public class RestaurantServiceTest {
 
   @Mock
   private RestaurantRepo restaurantRepo;
+
+  private MultipartFile multipartFile;
 
   @InjectMocks
   private RestaurantService restaurantService;
@@ -39,7 +42,7 @@ public class RestaurantServiceTest {
     restaurantInDto.setAddress("Test Address");
     restaurantInDto.setContactNumber("9876543210");
     restaurantInDto.setDescription("Test Description");
-    restaurantInDto.setImageUrl("http://test.com/image.jpg");
+    //restaurantInDto.setImageUrl("http://test.com/image.jpg");
 
     restaurant = new Restaurant();
     restaurant.setId(1);
@@ -48,7 +51,7 @@ public class RestaurantServiceTest {
     restaurant.setAddress("Test Address");
     restaurant.setContactNumber("9876543210");
     restaurant.setDescription("Test Description");
-    restaurant.setImageUrl("http://test.com/image.jpg");
+    //restaurant.setImageUrl("http://test.com/image.jpg");
 
     restaurantOutDto = new RestaurantOutDto();
     restaurantOutDto.setId(1);
@@ -57,7 +60,7 @@ public class RestaurantServiceTest {
     restaurantOutDto.setAddress("Test Address");
     restaurantOutDto.setContactNumber("9876543210");
     restaurantOutDto.setDescription("Test Description");
-    restaurantOutDto.setImageUrl("http://test.com/image.jpg");
+   // restaurantOutDto.setImageUrl("http://test.com/image.jpg");
   }
 
   @Test
@@ -66,7 +69,7 @@ public class RestaurantServiceTest {
     when(restaurantRepo.save(any(Restaurant.class))).thenReturn(restaurant);
 
     // Act
-    RestaurantOutDto result = restaurantService.addRestaurant(restaurantInDto);
+    RestaurantOutDto result = restaurantService.addRestaurant(restaurantInDto, null);
 
     // Assert
     assertNotNull(result);

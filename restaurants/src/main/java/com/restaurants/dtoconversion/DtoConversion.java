@@ -11,6 +11,7 @@ import com.restaurants.outdto.FoodItemOutDto;
 import com.restaurants.outdto.RestaurantOutDto;
 import lombok.extern.slf4j.Slf4j;
 
+
 /**
  * Utility class for converting between DTOs and entities.
  * Provides static methods to map between DTOs and entity objects for Restaurant, Category, and FoodItem.
@@ -34,7 +35,7 @@ public final class DtoConversion {
     restaurant.setRestaurantName(restaurantInDto.getRestaurantName());
     restaurant.setAddress(restaurantInDto.getAddress());
     restaurant.setContactNumber(restaurantInDto.getContactNumber());
-    restaurant.setImageUrl(restaurantInDto.getImageUrl());
+   // restaurant.setImageUrl(restaurantInDto.getImageUrl());
     restaurant.setDescription(restaurantInDto.getAddress());
     log.info("Mapped Restaurant entity: {}", restaurant);
     return restaurant;
@@ -53,9 +54,10 @@ public final class DtoConversion {
     restaurantOutDto.setUserId(restaurant.getUserId());
     restaurantOutDto.setRestaurantName(restaurant.getRestaurantName());
     restaurantOutDto.setDescription(restaurant.getDescription());
-    restaurantOutDto.setImageUrl(restaurant.getImageUrl());
+    //restaurantOutDto.setImageUrl(restaurant.getImageUrl());
     restaurantOutDto.setAddress(restaurant.getAddress());
     restaurantOutDto.setContactNumber(restaurant.getContactNumber());
+    restaurantOutDto.setImageData(restaurant.getImageData());
     log.info("Mapped RestaurantOutDto: {}", restaurantOutDto);
     return restaurantOutDto;
   }
@@ -112,7 +114,7 @@ public final class DtoConversion {
     foodItemOutDto.setDescription(foodItem.getDescription());
     foodItemOutDto.setRestaurantName(restaurantName);
     foodItemOutDto.setCategoryName(categoryName);
-    foodItemOutDto.setImageUrl(foodItem.getImageUrl());
+    foodItemOutDto.setImageData(foodItem.getImageData());
     log.info("Mapped FoodItemOutDto: {}", foodItemOutDto);
     return foodItemOutDto;
   }
@@ -132,7 +134,6 @@ public final class DtoConversion {
     foodItem.setRestaurantId(foodItemInDto.getRestaurantId());
     foodItem.setDescription(foodItemInDto.getDescription());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
-    foodItem.setImageUrl(foodItemInDto.getImageUrl());
     log.info("Mapped FoodItem entity: {}", foodItem);
     return foodItem;
   }

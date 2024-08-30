@@ -11,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,9 +40,10 @@ public class RestaurantController {
    * @return ResponseEntity containing the details of the added restaurant and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addRestaurant(@Valid @RequestBody RestaurantInDto restaurantInDto) {
+  public ResponseEntity<?> addRestaurant(@Valid @RequestPart RestaurantInDto restaurantInDto,
+                                         @RequestPart MultipartFile multipartFile) {
     log.info("Adding new restaurant with details: {}", restaurantInDto);
-    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto);
+    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
     if (restaurantOutDto == null) {
       log.warn("Failed to add restaurant with details: {}", restaurantInDto);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -55,6 +58,7 @@ public class RestaurantController {
    * @param userId the ID of the user for which to fetch restaurants
    * @return ResponseEntity containing a list of restaurants and HTTP status
    */
+  @Transactional
   @GetMapping("/get/{userId}")
   public ResponseEntity<?> getAllRestaurant(@PathVariable Integer userId) {
     log.info("Fetching all restaurants for user with ID: {}", userId);
@@ -62,4 +66,5 @@ public class RestaurantController {
     log.info("Retrieved restaurants: {}", restaurantOutDtoList);
     return new ResponseEntity<>(restaurantOutDtoList, HttpStatus.OK);
   }
+
 }

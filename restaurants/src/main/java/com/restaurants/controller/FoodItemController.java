@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -35,6 +38,7 @@ public class FoodItemController {
    * @param restaurantId the ID of the restaurant for which to fetch food items
    * @return ResponseEntity containing a list of food items and HTTP status
    */
+  @Transactional
   @GetMapping("/getAll/{restaurantId}")
   public ResponseEntity<?> getAllFoodItem(@PathVariable Integer restaurantId) {
     log.info("Fetching all food items for restaurant with ID: {}", restaurantId);
@@ -44,15 +48,17 @@ public class FoodItemController {
   }
 
   /**
-   * Adds a new food item.
+   * Adds a food item.
    *
-   * @param foodItemInDto the food item information to add
-   * @return ResponseEntity containing the details of the added food item and HTTP status
+   * @param foodItemInDto the food item details
+   * @param multipartFile the file associated with the food item
+   * @return a response entity with the result of the operation
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addFoodItem(@RequestBody FoodItemInDto foodItemInDto) {
+  public ResponseEntity<?> addFoodItem(@RequestPart("foodItemInDto") FoodItemInDto foodItemInDto,
+                                       @RequestPart("multipartFile") MultipartFile multipartFile) {
     log.info("Adding new food item: {}", foodItemInDto);
-    FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto);
+    FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
     log.info("Added food item: {}", foodItemOutDto);
     return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
   }

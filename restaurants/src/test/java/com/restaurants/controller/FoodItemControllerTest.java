@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,9 @@ class FoodItemControllerTest {
 
   @Mock
   private FoodItemService foodItemService;
+
+  @Mock
+  private MultipartFile multipartFile; // Mock MultipartFile
 
   @InjectMocks
   private FoodItemController foodItemController;
@@ -41,7 +45,6 @@ class FoodItemControllerTest {
     foodItemInDto.setCategoryId(2);
     foodItemInDto.setIsAvailable(true);
     foodItemInDto.setPrice(250.0);
-    foodItemInDto.setImageUrl("http://example.com/pasta.jpg");
 
     foodItemOutDto = new FoodItemOutDto();
     foodItemOutDto.setId(1);
@@ -51,7 +54,6 @@ class FoodItemControllerTest {
     foodItemOutDto.setCategoryName("Italian");
     foodItemOutDto.setIsAvailable(true);
     foodItemOutDto.setPrice(250.0);
-    foodItemOutDto.setImageUrl("http://example.com/pasta.jpg");
   }
 
   @Test
@@ -65,8 +67,13 @@ class FoodItemControllerTest {
 
   @Test
   void testAddFoodItem() {
-    when(foodItemService.add(any(FoodItemInDto.class))).thenReturn(foodItemOutDto);
-    ResponseEntity<?> response = foodItemController.addFoodItem(foodItemInDto);
+    // Mock behavior for MultipartFile if needed
+    when(multipartFile.getOriginalFilename()).thenReturn("beverage.jpg");
+
+    // Adjust service mock to handle MultipartFile
+    when(foodItemService.add(any(FoodItemInDto.class), any(MultipartFile.class))).thenReturn(foodItemOutDto);
+
+    ResponseEntity<?> response = foodItemController.addFoodItem(foodItemInDto, multipartFile);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals(foodItemOutDto, response.getBody());
   }

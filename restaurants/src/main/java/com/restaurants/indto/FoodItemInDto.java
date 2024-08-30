@@ -30,8 +30,4 @@ public class FoodItemInDto {
    * Price of the food item.
    */
   private Double price;
-  /**
-   * URL of the food item's image.
-   */
-  private String imageUrl;
 }

@@ -42,9 +42,4 @@ public class RestaurantInDto {
   @NotBlank(message = "Description cannot be blank")
   private String description;
 
-
-  /**
-   * URL of the restaurant's image.
-   */
-  private String imageUrl;
 }

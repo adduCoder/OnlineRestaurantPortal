@@ -21,7 +21,6 @@ public class FoodItemOutDtoTest {
     foodItemInDto.setCategoryId(2);
     foodItemInDto.setIsAvailable(true);
     foodItemInDto.setPrice(12.99);
-    foodItemInDto.setImageUrl("https://example.com/pasta.jpg");
 
     // Initialize the FoodItemOutDto object
     foodItemOutDto = new FoodItemOutDto();
@@ -32,7 +31,6 @@ public class FoodItemOutDtoTest {
     foodItemOutDto.setCategoryName("Main Course");
     foodItemOutDto.setIsAvailable(true);
     foodItemOutDto.setPrice(12.99);
-    foodItemOutDto.setImageUrl("https://example.com/pasta.jpg");
   }
 
   @Test
@@ -44,7 +42,6 @@ public class FoodItemOutDtoTest {
     assertEquals(2, foodItemInDto.getCategoryId());
     assertTrue(foodItemInDto.getIsAvailable());
     assertEquals(12.99, foodItemInDto.getPrice());
-    assertEquals("https://example.com/pasta.jpg", foodItemInDto.getImageUrl());
   }
 
   @Test
@@ -57,7 +54,6 @@ public class FoodItemOutDtoTest {
     assertEquals("Main Course", foodItemOutDto.getCategoryName());
     assertTrue(foodItemOutDto.getIsAvailable());
     assertEquals(12.99, foodItemOutDto.getPrice());
-    assertEquals("https://example.com/pasta.jpg", foodItemOutDto.getImageUrl());
   }
 
   @Test

@@ -20,7 +20,6 @@ public class FoodItemInDtoTest {
     foodItemInDto.setCategoryId(10);
     foodItemInDto.setIsAvailable(true);
     foodItemInDto.setPrice(12.99);
-    foodItemInDto.setImageUrl("http://example.com/image.jpg");
   }
 
   @Test
@@ -89,24 +88,8 @@ public class FoodItemInDtoTest {
     assertEquals(9.99, foodItemInDto.getPrice());
   }
 
-  @Test
-  public void testGetImageUrl() {
-    assertEquals("http://example.com/image.jpg", foodItemInDto.getImageUrl());
-  }
 
-  @Test
-  public void testSetImageUrl() {
-    foodItemInDto.setImageUrl("http://example.com/newimage.jpg");
-    assertEquals("http://example.com/newimage.jpg", foodItemInDto.getImageUrl());
-  }
 
-  @Test
-  public void testToString() {
-    String expected =
-      "FoodItemInDto(foodName=Pizza, restaurantId=1, description=Delicious, categoryId=10, isAvailable=true, price=12.99," +
-        " imageUrl=http://example.com/image.jpg)";
-    assertEquals(expected, foodItemInDto.toString());
-  }
 
   @Test
   public void testHashCode() {
@@ -117,7 +100,6 @@ public class FoodItemInDtoTest {
     foodItemInDto1.setCategoryId(10);
     foodItemInDto1.setIsAvailable(true);
     foodItemInDto1.setPrice(12.99);
-    foodItemInDto1.setImageUrl("http://example.com/image.jpg");
 
     FoodItemInDto foodItemInDto2 = new FoodItemInDto();
     foodItemInDto2.setFoodName("Pizza");
@@ -126,7 +108,6 @@ public class FoodItemInDtoTest {
     foodItemInDto2.setCategoryId(10);
     foodItemInDto2.setIsAvailable(true);
     foodItemInDto2.setPrice(12.99);
-    foodItemInDto2.setImageUrl("http://example.com/image.jpg");
 
     assertEquals(foodItemInDto1.hashCode(), foodItemInDto2.hashCode());
 
@@ -143,7 +124,6 @@ public class FoodItemInDtoTest {
     foodItemInDto1.setCategoryId(10);
     foodItemInDto1.setIsAvailable(true);
     foodItemInDto1.setPrice(12.99);
-    foodItemInDto1.setImageUrl("http://example.com/image.jpg");
 
     FoodItemInDto foodItemInDto2 = new FoodItemInDto();
     foodItemInDto2.setFoodName("Pizza");
@@ -152,7 +132,6 @@ public class FoodItemInDtoTest {
     foodItemInDto2.setCategoryId(10);
     foodItemInDto2.setIsAvailable(true);
     foodItemInDto2.setPrice(12.99);
-    foodItemInDto2.setImageUrl("http://example.com/image.jpg");
 
     assertEquals(foodItemInDto1, foodItemInDto2);
 

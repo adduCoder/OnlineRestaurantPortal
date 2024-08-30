@@ -2,6 +2,7 @@ package com.restaurants.outdto;
 
 import lombok.Data;
 
+
 @Data
 public class FoodItemOutDto {
 
@@ -35,8 +36,9 @@ public class FoodItemOutDto {
    * Price of the food item.
    */
   private Double price;
+
   /**
    * URL of the food item's image.
    */
-  private String imageUrl;
+  private byte[] imageData;
 }

@@ -32,7 +32,7 @@ class DtoConversionTest {
     restaurantInDto.setAddress("123 Main St");
     restaurantInDto.setContactNumber("7896541230");
     restaurantInDto.setDescription("Best Indian Cuisine");
-    restaurantInDto.setImageUrl("http://image.url/spicehub.jpg");
+    //restaurantInDto.setImageUrl("http://image.url/spicehub.jpg");
 
     // Initialize Restaurant Entity
     restaurant = new Restaurant();
@@ -42,7 +42,7 @@ class DtoConversionTest {
     restaurant.setAddress("123 Main St");
     restaurant.setContactNumber("7896541230");
     restaurant.setDescription("Best Indian Cuisine");
-    restaurant.setImageUrl("http://image.url/spicehub.jpg");
+    //restaurant.setImageUrl("http://image.url/spicehub.jpg");
 
     // Initialize CategoryInDto
     categoryInDto = new CategoryInDto();
@@ -63,7 +63,6 @@ class DtoConversionTest {
     foodItemInDto.setCategoryId(1);
     foodItemInDto.setIsAvailable(true);
     foodItemInDto.setPrice(2.99);
-    foodItemInDto.setImageUrl("http://image.url/gulabjamun.jpg");
 
     // Initialize FoodItem Entity
     foodItem = new FoodItem();
@@ -74,7 +73,6 @@ class DtoConversionTest {
     foodItem.setCategoryId(1);
     foodItem.setIsAvailable(true);
     foodItem.setPrice(2.99);
-    foodItem.setImageUrl("http://image.url/gulabjamun.jpg");
   }
 
   @Test
@@ -86,7 +84,7 @@ class DtoConversionTest {
     assertEquals(restaurantInDto.getAddress(), result.getAddress());
     assertEquals(restaurantInDto.getContactNumber(), result.getContactNumber());
     //assertEquals(restaurantInDto.getDescription(), result.getDescription());
-    assertEquals(restaurantInDto.getImageUrl(), result.getImageUrl());
+    //assertEquals(restaurantInDto.getImageUrl(), result.getImageUrl());
   }
 
   @Test
@@ -97,7 +95,7 @@ class DtoConversionTest {
     assertEquals(restaurant.getUserId(), result.getUserId());
     assertEquals(restaurant.getRestaurantName(), result.getRestaurantName());
     assertEquals(restaurant.getDescription(), result.getDescription());
-    assertEquals(restaurant.getImageUrl(), result.getImageUrl());
+    //assertEquals(restaurant.getImageUrl(), result.getImageUrl());
     assertEquals(restaurant.getAddress(), result.getAddress());
     assertEquals(restaurant.getContactNumber(), result.getContactNumber());
   }
@@ -129,7 +127,6 @@ class DtoConversionTest {
     assertEquals(foodItemInDto.getRestaurantId(), result.getRestaurantId());
     assertEquals(foodItemInDto.getDescription(), result.getDescription());
     assertEquals(foodItemInDto.getIsAvailable(), result.getIsAvailable());
-    assertEquals(foodItemInDto.getImageUrl(), result.getImageUrl());
   }
 
   @Test
@@ -143,6 +140,5 @@ class DtoConversionTest {
     assertEquals(foodItem.getDescription(), result.getDescription());
     assertEquals(restaurant.getRestaurantName(), result.getRestaurantName());
     assertEquals(category.getName(), result.getCategoryName());
-    assertEquals(foodItem.getImageUrl(), result.getImageUrl());
   }
 }

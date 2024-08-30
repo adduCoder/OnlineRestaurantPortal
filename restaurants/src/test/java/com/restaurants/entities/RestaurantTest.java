@@ -19,7 +19,7 @@ public class RestaurantTest {
     restaurant.setAddress("123 Main St, Springfield");
     restaurant.setContactNumber("9876543210");
     restaurant.setDescription("A place for authentic spices and cuisine");
-    restaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    //restaurant.setImageUrl("http://example.com/spicehouse.jpg");
   }
 
   @Test
@@ -31,7 +31,7 @@ public class RestaurantTest {
     assertEquals("123 Main St, Springfield", restaurant.getAddress());
     assertEquals("9876543210", restaurant.getContactNumber());
     assertEquals("A place for authentic spices and cuisine", restaurant.getDescription());
-    assertEquals("http://example.com/spicehouse.jpg", restaurant.getImageUrl());
+    //assertEquals("http://example.com/spicehouse.jpg", restaurant.getImageUrl());
   }
 
   @Test
@@ -57,7 +57,7 @@ public class RestaurantTest {
     anotherRestaurant.setAddress("123 Main St, Springfield");
     anotherRestaurant.setContactNumber("9876543210");
     anotherRestaurant.setDescription("A place for authentic spices and cuisine");
-    anotherRestaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    //anotherRestaurant.setImageUrl("http://example.com/spicehouse.jpg");
 
     assertEquals(restaurant, anotherRestaurant);
     assertEquals(restaurant.hashCode(), anotherRestaurant.hashCode());

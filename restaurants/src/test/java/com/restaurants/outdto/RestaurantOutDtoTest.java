@@ -19,7 +19,7 @@ public class RestaurantOutDtoTest {
     restaurantOutDto.setAddress("123 Main Street, Springfield");
     restaurantOutDto.setContactNumber("9876543210");
     restaurantOutDto.setDescription("A cozy Italian restaurant with a variety of classic dishes.");
-    restaurantOutDto.setImageUrl("https://example.com/restaurant.jpg");
+    //restaurantOutDto.setImageUrl("https://example.com/restaurant.jpg");
   }
 
   @Test
@@ -31,7 +31,7 @@ public class RestaurantOutDtoTest {
     assertEquals("123 Main Street, Springfield", restaurantOutDto.getAddress());
     assertEquals("9876543210", restaurantOutDto.getContactNumber());
     assertEquals("A cozy Italian restaurant with a variety of classic dishes.", restaurantOutDto.getDescription());
-    assertEquals("https://example.com/restaurant.jpg", restaurantOutDto.getImageUrl());
+    //assertEquals("https://example.com/restaurant.jpg", restaurantOutDto.getImageUrl());
   }
 
   @Test

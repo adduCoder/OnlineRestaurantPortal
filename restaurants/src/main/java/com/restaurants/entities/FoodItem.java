@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 
 /**
@@ -73,9 +74,9 @@ public class FoodItem {
   private Double price;
 
   /**
-   * The URL of the image representing the food item.
-   * This field is optional and can be null.
+    * This field is optional and can be null.
    */
-  @Column(name = "image_url")
-  private String imageUrl;
+  @Lob
+  @Column(name = "imageData")
+  private byte[] imageData;
 }

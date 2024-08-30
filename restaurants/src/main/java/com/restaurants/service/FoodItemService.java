@@ -13,7 +13,9 @@ import com.restaurants.repository.RestaurantRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +51,6 @@ public class FoodItemService {
     return result;
   }
 
-
   /**
    * Get category name by FoodItem.
    */
@@ -71,9 +72,18 @@ public class FoodItemService {
   /**
    * Add a new food item.
    */
-  public FoodItemOutDto add(FoodItemInDto foodItemInDto) {
+  public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
+    try {
+      if (multipartFile != null && !multipartFile.isEmpty()) {
+        foodItem.setImageData(multipartFile.getBytes());
+        log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
+      }
+    }
+    catch (IOException e) {
+      log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
+    }
     foodItemRepo.save(foodItem);
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);

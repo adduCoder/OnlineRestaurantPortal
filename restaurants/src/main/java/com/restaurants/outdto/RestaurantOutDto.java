@@ -32,5 +32,5 @@ public class RestaurantOutDto {
   /**
    * URL of the restaurant's image.
    */
-  private String imageUrl;
+  private byte[] imageData;
 }

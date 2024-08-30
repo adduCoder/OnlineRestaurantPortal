@@ -20,7 +20,6 @@ public class FoodItemTest {
     foodItem.setCategoryId(10);
     foodItem.setIsAvailable(true);
     foodItem.setPrice(12.99);
-    foodItem.setImageUrl("http://example.com/pizza.jpg");
   }
 
   @Test
@@ -33,7 +32,6 @@ public class FoodItemTest {
     assertEquals(10, foodItem.getCategoryId());
     assertTrue(foodItem.getIsAvailable());
     assertEquals(12.99, foodItem.getPrice());
-    assertEquals("http://example.com/pizza.jpg", foodItem.getImageUrl());
   }
 
   @Test
@@ -60,7 +58,6 @@ public class FoodItemTest {
     anotherFoodItem.setCategoryId(10);
     anotherFoodItem.setIsAvailable(true);
     anotherFoodItem.setPrice(12.99);
-    anotherFoodItem.setImageUrl("http://example.com/pizza.jpg");
 
     assertEquals(foodItem, anotherFoodItem);
     assertEquals(foodItem.hashCode(), anotherFoodItem.hashCode());

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 /**
  * Controller for managing restaurant categories.
  * Provides endpoints for category management operations including retrieval, creation, and update.

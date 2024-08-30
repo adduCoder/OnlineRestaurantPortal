@@ -8,7 +8,9 @@ import com.restaurants.repository.RestaurantRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +24,17 @@ public class RestaurantService {
    * @param restaurantInDto The DTO containing restaurant details.
    * @return The DTO of the added restaurant.
    */
-  public RestaurantOutDto addRestaurant(RestaurantInDto restaurantInDto) {
+  public RestaurantOutDto addRestaurant(RestaurantInDto restaurantInDto, MultipartFile multipartFile) {
     log.info("Adding new restaurant with name: {}", restaurantInDto.getRestaurantName());
     Restaurant restaurant = DtoConversion.mapToRestaurant(restaurantInDto);
+    try {
+      if (multipartFile != null && !multipartFile.isEmpty()) {
+        restaurant.setImageData(multipartFile.getBytes());
+      }
+    }
+    catch (IOException e) {
+      log.error("Error occurred while processing the image file");
+    }
     restaurantRepo.save(restaurant);
     log.info("Restaurant added successfully ");
     return DtoConversion.mapToRestaurantOutDto(restaurant);
