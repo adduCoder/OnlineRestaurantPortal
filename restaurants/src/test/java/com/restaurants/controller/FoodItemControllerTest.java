@@ -73,8 +73,41 @@ class FoodItemControllerTest {
     // Adjust service mock to handle MultipartFile
     when(foodItemService.add(any(FoodItemInDto.class), any(MultipartFile.class))).thenReturn(foodItemOutDto);
 
-    ResponseEntity<?> response = foodItemController.addFoodItem(foodItemInDto, multipartFile);
+    ResponseEntity<?> response = foodItemController.addFoodItem(
+      "Pasta",
+      1,
+      "Creamy Alfredo Pasta",
+      2,
+      true,
+      250.0,
+      multipartFile
+    );
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals(foodItemOutDto, response.getBody());
+  }
+
+  @Test
+  void testAddFoodItemBadRequest() {
+    // Simulate a failure in adding the food item
+    when(foodItemService.add(any(FoodItemInDto.class), any(MultipartFile.class))).thenThrow(new RuntimeException("Failed to add"));
+
+    ResponseEntity<?> response = foodItemController.addFoodItem(
+      "Pasta",
+      1,
+      "Creamy Alfredo Pasta",
+      2,
+      true,
+      250.0,
+      multipartFile
+    );
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  @Test
+  void testUpdateFoodItem() {
+    when(foodItemService.updateFoodItem(anyInt(), any(FoodItemInDto.class))).thenReturn(foodItemOutDto);
+    ResponseEntity<?> response = foodItemController.updateFoodItem(1, foodItemInDto);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(foodItemOutDto, response.getBody());
   }
 }

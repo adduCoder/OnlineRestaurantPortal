@@ -36,7 +36,7 @@ public final class DtoConversion {
     restaurant.setAddress(restaurantInDto.getAddress());
     restaurant.setContactNumber(restaurantInDto.getContactNumber());
    // restaurant.setImageUrl(restaurantInDto.getImageUrl());
-    restaurant.setDescription(restaurantInDto.getAddress());
+    restaurant.setDescription(restaurantInDto.getDescription());
     log.info("Mapped Restaurant entity: {}", restaurant);
     return restaurant;
   }

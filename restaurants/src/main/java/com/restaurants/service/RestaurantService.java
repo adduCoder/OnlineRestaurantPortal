@@ -55,4 +55,13 @@ public class RestaurantService {
     log.info("Found {} restaurants for user ID: {}", restaurantOutDtoList.size(), userId);
     return restaurantOutDtoList;
   }
+
+  public List<RestaurantOutDto> getAllRestros() {
+    List<Restaurant> restaurantList = restaurantRepo.findAll();
+    List<RestaurantOutDto> restaurantOutDtoList = new ArrayList<>();
+    for (Restaurant restaurant:restaurantList) {
+      restaurantOutDtoList.add(DtoConversion.mapToRestaurantOutDto(restaurant));
+    }
+    return restaurantOutDtoList;
+  }
 }

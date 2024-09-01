@@ -38,6 +38,7 @@ public class UserService {
   @Autowired
   private AddressService addressService;
 
+
   /**
    * Retrieves a user by their ID.
    *
@@ -83,7 +84,12 @@ public class UserService {
   public Integer addUser(UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
     User newUser = DtoConversion.requestToUser(userInDto);
-    String encodedPassword = PasswordEncoder.encodePassword(newUser.getPassword());
+   // String encodedPassword = PasswordEncoder.encodePassword(newUser.getPassword());
+   // newUser.setPassword(encodedPassword);
+    // Decode Base64 password received from frontend
+    String decodedPassword = PasswordEncoder.decodePassword(newUser.getPassword());
+    String encodedPassword = PasswordEncoder.encodePassword(decodedPassword);
+
     newUser.setPassword(encodedPassword);
     Optional<User> existedUser = userRepo.findByEmail(newUser.getEmail());
     if (existedUser.isPresent()) {
@@ -150,23 +156,31 @@ public class UserService {
    * @param loginInDto the login request containing email and password
    * @return a message indicating the result of the login attempt
    */
-  public String loginUser(LoginInDto loginInDto) {
-    log.info("Attempting login for user with email: {}", loginInDto.getEmail());
+  public UserOutDto loginUser(LoginInDto loginInDto) {
     String email = loginInDto.getEmail();
-    String password = loginInDto.getPassword();
-    Optional<User> existedUser = userRepo.findByEmail(email);
-    if (!existedUser.isPresent()) {
-      log.warn("Email not found: {}", loginInDto.getEmail());
-      return "Email Not Found";
+    String providedPassword = loginInDto.getPassword(); // Password provided by the user
+
+    // Fetch user by email
+    Optional<User> optionalUser = userRepo.findByEmail(email);
+    if (!optionalUser.isPresent()) {
+      // Email not found, return null to indicate failure
+      return null;
     }
-    User user = existedUser.get();
-    String existedPassword = PasswordEncoder.decodePassword(user.getPassword());
-    if (existedPassword.equals(password)) {
-      log.info("Login successful for user with email: {}", loginInDto.getEmail());
-      return "Login Success";
+
+    User user = optionalUser.get();
+    String storedPassword = user.getPassword(); // Encoded password from the database
+    System.out.println(storedPassword+" "+providedPassword);
+    // Decode both passwords for comparison
+    String decodedStoredPassword = PasswordEncoder.decodePassword(storedPassword);
+    String decodedProvidedPassword = PasswordEncoder.decodePassword(providedPassword);
+    System.out.println(decodedStoredPassword+" "+decodedProvidedPassword);
+    // Check if the decoded passwords match
+    if (decodedStoredPassword.equals(decodedProvidedPassword)) {
+      return DtoConversion.userToResponse(user); // Convert user to DTO
+    } else {
+      // Password mismatched, return null to indicate failure
+      return null;
     }
-    log.warn("Password mismatched for user with email: {}", loginInDto.getEmail());
-    return "Password Mismatched";
   }
 }
 

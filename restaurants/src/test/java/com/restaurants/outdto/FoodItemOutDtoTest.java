@@ -1,78 +1,75 @@
 package com.restaurants.outdto;
-
-import com.restaurants.indto.FoodItemInDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FoodItemOutDtoTest {
 
-  private FoodItemInDto foodItemInDto;
-  private FoodItemOutDto foodItemOutDto;
+  @Test
+  void testGettersAndSetters() {
+    FoodItemOutDto dto = new FoodItemOutDto();
+    dto.setId(1);
+    dto.setFoodName("Pizza");
+    dto.setRestaurantName("Italian Bistro");
+    dto.setDescription("Delicious cheese pizza");
+    dto.setCategoryName("Pizza");
+    dto.setIsAvailable(true);
+    dto.setPrice(12.99);
+    dto.setImageData(new byte[]{1, 2, 3});
 
-  @BeforeEach
-  public void setUp() {
-    // Initialize the FoodItemInDto object
-    foodItemInDto = new FoodItemInDto();
-    foodItemInDto.setFoodName("Pasta");
-    foodItemInDto.setRestaurantId(1);
-    foodItemInDto.setDescription("Delicious Italian pasta with creamy sauce");
-    foodItemInDto.setCategoryId(2);
-    foodItemInDto.setIsAvailable(true);
-    foodItemInDto.setPrice(12.99);
-
-    // Initialize the FoodItemOutDto object
-    foodItemOutDto = new FoodItemOutDto();
-    foodItemOutDto.setId(1);
-    foodItemOutDto.setFoodName("Pasta");
-    foodItemOutDto.setRestaurantName("Italian Bistro");
-    foodItemOutDto.setDescription("Delicious Italian pasta with creamy sauce");
-    foodItemOutDto.setCategoryName("Main Course");
-    foodItemOutDto.setIsAvailable(true);
-    foodItemOutDto.setPrice(12.99);
+    assertThat(dto.getId()).isEqualTo(1);
+    assertThat(dto.getFoodName()).isEqualTo("Pizza");
+    assertThat(dto.getRestaurantName()).isEqualTo("Italian Bistro");
+    assertThat(dto.getDescription()).isEqualTo("Delicious cheese pizza");
+    assertThat(dto.getCategoryName()).isEqualTo("Pizza");
+    assertThat(dto.getIsAvailable()).isTrue();
+    assertThat(dto.getPrice()).isEqualTo(12.99);
+    assertThat(dto.getImageData()).isEqualTo(new byte[]{1, 2, 3});
   }
 
   @Test
-  public void testFoodItemInDtoFields() {
-    // Test the fields of FoodItemInDto
-    assertEquals("Pasta", foodItemInDto.getFoodName());
-    assertEquals(1, foodItemInDto.getRestaurantId());
-    assertEquals("Delicious Italian pasta with creamy sauce", foodItemInDto.getDescription());
-    assertEquals(2, foodItemInDto.getCategoryId());
-    assertTrue(foodItemInDto.getIsAvailable());
-    assertEquals(12.99, foodItemInDto.getPrice());
+  void testToString() {
+    FoodItemOutDto dto = new FoodItemOutDto();
+    dto.setId(1);
+    dto.setFoodName("Pizza");
+    dto.setRestaurantName("Italian Bistro");
+    dto.setDescription("Delicious cheese pizza");
+    dto.setCategoryName("Pizza");
+    dto.setIsAvailable(true);
+    dto.setPrice(12.99);
+    dto.setImageData(new byte[]{1, 2, 3});
+
+    String expectedString = "FoodItemOutDto(id=1, foodName=Pizza, restaurantName=Italian Bistro, " +
+      "description=Delicious cheese pizza, categoryName=Pizza, isAvailable=true, price=12.99, imageData=[1, 2, 3])";
+    assertThat(dto.toString()).isEqualTo(expectedString);
   }
 
   @Test
-  public void testFoodItemOutDtoFields() {
-    // Test the fields of FoodItemOutDto
-    assertEquals(1, foodItemOutDto.getId());
-    assertEquals("Pasta", foodItemOutDto.getFoodName());
-    assertEquals("Italian Bistro", foodItemOutDto.getRestaurantName());
-    assertEquals("Delicious Italian pasta with creamy sauce", foodItemOutDto.getDescription());
-    assertEquals("Main Course", foodItemOutDto.getCategoryName());
-    assertTrue(foodItemOutDto.getIsAvailable());
-    assertEquals(12.99, foodItemOutDto.getPrice());
-  }
+  void testEqualsAndHashCode() {
+    FoodItemOutDto dto1 = new FoodItemOutDto();
+    dto1.setId(1);
+    dto1.setFoodName("Pizza");
+    dto1.setRestaurantName("Italian Bistro");
+    dto1.setDescription("Delicious cheese pizza");
+    dto1.setCategoryName("Pizza");
+    dto1.setIsAvailable(true);
+    dto1.setPrice(12.99);
+    dto1.setImageData(new byte[]{1, 2, 3});
 
-  @Test
-  public void testFoodItemInDtoMutations() {
-    // Test setting new values for FoodItemInDto
-    foodItemInDto.setFoodName("Pizza");
-    assertEquals("Pizza", foodItemInDto.getFoodName());
+    FoodItemOutDto dto2 = new FoodItemOutDto();
+    dto2.setId(1);
+    dto2.setFoodName("Pizza");
+    dto2.setRestaurantName("Italian Bistro");
+    dto2.setDescription("Delicious cheese pizza");
+    dto2.setCategoryName("Pizza");
+    dto2.setIsAvailable(true);
+    dto2.setPrice(12.99);
+    dto2.setImageData(new byte[]{1, 2, 3});
 
-    foodItemInDto.setPrice(15.99);
-    assertEquals(15.99, foodItemInDto.getPrice());
-  }
+    assertThat(dto1).isEqualTo(dto2);
+    assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
 
-  @Test
-  public void testFoodItemOutDtoMutations() {
-    // Test setting new values for FoodItemOutDto
-    foodItemOutDto.setFoodName("Pizza");
-    assertEquals("Pizza", foodItemOutDto.getFoodName());
-
-    foodItemOutDto.setRestaurantName("Pizza Palace");
-    assertEquals("Pizza Palace", foodItemOutDto.getRestaurantName());
+    dto2.setFoodName("Burger");
+    assertThat(dto1).isNotEqualTo(dto2);
+    assertThat(dto1.hashCode()).isNotEqualTo(dto2.hashCode());
   }
 }

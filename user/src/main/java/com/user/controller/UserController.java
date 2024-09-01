@@ -1,5 +1,7 @@
 package com.user.controller;
 
+import com.user.exceptionhandler.GlobalExceptionHandler;
+import com.user.exceptionhandler.NoCustomerFound;
 import com.user.indto.LoginInDto;
 import com.user.indto.UserInDto;
 import com.user.outdto.UserOutDto;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for managing users.
@@ -112,14 +116,20 @@ public class UserController {
    * @param loginInDto the login credentials
    * @return ResponseEntity containing a login response and HTTP status
    */
-  @PostMapping("/login")
-  public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
-    log.info("Attempting login for user with email: {}", loginInDto.getEmail());
-    String res = userService.loginUser(loginInDto);
-    log.info("Login successful for user with email: {}", loginInDto.getEmail());
-    return new ResponseEntity<>(res, HttpStatus.OK);
-  }
+   @PostMapping("/login")
+   public ResponseEntity<?> loginUser(@RequestBody LoginInDto loginInDto) {
+     log.info("Received login request for email: {}", loginInDto.getEmail());
 
+     UserOutDto userOutDto = userService.loginUser(loginInDto);
+
+     if (userOutDto != null) {
+       log.info("Login successful for email: {}", loginInDto.getEmail());
+       return ResponseEntity.ok(userOutDto);
+     } else {
+       log.error("Login failed: Invalid credentials");
+       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GlobalExceptionHandler.ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid credentials"));
+     }
+   }
 }
 
 

@@ -34,12 +34,12 @@ class CategoryControllerTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
     categoryInDto = new CategoryInDto();
-    categoryInDto.setRestaurantId(1);
+    categoryInDto.setRestaurantId(1); // Ensure this matches the field name in CategoryInDto
     categoryInDto.setName("Italian");
 
     categoryOutDto = new CategoryOutDto();
     categoryOutDto.setId(1);
-    categoryOutDto.setResturantId(1);
+    categoryOutDto.setId(1); // Ensure this matches the field name in CategoryOutDto
     categoryOutDto.setName("Italian");
   }
 
