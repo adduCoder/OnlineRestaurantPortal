@@ -45,6 +45,20 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
+  @ExceptionHandler(CategoryAlreadyExists.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleCategoryAlreadyExists(CategoryAlreadyExists ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
+  @ExceptionHandler(FoodItemAlreadyExists.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleFoodItemAlreadyExists(FoodItemAlreadyExists ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
    /**
    * Handles {@link MethodArgumentNotValidException} exceptions.
    * This exception is typically thrown when validation of method arguments fails.

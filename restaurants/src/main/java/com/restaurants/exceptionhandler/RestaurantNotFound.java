@@ -12,7 +12,7 @@ public class RestaurantNotFound extends RuntimeException {
    * Constructs a new {@link RestaurantNotFound} exception with a default error message.
    */
   public RestaurantNotFound() {
-    super("No Customer Found Exception");
+    super("No Restaurant Found !");
   }
 }
 

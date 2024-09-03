@@ -2,10 +2,14 @@ package com.restaurants.service;
 
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
+import com.restaurants.entities.Restaurant;
+import com.restaurants.exceptionhandler.CategoryAlreadyExists;
 import com.restaurants.exceptionhandler.CategoryNotFound;
+import com.restaurants.exceptionhandler.RestaurantNotFound;
 import com.restaurants.indto.CategoryInDto;
 import com.restaurants.outdto.CategoryOutDto;
 import com.restaurants.repository.CategoryRepo;
+import com.restaurants.repository.RestaurantRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,14 +24,26 @@ public class CategoryService {
   @Autowired
   private CategoryRepo categoryRepo;
 
+  @Autowired
+  private RestaurantRepo restaurantRepo;
+
   /**
    * Add a new category.
    */
   public CategoryOutDto addCategory(CategoryInDto categoryInDto) {
     log.info("Adding a new category with name: {}", categoryInDto.getName());
-    Category category = categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
+    //Category category = categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
+    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(categoryInDto.getRestaurantId());
+    if(!optionalRestaurant.isPresent()){
+      throw new RestaurantNotFound();
+    }
+    Optional<Category> existedOptionalCategory=categoryRepo.findByNameAndRestaurantId(categoryInDto.getName(),categoryInDto.getRestaurantId());
+    if(existedOptionalCategory.isPresent()) {
+        throw  new CategoryAlreadyExists();
+    }
     log.info("Category added successfully");
-    return DtoConversion.mapToCategoryOutDto(category);
+    Category savedCategory=categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
+    return DtoConversion.mapToCategoryOutDto(savedCategory);
   }
 
   /**
@@ -49,6 +65,10 @@ public class CategoryService {
    */
   public List<CategoryOutDto> getAllCategory(Integer restaurantId) {
     log.info("Fetching all categories for restaurant ID: {}", restaurantId);
+    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(restaurantId);
+    if(!optionalRestaurant.isPresent()){
+      throw new RestaurantNotFound();
+    }
     List<Category> categoryList = categoryRepo.findAllByRestaurantId(restaurantId);
     List<CategoryOutDto> categoryOutDtoList = new ArrayList<>();
     for (Category category:categoryList) {
@@ -69,7 +89,6 @@ public class CategoryService {
       throw new CategoryNotFound();
     }
     Category category = optionalCategory.get();
-    category.setRestaurantId(categoryInDto.getRestaurantId());
     category.setName(categoryInDto.getName());
     categoryRepo.save(category);
     log.info("Category updated successfully with ID: {}", categoryId);

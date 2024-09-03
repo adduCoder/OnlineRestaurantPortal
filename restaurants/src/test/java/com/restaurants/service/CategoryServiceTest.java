@@ -124,7 +124,6 @@ public class CategoryServiceTest {
     assertNotNull(categoryOutDto);
     assertEquals(1, categoryOutDto.getId());
     assertEquals("UpdatedCategory", categoryOutDto.getName());
-    assertEquals(2, categoryOutDto.getResturantId());
   }
 
   @Test

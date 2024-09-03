@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 /**
  * Controller for managing restaurant categories.
@@ -65,7 +66,7 @@ public class CategoryController {
    * @return ResponseEntity containing the details of the added category and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addCategory(@RequestBody CategoryInDto categoryInDto) {
+  public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryInDto categoryInDto) {
     log.info("Adding new category: {}", categoryInDto);
     CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
     if (categoryOutDto == null) {
@@ -80,12 +81,11 @@ public class CategoryController {
    * Updates an existing category.
    *
    * @param categoryId the ID of the category to update
-   * @param categoryInDto the new category information
    * @return ResponseEntity containing the updated category details and HTTP status
    */
   @PutMapping("/update/{categoryId}")
-  public ResponseEntity<?> updateCategory(@PathVariable Integer categoryId, @RequestBody CategoryInDto categoryInDto) {
-    log.info("Updating category with ID: {} with data: {}", categoryId, categoryInDto);
+  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId,@Valid @RequestBody CategoryInDto categoryInDto) {
+    log.info("Updating category with ID: {} with data: {}", categoryId);
     CategoryOutDto categoryOutDto = categoryService.updateCategory(categoryId, categoryInDto);
     log.info("Updated category: {}", categoryOutDto);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);

@@ -1,6 +1,11 @@
 package com.restaurants.indto;
 
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 /**
  * Data Transfer Object (DTO) for category input.
  * <p>
@@ -24,5 +29,8 @@ public class CategoryInDto {
    * This field represents the name of the category that will be created or updated.
    * </p>
    */
+  @NotBlank(message = "Name cannot be blank")
+  @Size(min = 3, message = "Name must be at least 3 characters long")
+  @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabets")
   private String name;
 }

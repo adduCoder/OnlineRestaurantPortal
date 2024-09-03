@@ -4,7 +4,10 @@ import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
+import com.restaurants.exceptionhandler.CategoryNotFound;
+import com.restaurants.exceptionhandler.FoodItemAlreadyExists;
 import com.restaurants.exceptionhandler.FoodItemNotFound;
+import com.restaurants.exceptionhandler.RestaurantNotFound;
 import com.restaurants.indto.FoodItemInDto;
 import com.restaurants.outdto.FoodItemOutDto;
 import com.restaurants.repository.CategoryRepo;
@@ -75,6 +78,27 @@ public class FoodItemService {
   public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
+    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    if(!optionalRestaurant.isPresent()){
+      System.out.println(foodItemInDto.getRestaurantId());
+      throw new RestaurantNotFound();
+    }
+    Optional<Category> optionalCategory=categoryRepo.findById(foodItemInDto.getCategoryId());
+    if(!optionalCategory.isPresent()){
+      System.out.println("not printing on postman");
+      throw new CategoryNotFound();
+    }
+    else{
+      Category category=optionalCategory.get();
+      if(category.getRestaurantId()!=foodItemInDto.getRestaurantId()){
+        throw new CategoryNotFound();
+      }
+    }
+
+    Optional<FoodItem> optionalFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName());
+    if(optionalFoodItem.isPresent()){
+      throw new FoodItemAlreadyExists();
+    }
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
         foodItem.setImageData(multipartFile.getBytes());
@@ -116,6 +140,18 @@ public class FoodItemService {
     if (!optionalFoodItem.isPresent()) {
       log.error("Food item not found with ID: {}", foodItemId);
       throw  new FoodItemNotFound();
+    }
+    Optional<FoodItem> optionalSameNameFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName());
+    if(optionalSameNameFoodItem.isPresent()){
+      throw new FoodItemAlreadyExists();
+    }
+    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    if(!optionalRestaurant.isPresent()){
+      throw new RestaurantNotFound();
+    }
+    Optional<Category> optionalCategory=categoryRepo.findById(foodItemInDto.getCategoryId());
+    if(!optionalCategory.isPresent()){
+      throw new CategoryNotFound();
     }
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());

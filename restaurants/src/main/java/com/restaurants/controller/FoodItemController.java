@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -63,25 +65,11 @@ public class FoodItemController {
 //    log.info("Added food item: {}", foodItemOutDto);
 //    return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
 //  }
+  @Transactional
   @PostMapping("/addFoodItem")
   public ResponseEntity<?> addFoodItem(
-    @RequestParam("foodName") String foodName,
-    @RequestParam("restaurantId") Integer restaurantId,
-    @RequestParam("description") String description,
-    @RequestParam("categoryId") Integer categoryId,
-    @RequestParam("isAvailable") Boolean isAvailable,
-    @RequestParam("price") Double price,
+    @ModelAttribute @Valid FoodItemInDto foodItemInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-
-    // Create a FoodItemInDto object
-    FoodItemInDto foodItemInDto = new FoodItemInDto();
-    foodItemInDto.setFoodName(foodName);
-    foodItemInDto.setRestaurantId(restaurantId);
-    foodItemInDto.setDescription(description);
-    foodItemInDto.setCategoryId(categoryId);
-    foodItemInDto.setIsAvailable(isAvailable);
-    foodItemInDto.setPrice(price);
-
     try {
       // Add the food item using the service
       FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
@@ -95,7 +83,6 @@ public class FoodItemController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
   }
-
   /**
    * Updates an existing food item.
    *
@@ -103,6 +90,7 @@ public class FoodItemController {
    * @param foodItemInDto the new food item information
    * @return ResponseEntity containing the updated food item details and HTTP status
    */
+  @Transactional
   @PutMapping("/update/{foodItemId}")
   public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId, @RequestBody FoodItemInDto foodItemInDto) {
     log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
