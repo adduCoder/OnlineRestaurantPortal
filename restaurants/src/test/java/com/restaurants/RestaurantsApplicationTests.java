@@ -19,10 +19,4 @@ public class RestaurantsApplicationTests {
   void contextLoads() {
     assertNotNull(applicationContext);
   }
-
-//  @Test
-//  void testMain(CapturedOutput output) {
-//    RestaurantsApplication.main(new String[] {});
-//    String logs = output.getAll();
-//  }
 }

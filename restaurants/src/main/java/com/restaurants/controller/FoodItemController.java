@@ -30,7 +30,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/foodItem")
-@CrossOrigin(origins = "http://localhost:3000") // Adjust this to your frontend URL
+@CrossOrigin(origins = "http://localhost:3000")
 public class FoodItemController {
 
   @Autowired
@@ -57,29 +57,18 @@ public class FoodItemController {
    * @param multipartFile the file associated with the food item
    * @return a response entity with the result of the operation
    */
-//  @PostMapping("/add")
-//  public ResponseEntity<?> addFoodItem(@RequestPart("foodItemInDto") FoodItemInDto foodItemInDto,
-//                                       @RequestPart("multipartFile") MultipartFile multipartFile) {
-//    log.info("Adding new food item: {}", foodItemInDto);
-//    FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
-//    log.info("Added food item: {}", foodItemOutDto);
-//    return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
-//  }
   @Transactional
   @PostMapping("/addFoodItem")
   public ResponseEntity<?> addFoodItem(
     @ModelAttribute @Valid FoodItemInDto foodItemInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
     try {
-      // Add the food item using the service
       FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
 
-      // Return a ResponseEntity with the created food item and HTTP status CREATED
       return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
     } catch (Exception e) {
       log.error("Failed to add food item", e);
 
-      // Return a ResponseEntity with HTTP status BAD_REQUEST
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
   }

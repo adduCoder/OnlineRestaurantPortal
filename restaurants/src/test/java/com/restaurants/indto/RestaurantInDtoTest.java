@@ -12,13 +12,11 @@ public class RestaurantInDtoTest {
   @BeforeEach
   public void setUp() {
     restaurantInDto = new RestaurantInDto();
-    // Initialize the object with valid data
     restaurantInDto.setUserId(1);
     restaurantInDto.setRestaurantName("Cafe Mocha");
     restaurantInDto.setAddress("123 Coffee Street, Indore");
     restaurantInDto.setContactNumber("7896541230");
     restaurantInDto.setDescription("A cozy place for coffee lovers");
-    //restaurantInDto.setImageUrl("http://example.com/image.jpg");
   }
 
   @Test
