@@ -1,8 +1,9 @@
-package com.restaurants.indto;
+package com.restaurants.dto.indto;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -22,6 +23,7 @@ public class CategoryInDto {
    * This field is used to associate the category with a specific restaurant.
    * </p>
    */
+  @NotNull(message = "Category ID cannot be null")
   private Integer restaurantId;
   /**
    * The name of the category.
@@ -29,8 +31,8 @@ public class CategoryInDto {
    * This field represents the name of the category that will be created or updated.
    * </p>
    */
-  @NotBlank(message = "Name cannot be blank")
-  @Size(min = 3, message = "Name must be at least 3 characters long")
-  @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabets")
+  @NotBlank(message = "Food name cannot be blank")
+  @Size(min = 3, message = "Food name must be at least 3 characters long")
+  @Pattern(regexp = "^[a-zA-Z ]+$", message = "Food name must contain only alphabets and spaces")
   private String name;
 }

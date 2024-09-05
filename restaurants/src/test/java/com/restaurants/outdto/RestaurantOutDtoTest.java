@@ -1,5 +1,6 @@
 package com.restaurants.outdto;
 
+import com.restaurants.dto.outdto.RestaurantOutDto;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 

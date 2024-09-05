@@ -8,8 +8,8 @@ import com.restaurants.exceptionhandler.CategoryNotFound;
 import com.restaurants.exceptionhandler.FoodItemAlreadyExists;
 import com.restaurants.exceptionhandler.FoodItemNotFound;
 import com.restaurants.exceptionhandler.RestaurantNotFound;
-import com.restaurants.indto.FoodItemInDto;
-import com.restaurants.outdto.FoodItemOutDto;
+import com.restaurants.dto.indto.FoodItemInDto;
+import com.restaurants.dto.outdto.FoodItemOutDto;
 import com.restaurants.repository.CategoryRepo;
 import com.restaurants.repository.FoodItemRepo;
 import com.restaurants.repository.RestaurantRepo;
@@ -80,12 +80,12 @@ public class FoodItemService {
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
     Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(foodItemInDto.getRestaurantId());
     if(!optionalRestaurant.isPresent()){
-      System.out.println(foodItemInDto.getRestaurantId());
+      //System.out.println(foodItemInDto.getRestaurantId());
       throw new RestaurantNotFound();
     }
     Optional<Category> optionalCategory=categoryRepo.findById(foodItemInDto.getCategoryId());
     if(!optionalCategory.isPresent()){
-      System.out.println("not printing on postman");
+      //System.out.println("not printing on postman");
       throw new CategoryNotFound();
     }
     else{
@@ -95,7 +95,7 @@ public class FoodItemService {
       }
     }
 
-    Optional<FoodItem> optionalFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName());
+    Optional<FoodItem> optionalFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName().toLowerCase());
     if(optionalFoodItem.isPresent()){
       throw new FoodItemAlreadyExists();
     }
@@ -108,6 +108,15 @@ public class FoodItemService {
     catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
     }
+    try {
+      if (multipartFile != null && !multipartFile.isEmpty()) {
+        foodItem.setImageData(multipartFile.getBytes());
+      }
+    }
+    catch (IOException e) {
+      log.error("Error occurred while processing the image file");
+    }
+    foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
     foodItemRepo.save(foodItem);
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);

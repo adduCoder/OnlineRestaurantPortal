@@ -1,5 +1,6 @@
 package com.restaurants.indto;
 
+import com.restaurants.dto.indto.CategoryInDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

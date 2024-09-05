@@ -1,8 +1,8 @@
 package com.restaurants.controller;
 
 
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.indto.RestaurantInDto;
+import com.restaurants.dto.outdto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -28,7 +30,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/restaurant")
-@CrossOrigin(origins = "http://localhost:3000") // Adjust this to your frontend URL
+@CrossOrigin(origins = "http://localhost:3000")
 public class RestaurantController {
 
   @Autowired
@@ -52,29 +54,13 @@ public class RestaurantController {
 //    return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
 //  }
   @PostMapping("/add")
-  public ResponseEntity<?> addRestaurant(
-    @RequestParam("userId") Integer userId,
-    @RequestParam("restaurantName") String restaurantName,
-    @RequestParam("address") String address,
-    @RequestParam("contactNumber") String contactNumber,
-    @RequestParam("description") String description,
+  public ResponseEntity<RestaurantOutDto> addRestaurant(
+    @Valid @ModelAttribute RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-
-    RestaurantInDto restaurantInDto = new RestaurantInDto();
-    restaurantInDto.setUserId(userId);
-    restaurantInDto.setRestaurantName(restaurantName);
-    restaurantInDto.setAddress(address);
-    restaurantInDto.setContactNumber(contactNumber);
-    restaurantInDto.setDescription(description);
-
-    try {
-      RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-      return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
-    } catch (Exception e) {
-      log.error("Failed to add restaurant", e);
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+     RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
+     return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
   }
+
   /**
    * Retrieves all restaurants associated with a specific user.
    *

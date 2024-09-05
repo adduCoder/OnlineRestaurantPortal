@@ -1,7 +1,7 @@
 package com.restaurants.controller;
 
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.outdto.CategoryOutDto;
+import com.restaurants.dto.indto.CategoryInDto;
+import com.restaurants.dto.outdto.CategoryOutDto;
 import com.restaurants.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

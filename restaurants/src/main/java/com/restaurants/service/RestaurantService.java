@@ -1,10 +1,14 @@
 package com.restaurants.service;
 
+import com.restaurants.dto.outdto.UserOutDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.indto.RestaurantInDto;
+import com.restaurants.dto.outdto.RestaurantOutDto;
+import com.restaurants.exceptionhandler.OperationNotAllowed;
+import com.restaurants.exceptionhandler.UserNotFound;
 import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.util.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,9 @@ public class RestaurantService {
   @Autowired
   private RestaurantRepo restaurantRepo;
 
+  @Autowired
+  private UserFClient userFClient;
+
   /**
    * Adds a new restaurant.
    * @param restaurantInDto The DTO containing restaurant details.
@@ -26,7 +33,18 @@ public class RestaurantService {
    */
   public RestaurantOutDto addRestaurant(RestaurantInDto restaurantInDto, MultipartFile multipartFile) {
     log.info("Adding new restaurant with name: {}", restaurantInDto.getRestaurantName());
+    //check for userId
     Restaurant restaurant = DtoConversion.mapToRestaurant(restaurantInDto);
+    UserOutDto userOutDto;
+    try {
+      userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
+    }
+    catch (Exception e){
+      throw new UserNotFound();
+    }
+    if(userOutDto.getRole()==Role.USER){
+      throw new OperationNotAllowed();
+    }
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
         restaurant.setImageData(multipartFile.getBytes());

@@ -25,24 +25,24 @@ public class GlobalExceptionHandler {
    * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
    */
   @ExceptionHandler(RestaurantNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorResponse handleNoCustomerFound(RestaurantNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   @ExceptionHandler(CategoryNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorResponse handleCategoryNotFound(CategoryNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   @ExceptionHandler(FoodItemNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorResponse handleFoodItemNotFound(FoodItemNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   @ExceptionHandler(CategoryAlreadyExists.class)
@@ -59,7 +59,21 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
-   /**
+  @ExceptionHandler(UserNotFound.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ErrorResponse handleUserNotFound(UserNotFound ex) {
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+  }
+
+  @ExceptionHandler(OperationNotAllowed.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleOperationNotAllowed(OperationNotAllowed ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
+  /**
    * Handles {@link MethodArgumentNotValidException} exceptions.
    * This exception is typically thrown when validation of method arguments fails.
    *
@@ -71,9 +85,9 @@ public class GlobalExceptionHandler {
   @ResponseBody
   public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
     List<String> errorMessages = ex.getBindingResult()
-      .getFieldErrors() // Get the field errors directly
+      .getFieldErrors()
       .stream()
-      .map(error -> error.getDefaultMessage()) // Get the default message for each error
+      .map(error -> error.getDefaultMessage())
       .collect(Collectors.toList());
 
     String errorMessage = "Validation failed: " + String.join(", ", errorMessages);

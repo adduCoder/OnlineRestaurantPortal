@@ -25,10 +25,10 @@ public class GlobalExceptionHandler {
    * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
    */
   @ExceptionHandler(NoCustomerFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorResponse handleNoCustomerFound(NoCustomerFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   /**
@@ -68,10 +68,10 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(NoAddressFound.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorResponse handleNoAddressFound(NoAddressFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   /**

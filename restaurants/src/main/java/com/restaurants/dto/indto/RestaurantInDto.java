@@ -1,4 +1,4 @@
-package com.restaurants.indto;
+package com.restaurants.dto.indto;
 
 import lombok.Data;
 

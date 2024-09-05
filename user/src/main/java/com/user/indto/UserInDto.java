@@ -22,7 +22,7 @@ public class UserInDto {
    */
   @NotBlank(message = "Name cannot be blank")
   @Size(min = 3, message = "Name must be at least 3 characters long")
-  @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabets")
+  @Pattern(regexp = "^[a-zA-Z]+(?: [a-zA-Z]+)*$", message = "Name must contain only alphabets and single spaces between words")
   private String name;
 
   /**

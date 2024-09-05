@@ -6,8 +6,8 @@ import com.restaurants.entities.Restaurant;
 import com.restaurants.exceptionhandler.CategoryAlreadyExists;
 import com.restaurants.exceptionhandler.CategoryNotFound;
 import com.restaurants.exceptionhandler.RestaurantNotFound;
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.outdto.CategoryOutDto;
+import com.restaurants.dto.indto.CategoryInDto;
+import com.restaurants.dto.outdto.CategoryOutDto;
 import com.restaurants.repository.CategoryRepo;
 import com.restaurants.repository.RestaurantRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +37,12 @@ public class CategoryService {
     if(!optionalRestaurant.isPresent()){
       throw new RestaurantNotFound();
     }
-    Optional<Category> existedOptionalCategory=categoryRepo.findByNameAndRestaurantId(categoryInDto.getName(),categoryInDto.getRestaurantId());
+    Optional<Category> existedOptionalCategory=categoryRepo.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(),categoryInDto.getRestaurantId());
     if(existedOptionalCategory.isPresent()) {
         throw  new CategoryAlreadyExists();
     }
     log.info("Category added successfully");
+    categoryInDto.setName(categoryInDto.getName().toLowerCase());
     Category savedCategory=categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
     return DtoConversion.mapToCategoryOutDto(savedCategory);
   }
