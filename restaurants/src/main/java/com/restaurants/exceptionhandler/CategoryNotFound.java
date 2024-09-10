@@ -1,5 +1,7 @@
 package com.restaurants.exceptionhandler;
 
+import com.restaurants.util.Constant;
+
 /**
  * Exception thrown when a requested category is not found.
  * <p>
@@ -14,6 +16,6 @@ public class CategoryNotFound extends RuntimeException {
    * The default message is "No Such Category Existed".
    */
   public CategoryNotFound() {
-    super("No Such Category Existed");
+    super(Constant.CATEGORY_NOT_FOUND);
   }
 }

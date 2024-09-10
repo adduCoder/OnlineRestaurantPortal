@@ -1,5 +1,7 @@
 package com.user.exceptionhandler;
 
+import com.user.util.Constant;
+
 /**
  * Custom exception thrown when no customer is found.
  * <p>
@@ -12,7 +14,7 @@ public class NoCustomerFound extends RuntimeException {
    * Constructs a new {@link NoCustomerFound} exception with a default error message.
    */
   public NoCustomerFound() {
-    super("No Customer Found Exception");
+    super(Constant.NO_CUSTOMER_FOUND);
   }
 }
 

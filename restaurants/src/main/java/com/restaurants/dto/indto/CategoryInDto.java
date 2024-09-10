@@ -23,7 +23,7 @@ public class CategoryInDto {
    * This field is used to associate the category with a specific restaurant.
    * </p>
    */
-  @NotNull(message = "Category ID cannot be null")
+  @NotNull(message = "Restro ID cannot be null")
   private Integer restaurantId;
   /**
    * The name of the category.
@@ -35,4 +35,5 @@ public class CategoryInDto {
   @Size(min = 3, message = "Food name must be at least 3 characters long")
   @Pattern(regexp = "^[a-zA-Z ]+$", message = "Food name must contain only alphabets and spaces")
   private String name;
+
 }

@@ -1,7 +1,9 @@
 package com.restaurants.exceptionhandler;
 
-public class OperationNotAllowed extends RuntimeException{
-  public OperationNotAllowed(){
-    super("This operation can't be performed as you are not an Owner");
+import com.restaurants.util.Constant;
+
+public class OperationNotAllowed extends RuntimeException {
+  public OperationNotAllowed() {
+    super(Constant.OPERATION_NOT_ALLOWED);
   }
 }

@@ -1,9 +1,8 @@
-package com.user.indto;
+package com.user.dto;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -11,7 +10,7 @@ import javax.validation.constraints.Size;
  * This class is used to encapsulate the data sent in a request for updating an address.
  */
 @Data
-public class UpdateAddressRequest {
+public class UpdateAddressInDto {
 
   /**
    * The street of the address.
@@ -41,7 +40,7 @@ public class UpdateAddressRequest {
    * The pin code of the address.
    * This field cannot be null.
    */
-  @NotNull(message = "pinCode cannot be blank")
+  @NotBlank(message = "pinCode cannot be blank")
   private Integer pinCode;
 
 }

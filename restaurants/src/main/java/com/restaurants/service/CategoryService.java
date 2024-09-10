@@ -1,5 +1,6 @@
 package com.restaurants.service;
 
+import com.restaurants.dto.indto.CategoryUpdateInDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.Restaurant;
@@ -26,24 +27,25 @@ public class CategoryService {
 
   @Autowired
   private RestaurantRepo restaurantRepo;
-
   /**
    * Add a new category.
    */
   public CategoryOutDto addCategory(CategoryInDto categoryInDto) {
     log.info("Adding a new category with name: {}", categoryInDto.getName());
     //Category category = categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(categoryInDto.getRestaurantId());
-    if(!optionalRestaurant.isPresent()){
+    categoryInDto.setName(categoryInDto.getName().trim());
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(categoryInDto.getRestaurantId());
+    if (!optionalRestaurant.isPresent()) {
       throw new RestaurantNotFound();
     }
-    Optional<Category> existedOptionalCategory=categoryRepo.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(),categoryInDto.getRestaurantId());
-    if(existedOptionalCategory.isPresent()) {
-        throw  new CategoryAlreadyExists();
+    Optional<Category> existedOptionalCategory =
+      categoryRepo.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(), categoryInDto.getRestaurantId());
+    if (existedOptionalCategory.isPresent()) {
+      throw new CategoryAlreadyExists();
     }
     log.info("Category added successfully");
     categoryInDto.setName(categoryInDto.getName().toLowerCase());
-    Category savedCategory=categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
+    Category savedCategory = categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
     return DtoConversion.mapToCategoryOutDto(savedCategory);
   }
 
@@ -66,8 +68,8 @@ public class CategoryService {
    */
   public List<CategoryOutDto> getAllCategory(Integer restaurantId) {
     log.info("Fetching all categories for restaurant ID: {}", restaurantId);
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(restaurantId);
-    if(!optionalRestaurant.isPresent()){
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    if (!optionalRestaurant.isPresent()) {
       throw new RestaurantNotFound();
     }
     List<Category> categoryList = categoryRepo.findAllByRestaurantId(restaurantId);
@@ -82,7 +84,7 @@ public class CategoryService {
   /**
    * Update a category.
    */
-  public CategoryOutDto updateCategory(Integer categoryId, CategoryInDto categoryInDto) {
+  public CategoryOutDto updateCategory(Integer categoryId, CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {}", categoryId);
     Optional<Category> optionalCategory = categoryRepo.findById(categoryId);
     if (!optionalCategory.isPresent()) {
@@ -90,9 +92,16 @@ public class CategoryService {
       throw new CategoryNotFound();
     }
     Category category = optionalCategory.get();
-    category.setName(categoryInDto.getName());
+    List<Category> categoryList = categoryRepo.findAllByRestaurantId(category.getRestaurantId());
+    for (Category subCategory:categoryList) {
+      if (subCategory.getName().equals(categoryUpdateInDto.getName().toLowerCase())) {
+        throw new CategoryAlreadyExists();
+      }
+    }
+    category.setName(categoryUpdateInDto.getName().toLowerCase());
     categoryRepo.save(category);
     log.info("Category updated successfully with ID: {}", categoryId);
     return DtoConversion.mapToCategoryOutDto(category);
   }
+
 }

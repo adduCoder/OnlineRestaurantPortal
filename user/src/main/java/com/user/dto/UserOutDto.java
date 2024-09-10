@@ -1,4 +1,4 @@
-package com.user.outdto;
+package com.user.dto;
 
 import com.user.util.Role;
 import lombok.Data;

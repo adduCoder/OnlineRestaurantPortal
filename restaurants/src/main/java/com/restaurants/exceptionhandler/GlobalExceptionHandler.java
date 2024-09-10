@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,17 +81,41 @@ public class GlobalExceptionHandler {
    * @param ex the exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#BAD_REQUEST} and a list of validation error messages
    */
-  @ExceptionHandler(MethodArgumentNotValidException.class)
+//  @ExceptionHandler(MethodArgumentNotValidException.class)
+//  @ResponseStatus(HttpStatus.BAD_REQUEST)
+//  @ResponseBody
+//  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+//    List<String> errorMessages = ex.getBindingResult()
+//      .getFieldErrors()
+//      .stream()
+//      .map(error -> error.getDefaultMessage())
+//      .collect(Collectors.toList());
+//    String errorMessage = "Validation failed: " + String.join(", ", errorMessages);
+//    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+//  }
+  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-    List<String> errorMessages = ex.getBindingResult()
-      .getFieldErrors()
-      .stream()
-      .map(error -> error.getDefaultMessage())
-      .collect(Collectors.toList());
+  public ErrorResponse handleValidationExceptions(Exception ex) {
+    List<String> errorMessages = null;
 
-    String errorMessage = "Validation failed: " + String.join(", ", errorMessages);
+    if (ex instanceof MethodArgumentNotValidException) {
+      errorMessages = ((MethodArgumentNotValidException) ex)
+        .getBindingResult()
+        .getFieldErrors()
+        .stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.toList());
+    } else if (ex instanceof BindException) {
+      errorMessages = ((BindException) ex)
+        .getBindingResult()
+        .getFieldErrors()
+        .stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.toList());
+    }
+
+    String errorMessage = errorMessages != null ? String.join(", ", errorMessages) : "Validation error";
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }
 

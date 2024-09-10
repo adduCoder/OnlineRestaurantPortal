@@ -2,10 +2,10 @@ package com.user.service;
 
 import com.user.entity.Address;
 import com.user.exceptionhandler.NoAddressFound;
-import com.user.indto.AddressRequest;
-import com.user.indto.UpdateAddressRequest;
+import com.user.dto.AddressInDto;
+import com.user.dto.UpdateAddressInDto;
 import com.user.outdto.AddressResponse;
-import com.user.outdto.UserOutDto;
+import com.user.dto.UserOutDto;
 import com.user.repository.AddressRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +40,8 @@ class AddressServiceTest {
   private List<Address> addressList;
 
   private Address address;
-  private AddressRequest addressRequest;
-  private UpdateAddressRequest updateAddressRequest;
+  private AddressInDto AddressInDto;
+  private UpdateAddressInDto updateAddressInDto;
   private AddressResponse addressResponse;
 
   @BeforeEach
@@ -54,17 +54,17 @@ class AddressServiceTest {
     address.setState("MP");
     address.setPinCode(452001);
     address.setUserId(1);
-    addressRequest = new AddressRequest();
-    addressRequest.setStreet("Tower Square");
-    addressRequest.setCity("Indore");
-    addressRequest.setState("MP");
-    addressRequest.setPinCode(452001);
-    addressRequest.setUserId(1);
-    updateAddressRequest = new UpdateAddressRequest();
-    updateAddressRequest.setStreet("Updated Street");
-    updateAddressRequest.setCity("Updated City");
-    updateAddressRequest.setState("Updated State");
-    updateAddressRequest.setPinCode(123456);
+    AddressInDto = new AddressInDto();
+    AddressInDto.setStreet("Tower Square");
+    AddressInDto.setCity("Indore");
+    AddressInDto.setState("MP");
+    AddressInDto.setPinCode(452001);
+    AddressInDto.setUserId(1);
+    updateAddressInDto = new UpdateAddressInDto();
+    updateAddressInDto.setStreet("Updated Street");
+    updateAddressInDto.setCity("Updated City");
+    updateAddressInDto.setState("Updated State");
+    updateAddressInDto.setPinCode(123456);
     addressResponse = new AddressResponse();
     addressResponse.setStreet("Tower Square");
     addressResponse.setCity("Indore");
@@ -86,7 +86,7 @@ class AddressServiceTest {
   void testCreateAddress() {
     when(userService.getUser(anyInt())).thenReturn(new UserOutDto());
     when(addressRepo.save(any(Address.class))).thenReturn(address);
-    AddressResponse response = addressService.createAddress(addressRequest);
+    AddressResponse response = addressService.createAddress(AddressInDto);
 //    verify(userService, times(1)).getUser(anyInt());
     verify(addressRepo, times(1)).save(any(Address.class));
   }
@@ -124,7 +124,7 @@ class AddressServiceTest {
   void testUpdateAddress() {
     when(addressRepo.findById(anyInt())).thenReturn(Optional.of(address));
     when(addressRepo.save(any(Address.class))).thenReturn(address);
-    AddressResponse response = addressService.updateAddress(1, updateAddressRequest);
+    AddressResponse response = addressService.updateAddress(1, updateAddressInDto);
     verify(addressRepo, times(1)).findById(anyInt());
     verify(addressRepo, times(1)).save(any(Address.class));
   }
@@ -132,6 +132,6 @@ class AddressServiceTest {
   @Test
   void testUpdateAddressNotFound() {
     when(addressRepo.findById(anyInt())).thenReturn(Optional.empty());
-    assertThrows(NoAddressFound.class, () -> addressService.updateAddress(1, updateAddressRequest));
+    assertThrows(NoAddressFound.class, () -> addressService.updateAddress(1, updateAddressInDto));
   }
 }

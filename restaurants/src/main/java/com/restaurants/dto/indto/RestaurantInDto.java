@@ -18,9 +18,9 @@ public class RestaurantInDto {
   /**
    * Name of the restaurant.
    */
-  @NotBlank(message = "Name cannot be blank")
-  @Size(min = 3, message = "Name must be at least 3 characters long")
-  @Pattern(regexp = "^[a-z]([-']?[a-z]+)*( [a-z]([-']?[a-z]+)*)+$", message = "Name must contain only alphabets")
+  @NotBlank(message = "Food name cannot be blank")
+  @Size(min = 3, message = "Food name must be at least 3 characters long")
+  @Pattern(regexp = "^[a-zA-Z ]+$", message = "Food name must contain only alphabets and spaces")
   private String restaurantName;
 
   /**

@@ -1,4 +1,4 @@
-package com.user.outdto;
+package com.user.dto;
 
 import lombok.Data;
 /**
@@ -6,7 +6,7 @@ import lombok.Data;
  * This class encapsulates the details of an address that are returned in response to address-related requests.
  */
 @Data
-public class AddressResponse {
+public class AddressOutDto {
   /**
    * The unique identifier for the address.
    */

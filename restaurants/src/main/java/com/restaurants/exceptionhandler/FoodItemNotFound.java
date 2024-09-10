@@ -1,4 +1,7 @@
 package com.restaurants.exceptionhandler;
+
+import com.restaurants.util.Constant;
+
 /**
  * Exception thrown when a requested food item is not found.
  * <p>
@@ -12,6 +15,6 @@ public class FoodItemNotFound extends RuntimeException {
    * The default message is "No FoodItem Found!".
    */
   public FoodItemNotFound() {
-    super("No FoodItem Found!");
+    super(Constant.FOODITEM_NOT_FOUND);
   }
 }

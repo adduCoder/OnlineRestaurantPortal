@@ -1,8 +1,8 @@
 package com.user.controller;
 
-import com.user.indto.LoginInDto;
-import com.user.indto.UserInDto;
-import com.user.outdto.UserOutDto;
+import com.user.dto.LoginInDto;
+import com.user.dto.UserInDto;
+import com.user.dto.UserOutDto;
 import com.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

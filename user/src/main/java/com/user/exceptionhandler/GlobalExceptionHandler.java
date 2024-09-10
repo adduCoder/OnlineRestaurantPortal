@@ -1,13 +1,17 @@
 package com.user.exceptionhandler;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -74,6 +78,21 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+    Map<String, String> errors = new HashMap<>();
+    String message = ex.getMessage();
+
+    if (message.contains("InvalidFormatException")) {
+      errors.put("error", "Invalid role provided. Accepted values are USER or OWNER.");
+    } else {
+      errors.put("error", "Invalid request payload.");
+    }
+
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
+
   /**
    * Class representing the error response returned by the exception handlers.
    */
@@ -130,6 +149,5 @@ public class GlobalExceptionHandler {
       this.message = message;
     }
   }
-
 }
 

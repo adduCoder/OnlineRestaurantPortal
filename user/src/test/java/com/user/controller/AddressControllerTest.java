@@ -1,7 +1,7 @@
 package com.user.controller;
 
-import com.user.indto.AddressRequest;
-import com.user.indto.UpdateAddressRequest;
+import com.user.dto.AddressInDto;
+import com.user.dto.UpdateAddressInDto;
 import com.user.outdto.AddressResponse;
 import com.user.service.AddressService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +29,8 @@ class AddressControllerTest {
   private AddressController addressController;
 
   private AddressResponse addressResponse;
-  private AddressRequest addressRequest;
-  private UpdateAddressRequest updateAddressRequest;
+  private AddressInDto AddressInDto;
+  private UpdateAddressInDto updateAddressInDto;
 
   @BeforeEach
   void setUp() {
@@ -43,24 +43,24 @@ class AddressControllerTest {
     addressResponse.setState("Karnataka");
     addressResponse.setPinCode(560001);
 
-    addressRequest = new AddressRequest();
-    addressRequest.setUserId(1);
-    addressRequest.setStreet("MG Road");
-    addressRequest.setCity("Bangalore");
-    addressRequest.setState("Karnataka");
-    addressRequest.setPinCode(560001);
+    AddressInDto = new AddressInDto();
+    AddressInDto.setUserId(1);
+    AddressInDto.setStreet("MG Road");
+    AddressInDto.setCity("Bangalore");
+    AddressInDto.setState("Karnataka");
+    AddressInDto.setPinCode(560001);
 
-    updateAddressRequest = new UpdateAddressRequest();
-    updateAddressRequest.setStreet("Brigade Road");
-    updateAddressRequest.setCity("Mumbai");
-    updateAddressRequest.setState("Maharashtra");
-    updateAddressRequest.setPinCode(400001);
+    updateAddressInDto = new UpdateAddressInDto();
+    updateAddressInDto.setStreet("Brigade Road");
+    updateAddressInDto.setCity("Mumbai");
+    updateAddressInDto.setState("Maharashtra");
+    updateAddressInDto.setPinCode(400001);
   }
 
   @Test
   void testAddAddress() {
-    when(addressService.createAddress(any(AddressRequest.class))).thenReturn(addressResponse);
-    ResponseEntity<?> response = addressController.addAddress(addressRequest);
+    when(addressService.createAddress(any(AddressInDto.class))).thenReturn(addressResponse);
+    ResponseEntity<?> response = addressController.addAddress(AddressInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals(addressResponse, response.getBody());
   }
@@ -84,8 +84,8 @@ class AddressControllerTest {
 
   @Test
   void testUpdateAddress() {
-    when(addressService.updateAddress(anyInt(), any(UpdateAddressRequest.class))).thenReturn(addressResponse);
-    ResponseEntity<?> response = addressController.updateAddress(1, updateAddressRequest);
+    when(addressService.updateAddress(anyInt(), any(UpdateAddressInDto.class))).thenReturn(addressResponse);
+    ResponseEntity<?> response = addressController.updateAddress(1, updateAddressInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(addressResponse, response.getBody());
   }

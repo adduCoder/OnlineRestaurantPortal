@@ -39,10 +39,10 @@ public class RestaurantService {
     try {
       userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
     }
-    catch (Exception e){
+    catch (Exception e) {
       throw new UserNotFound();
     }
-    if(userOutDto.getRole()==Role.USER){
+    if (userOutDto.getRole() == Role.USER) {
       throw new OperationNotAllowed();
     }
     try {

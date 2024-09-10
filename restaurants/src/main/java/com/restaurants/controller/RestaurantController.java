@@ -57,8 +57,8 @@ public class RestaurantController {
   public ResponseEntity<RestaurantOutDto> addRestaurant(
     @Valid @ModelAttribute RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-     RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-     return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
+    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
+    return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
   }
 
   /**

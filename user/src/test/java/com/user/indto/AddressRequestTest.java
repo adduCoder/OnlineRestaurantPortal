@@ -1,130 +1,131 @@
 package com.user.indto;
 
+import com.user.dto.AddressInDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class AddressRequestTest {
+public class AddressInDtoTest {
 
-  private AddressRequest addressRequest;
+  private com.user.dto.AddressInDto AddressInDto;
 
   @BeforeEach
   public void setUp() {
-    addressRequest = new AddressRequest();
+    AddressInDto = new AddressInDto();
   }
 
   @Test
   public void testGetStreet() {
-    addressRequest.setStreet("MG Road");
-    assertEquals("MG Road", addressRequest.getStreet());
+    AddressInDto.setStreet("MG Road");
+    assertEquals("MG Road", AddressInDto.getStreet());
   }
 
   @Test
   public void testSetStreet() {
-    addressRequest.setStreet("Brigade Road");
-    assertEquals("Brigade Road", addressRequest.getStreet());
+    AddressInDto.setStreet("Brigade Road");
+    assertEquals("Brigade Road", AddressInDto.getStreet());
   }
 
   @Test
   public void testGetState() {
-    addressRequest.setState("Karnataka");
-    assertEquals("Karnataka", addressRequest.getState());
+    AddressInDto.setState("Karnataka");
+    assertEquals("Karnataka", AddressInDto.getState());
   }
 
   @Test
   public void testSetState() {
-    addressRequest.setState("Maharashtra");
-    assertEquals("Maharashtra", addressRequest.getState());
+    AddressInDto.setState("Maharashtra");
+    assertEquals("Maharashtra", AddressInDto.getState());
   }
 
   @Test
   public void testGetCity() {
-    addressRequest.setCity("Bangalore");
-    assertEquals("Bangalore", addressRequest.getCity());
+    AddressInDto.setCity("Bangalore");
+    assertEquals("Bangalore", AddressInDto.getCity());
   }
 
   @Test
   public void testSetCity() {
-    addressRequest.setCity("Mumbai");
-    assertEquals("Mumbai", addressRequest.getCity());
+    AddressInDto.setCity("Mumbai");
+    assertEquals("Mumbai", AddressInDto.getCity());
   }
 
   @Test
   public void testGetPinCode() {
-    addressRequest.setPinCode(560001);
-    assertEquals(560001, addressRequest.getPinCode());
+    AddressInDto.setPinCode(560001);
+    assertEquals(560001, AddressInDto.getPinCode());
   }
 
   @Test
   public void testSetPinCode() {
-    addressRequest.setPinCode(400001);
-    assertEquals(400001, addressRequest.getPinCode());
+    AddressInDto.setPinCode(400001);
+    assertEquals(400001, AddressInDto.getPinCode());
   }
 
   @Test
   public void testGetUserId() {
-    addressRequest.setUserId(1);
-    assertEquals(1, addressRequest.getUserId());
+    AddressInDto.setUserId(1);
+    assertEquals(1, AddressInDto.getUserId());
   }
 
   @Test
   public void testSetUserId() {
-    addressRequest.setUserId(2);
-    assertEquals(2, addressRequest.getUserId());
+    AddressInDto.setUserId(2);
+    assertEquals(2, AddressInDto.getUserId());
   }
 
   @Test
   public void testToString() {
-    addressRequest.setStreet("MG Road");
-    addressRequest.setState("Karnataka");
-    addressRequest.setCity("Bangalore");
-    addressRequest.setPinCode(560001);
-    addressRequest.setUserId(1);
-    String expected = "AddressRequest(street=MG Road, state=Karnataka, city=Bangalore, pinCode=560001, userId=1)";
-    assertEquals(expected, addressRequest.toString());
+    AddressInDto.setStreet("MG Road");
+    AddressInDto.setState("Karnataka");
+    AddressInDto.setCity("Bangalore");
+    AddressInDto.setPinCode(560001);
+    AddressInDto.setUserId(1);
+    String expected = "AddressInDto(street=MG Road, state=Karnataka, city=Bangalore, pinCode=560001, userId=1)";
+    assertEquals(expected, AddressInDto.toString());
   }
 
   @Test
   public void testHashCode() {
-    AddressRequest addressRequest1 = new AddressRequest();
-    addressRequest1.setStreet("MG Road");
-    addressRequest1.setState("Karnataka");
-    addressRequest1.setCity("Bangalore");
-    addressRequest1.setPinCode(560001);
-    addressRequest1.setUserId(1);
+    AddressInDto AddressInDto1 = new AddressInDto();
+    AddressInDto1.setStreet("MG Road");
+    AddressInDto1.setState("Karnataka");
+    AddressInDto1.setCity("Bangalore");
+    AddressInDto1.setPinCode(560001);
+    AddressInDto1.setUserId(1);
 
-    AddressRequest addressRequest2 = new AddressRequest();
-    addressRequest2.setStreet("MG Road");
-    addressRequest2.setState("Karnataka");
-    addressRequest2.setCity("Bangalore");
-    addressRequest2.setPinCode(560001);
-    addressRequest2.setUserId(1);
+    AddressInDto AddressInDto2 = new AddressInDto();
+    AddressInDto2.setStreet("MG Road");
+    AddressInDto2.setState("Karnataka");
+    AddressInDto2.setCity("Bangalore");
+    AddressInDto2.setPinCode(560001);
+    AddressInDto2.setUserId(1);
 
-    assertEquals(addressRequest1.hashCode(), addressRequest2.hashCode());
+    assertEquals(AddressInDto1.hashCode(), AddressInDto2.hashCode());
   }
 
   @Test
   public void testEquals() {
-    AddressRequest addressRequest1 = new AddressRequest();
-    addressRequest1.setStreet("MG Road");
-    addressRequest1.setState("Karnataka");
-    addressRequest1.setCity("Bangalore");
-    addressRequest1.setPinCode(560001);
-    addressRequest1.setUserId(1);
+    AddressInDto AddressInDto1 = new AddressInDto();
+    AddressInDto1.setStreet("MG Road");
+    AddressInDto1.setState("Karnataka");
+    AddressInDto1.setCity("Bangalore");
+    AddressInDto1.setPinCode(560001);
+    AddressInDto1.setUserId(1);
 
-    AddressRequest addressRequest2 = new AddressRequest();
-    addressRequest2.setStreet("MG Road");
-    addressRequest2.setState("Karnataka");
-    addressRequest2.setCity("Bangalore");
-    addressRequest2.setPinCode(560001);
-    addressRequest2.setUserId(1);
+    AddressInDto AddressInDto2 = new AddressInDto();
+    AddressInDto2.setStreet("MG Road");
+    AddressInDto2.setState("Karnataka");
+    AddressInDto2.setCity("Bangalore");
+    AddressInDto2.setPinCode(560001);
+    AddressInDto2.setUserId(1);
 
-    assertEquals(addressRequest1, addressRequest2);
+    assertEquals(AddressInDto1, AddressInDto2);
 
-    addressRequest2.setCity("Mumbai");
-    assertNotEquals(addressRequest1, addressRequest2);
+    AddressInDto2.setCity("Mumbai");
+    assertNotEquals(AddressInDto1, AddressInDto2);
   }
 
 }

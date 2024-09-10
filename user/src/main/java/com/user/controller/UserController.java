@@ -1,11 +1,12 @@
 package com.user.controller;
 
 import com.user.exceptionhandler.GlobalExceptionHandler;
-import com.user.exceptionhandler.NoCustomerFound;
-import com.user.indto.LoginInDto;
-import com.user.indto.UserInDto;
-import com.user.outdto.UserOutDto;
+import com.user.dto.AmountInDto;
+import com.user.dto.LoginInDto;
+import com.user.dto.UserInDto;
+import com.user.dto.UserOutDto;
 import com.user.service.UserService;
+import com.user.util.UserApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller for managing users.
@@ -78,7 +77,11 @@ public class UserController {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     log.info("User added successfully with ID: {}", createdUser);
-    return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    UserApiResponse userApiResponse=new UserApiResponse();
+    userApiResponse.setMessage("New User Registerd Successfully");
+    userApiResponse.setUserId(createdUser);
+    userApiResponse.setRole(userInDto.getRole());
+    return new ResponseEntity<>(userApiResponse, HttpStatus.CREATED);
   }
 
   /**
@@ -93,9 +96,11 @@ public class UserController {
     log.info("Updating user with ID: {}", userId);
     UserOutDto userOutDto = userService.updateUser(userId, userInDto);
     log.info("User updated successfully with ID: {}", userId);
-    return new ResponseEntity<>(userOutDto, HttpStatus.OK);
+    UserApiResponse userApiResponse=new UserApiResponse();
+    userApiResponse.setMessage("User Updated Successfully");
+    userApiResponse.setUserId(userId);
+    return new ResponseEntity<>(userApiResponse, HttpStatus.OK);
   }
-
   /**
    * Deletes a user by their ID.
    *
@@ -117,18 +122,34 @@ public class UserController {
    * @return ResponseEntity containing a login response and HTTP status
    */
    @PostMapping("/login")
-   public ResponseEntity<?> loginUser(@RequestBody LoginInDto loginInDto) {
+   public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
      log.info("Received login request for email: {}", loginInDto.getEmail());
-
      UserOutDto userOutDto = userService.loginUser(loginInDto);
+    // UserApiResponse userApiResponse=new UserApiResponse();
 
      if (userOutDto != null) {
        log.info("Login successful for email: {}", loginInDto.getEmail());
+//       userApiResponse.setMessage("Login Successfull");
+//       userApiResponse.setUserId(userOutDto.getId());
+//       userApiResponse.setRole(userOutDto.getRole());
        return ResponseEntity.ok(userOutDto);
-     } else {
+     }
+     else {
        log.error("Login failed: Invalid credentials");
        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GlobalExceptionHandler.ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid credentials"));
      }
+   }
+
+   @PutMapping("/deduct/{userId}")
+   public ResponseEntity<?> deductMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto){
+     userService.deductMoney(userId,amountInDto);
+     return new ResponseEntity<>(HttpStatus.OK);
+   }
+
+   @PutMapping("/addMoney/{userId}")
+  public ResponseEntity<?> addMoney(@PathVariable Integer userId,@RequestBody AmountInDto amountInDto){
+     userService.addMoney(userId,amountInDto);
+     return new ResponseEntity<>(HttpStatus.OK);
    }
 }
 

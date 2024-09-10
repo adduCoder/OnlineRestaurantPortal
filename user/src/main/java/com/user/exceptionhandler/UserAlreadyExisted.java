@@ -1,6 +1,8 @@
 package com.user.exceptionhandler;
 
 
+import com.user.util.Constant;
+
 /**
  * Custom exception thrown when a user already exists in the system.
  * <p>
@@ -15,7 +17,8 @@ public class UserAlreadyExisted extends RuntimeException {
    * Constructs a new {@link UserAlreadyExisted} exception with a default error message.
    */
   public UserAlreadyExisted() {
-    super("User Already Existed");
+    super(Constant.USER_ALREADY_EXISTED);
   }
+
 }
 

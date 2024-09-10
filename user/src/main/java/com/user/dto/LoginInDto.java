@@ -1,4 +1,4 @@
-package com.user.indto;
+package com.user.dto;
 
 import lombok.Data;
 
@@ -19,7 +19,8 @@ public class LoginInDto {
    */
   @NotBlank(message = "Email cannot be blank")
   @Email(message = "Email should be valid")
-  @Pattern(regexp = ".*\\.com$", message = "Email should end with '.com'")
+  @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9._%+-]+@(?:gmail\\.com|nucleusteq\\.com)$",
+    message = "Email must contain at least one alphabetic character before '@gmail.com' or '@nucleusteq.com'")
   private String email;
 
   /**
@@ -28,7 +29,5 @@ public class LoginInDto {
    */
   @NotBlank(message = "Password cannot be blank")
   private String password;
-
-
 }
 

@@ -1,0 +1,14 @@
+package com.orders.util;
+
+public final class Constant {
+  public static final String UPDATED = "Updated Successfull";
+  public static final String INSUFFICIENT_AMOUNT = "Insufficient amount";
+  public static final String NOT_FOUND = "User Not Found !";
+  public static final String ORDER_NOT_FOUND = "Order Not Found";
+  public static final String SESSION_EXPIRED = "Session Expired (greater than 30 seconds)";
+  public static final String hi = "HII";
+  public static String SUCCESS = "Successfully added";
+
+  private Constant() {
+  }
+}

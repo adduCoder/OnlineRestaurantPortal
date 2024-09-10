@@ -1,4 +1,4 @@
-package com.user.indto;
+package com.user.dto;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
  * This class is used to encapsulate the address data sent in a request for adding a new address.
  */
 @Data
-public class AddressRequest {
+public class AddressInDto {
   /**
    * The street address.
    * This field cannot be blank and must be at least 3 characters long.
@@ -47,7 +47,6 @@ public class AddressRequest {
    * The ID of the user associated with this address.
    * This field cannot be null.
    */
-  @NotNull(message = "Name cannot be blank")
+  @NotNull(message = "userId cannot be blank")
    private Integer userId;
-
 }

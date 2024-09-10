@@ -1,128 +1,129 @@
 package com.user.indto;
 
+import com.user.dto.UpdateAddressInDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class UpdateAddressRequestTest {
+public class UpdateAddressInDtoTest {
 
-  private UpdateAddressRequest updateAddressRequest;
+  private UpdateAddressInDto updateAddressInDto;
 
   @BeforeEach
   public void setUp() {
-    updateAddressRequest = new UpdateAddressRequest();
+    updateAddressInDto = new UpdateAddressInDto();
   }
 
   @Test
   public void testGetStreet() {
-    updateAddressRequest.setStreet("MG Road");
-    assertEquals("MG Road", updateAddressRequest.getStreet());
+    updateAddressInDto.setStreet("MG Road");
+    assertEquals("MG Road", updateAddressInDto.getStreet());
   }
 
   @Test
   public void testSetStreet() {
-    updateAddressRequest.setStreet("Brigade Road");
-    assertEquals("Brigade Road", updateAddressRequest.getStreet());
+    updateAddressInDto.setStreet("Brigade Road");
+    assertEquals("Brigade Road", updateAddressInDto.getStreet());
   }
 
   @Test
   public void testGetState() {
-    updateAddressRequest.setState("Karnataka");
-    assertEquals("Karnataka", updateAddressRequest.getState());
+    updateAddressInDto.setState("Karnataka");
+    assertEquals("Karnataka", updateAddressInDto.getState());
   }
 
   @Test
   public void testSetState() {
-    updateAddressRequest.setState("Maharashtra");
-    assertEquals("Maharashtra", updateAddressRequest.getState());
+    updateAddressInDto.setState("Maharashtra");
+    assertEquals("Maharashtra", updateAddressInDto.getState());
   }
 
   @Test
   public void testGetCity() {
-    updateAddressRequest.setCity("Bangalore");
-    assertEquals("Bangalore", updateAddressRequest.getCity());
+    updateAddressInDto.setCity("Bangalore");
+    assertEquals("Bangalore", updateAddressInDto.getCity());
   }
 
   @Test
   public void testSetCity() {
-    updateAddressRequest.setCity("Mumbai");
-    assertEquals("Mumbai", updateAddressRequest.getCity());
+    updateAddressInDto.setCity("Mumbai");
+    assertEquals("Mumbai", updateAddressInDto.getCity());
   }
 
   @Test
   public void testGetPinCode() {
-    updateAddressRequest.setPinCode(560001);
-    assertEquals(560001, updateAddressRequest.getPinCode());
+    updateAddressInDto.setPinCode(560001);
+    assertEquals(560001, updateAddressInDto.getPinCode());
   }
 
   @Test
   public void testSetPinCode() {
-    updateAddressRequest.setPinCode(400001);
-    assertEquals(400001, updateAddressRequest.getPinCode());
+    updateAddressInDto.setPinCode(400001);
+    assertEquals(400001, updateAddressInDto.getPinCode());
   }
 
   @Test
   public void testToString() {
-    updateAddressRequest.setStreet("MG Road");
-    updateAddressRequest.setState("Karnataka");
-    updateAddressRequest.setCity("Bangalore");
-    updateAddressRequest.setPinCode(560001);
+    updateAddressInDto.setStreet("MG Road");
+    updateAddressInDto.setState("Karnataka");
+    updateAddressInDto.setCity("Bangalore");
+    updateAddressInDto.setPinCode(560001);
 
-    String expected = "UpdateAddressRequest(street=MG Road, state=Karnataka, city=Bangalore, pinCode=560001)";
-    assertEquals(expected, updateAddressRequest.toString());
+    String expected = "UpdateAddressInDto(street=MG Road, state=Karnataka, city=Bangalore, pinCode=560001)";
+    assertEquals(expected, updateAddressInDto.toString());
   }
 
   @Test
   public void testHashCode() {
-    UpdateAddressRequest updateAddressRequest1 = new UpdateAddressRequest();
-    updateAddressRequest1.setStreet("MG Road");
-    updateAddressRequest1.setState("Karnataka");
-    updateAddressRequest1.setCity("Bangalore");
-    updateAddressRequest1.setPinCode(560001);
+    UpdateAddressInDto updateAddressInDto1 = new UpdateAddressInDto();
+    updateAddressInDto1.setStreet("MG Road");
+    updateAddressInDto1.setState("Karnataka");
+    updateAddressInDto1.setCity("Bangalore");
+    updateAddressInDto1.setPinCode(560001);
 
-    UpdateAddressRequest updateAddressRequest2 = new UpdateAddressRequest();
-    updateAddressRequest2.setStreet("MG Road");
-    updateAddressRequest2.setState("Karnataka");
-    updateAddressRequest2.setCity("Bangalore");
-    updateAddressRequest2.setPinCode(560001);
+    UpdateAddressInDto updateAddressInDto2 = new UpdateAddressInDto();
+    updateAddressInDto2.setStreet("MG Road");
+    updateAddressInDto2.setState("Karnataka");
+    updateAddressInDto2.setCity("Bangalore");
+    updateAddressInDto2.setPinCode(560001);
 
-    assertEquals(updateAddressRequest1.hashCode(), updateAddressRequest2.hashCode());
+    assertEquals(updateAddressInDto1.hashCode(), updateAddressInDto2.hashCode());
 
-    updateAddressRequest2.setCity("Mumbai");
-    assertNotEquals(updateAddressRequest1.hashCode(), updateAddressRequest2.hashCode());
+    updateAddressInDto2.setCity("Mumbai");
+    assertNotEquals(updateAddressInDto1.hashCode(), updateAddressInDto2.hashCode());
   }
 
   @Test
   public void testEquals() {
-    UpdateAddressRequest updateAddressRequest1 = new UpdateAddressRequest();
-    updateAddressRequest1.setStreet("MG Road");
-    updateAddressRequest1.setState("Karnataka");
-    updateAddressRequest1.setCity("Bangalore");
-    updateAddressRequest1.setPinCode(560001);
+    UpdateAddressInDto updateAddressInDto1 = new UpdateAddressInDto();
+    updateAddressInDto1.setStreet("MG Road");
+    updateAddressInDto1.setState("Karnataka");
+    updateAddressInDto1.setCity("Bangalore");
+    updateAddressInDto1.setPinCode(560001);
 
-    UpdateAddressRequest updateAddressRequest2 = new UpdateAddressRequest();
-    updateAddressRequest2.setStreet("MG Road");
-    updateAddressRequest2.setState("Karnataka");
-    updateAddressRequest2.setCity("Bangalore");
-    updateAddressRequest2.setPinCode(560001);
+    UpdateAddressInDto updateAddressInDto2 = new UpdateAddressInDto();
+    updateAddressInDto2.setStreet("MG Road");
+    updateAddressInDto2.setState("Karnataka");
+    updateAddressInDto2.setCity("Bangalore");
+    updateAddressInDto2.setPinCode(560001);
 
     // Check that two objects with the same values are equal
-    assertEquals(updateAddressRequest1, updateAddressRequest2);
+    assertEquals(updateAddressInDto1, updateAddressInDto2);
 
     // Change a field and check that they are no longer equal
-    updateAddressRequest2.setCity("Mumbai");
-    assertNotEquals(updateAddressRequest1, updateAddressRequest2);
+    updateAddressInDto2.setCity("Mumbai");
+    assertNotEquals(updateAddressInDto1, updateAddressInDto2);
 
     // Check that an object is equal to itself
-    assertEquals(updateAddressRequest1, updateAddressRequest1);
+    assertEquals(updateAddressInDto1, updateAddressInDto1);
 
     // Check that an object is not equal to null
-    assertNotEquals(updateAddressRequest1, null);
+    assertNotEquals(updateAddressInDto1, null);
 
     // Check that an object is not equal to a different type of object
-    assertNotEquals(updateAddressRequest1, new Object());
+    assertNotEquals(updateAddressInDto1, new Object());
   }
 
 }

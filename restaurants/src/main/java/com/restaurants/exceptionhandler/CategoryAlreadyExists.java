@@ -1,6 +1,9 @@
 package com.restaurants.exceptionhandler;
+
+import com.restaurants.util.Constant;
+
 public class CategoryAlreadyExists extends RuntimeException {
   public CategoryAlreadyExists() {
-    super("Category with the same name already exists");
+    super(Constant.CATEGORY_ALREADY_EXISTS);
   }
 }

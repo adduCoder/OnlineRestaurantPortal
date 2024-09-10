@@ -1,6 +1,7 @@
 package com.restaurants.controller;
 
 import com.restaurants.dto.indto.CategoryInDto;
+import com.restaurants.dto.indto.CategoryUpdateInDto;
 import com.restaurants.dto.outdto.CategoryOutDto;
 import com.restaurants.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -84,9 +85,10 @@ public class CategoryController {
    * @return ResponseEntity containing the updated category details and HTTP status
    */
   @PutMapping("/update/{categoryId}")
-  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId,@Valid @RequestBody CategoryInDto categoryInDto) {
+  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId, @Valid @RequestBody
+    CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {} with data: {}", categoryId);
-    CategoryOutDto categoryOutDto = categoryService.updateCategory(categoryId, categoryInDto);
+    CategoryOutDto categoryOutDto = categoryService.updateCategory(categoryId, categoryUpdateInDto);
     log.info("Updated category: {}", categoryOutDto);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
   }

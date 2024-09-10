@@ -1,5 +1,7 @@
 package com.user.exceptionhandler;
 
+import com.user.util.Constant;
+
 /**
  * Custom exception thrown when no address is found.
  * <p>
@@ -12,7 +14,7 @@ public class NoAddressFound extends RuntimeException {
    * Constructs a new {@link NoAddressFound} exception with a default error message.
    */
   public NoAddressFound() {
-    super("No Address Found Exception");
+    super(Constant.NO_ADDRESS_FOUND);
   }
 }
 

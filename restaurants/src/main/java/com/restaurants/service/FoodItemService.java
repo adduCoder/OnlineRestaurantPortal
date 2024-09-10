@@ -1,5 +1,6 @@
 package com.restaurants.service;
 
+import com.restaurants.dto.outdto.FoodItemNameOutDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
@@ -77,28 +78,31 @@ public class FoodItemService {
    */
   public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
+    foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
+
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(foodItemInDto.getRestaurantId());
-    if(!optionalRestaurant.isPresent()){
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    if (!optionalRestaurant.isPresent()) {
       //System.out.println(foodItemInDto.getRestaurantId());
       throw new RestaurantNotFound();
     }
-    Optional<Category> optionalCategory=categoryRepo.findById(foodItemInDto.getCategoryId());
-    if(!optionalCategory.isPresent()){
-      //System.out.println("not printing on postman");
+    Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
+    if (!optionalCategory.isPresent()) {
       throw new CategoryNotFound();
     }
-    else{
-      Category category=optionalCategory.get();
-      if(category.getRestaurantId()!=foodItemInDto.getRestaurantId()){
+    else {
+      Category category = optionalCategory.get();
+      if (category.getRestaurantId() != foodItemInDto.getRestaurantId()) {
         throw new CategoryNotFound();
       }
     }
-
-    Optional<FoodItem> optionalFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName().toLowerCase());
-    if(optionalFoodItem.isPresent()){
-      throw new FoodItemAlreadyExists();
+    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
+    for (FoodItem subFoodItem:foodItemList) {
+      if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
+        throw new FoodItemAlreadyExists();
+      }
     }
+
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
         foodItem.setImageData(multipartFile.getBytes());
@@ -107,14 +111,6 @@ public class FoodItemService {
     }
     catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
-    }
-    try {
-      if (multipartFile != null && !multipartFile.isEmpty()) {
-        foodItem.setImageData(multipartFile.getBytes());
-      }
-    }
-    catch (IOException e) {
-      log.error("Error occurred while processing the image file");
     }
     foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
     foodItemRepo.save(foodItem);
@@ -143,34 +139,62 @@ public class FoodItemService {
   /**
    * Update an existing food item.
    */
-  public FoodItemOutDto updateFoodItem(Integer foodItemId, FoodItemInDto foodItemInDto) {
+  public FoodItemOutDto updateFoodItem(Integer foodItemId, FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Updating food item with ID: {}", foodItemId);
+    foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
     Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
     if (!optionalFoodItem.isPresent()) {
       log.error("Food item not found with ID: {}", foodItemId);
       throw  new FoodItemNotFound();
     }
-    Optional<FoodItem> optionalSameNameFoodItem=foodItemRepo.findByfoodName(foodItemInDto.getFoodName());
-    if(optionalSameNameFoodItem.isPresent()){
-      throw new FoodItemAlreadyExists();
+    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
+    for (FoodItem subFoodItem:foodItemList) {
+      if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
+        throw new FoodItemAlreadyExists();
+      }
     }
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(foodItemInDto.getRestaurantId());
-    if(!optionalRestaurant.isPresent()){
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    if (!optionalRestaurant.isPresent()) {
       throw new RestaurantNotFound();
     }
-    Optional<Category> optionalCategory=categoryRepo.findById(foodItemInDto.getCategoryId());
-    if(!optionalCategory.isPresent()){
+    Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
+    if (!optionalCategory.isPresent()) {
       throw new CategoryNotFound();
     }
+
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());
-    foodItem.setFoodName(foodItemInDto.getFoodName());
+    foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
+
+    try {
+      if (multipartFile != null && !multipartFile.isEmpty()) {
+        foodItem.setImageData(multipartFile.getBytes());
+        log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
+      }
+    }
+    catch (IOException e) {
+      log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
+    }
+
     foodItemRepo.save(foodItem);
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);
     log.info("Food item updated successfully with ID: {}", foodItemId);
     return DtoConversion.mapToFoodItemOutDto(foodItem, restaurantName, categoryName);
+  }
+
+  public FoodItemNameOutDto getFoodItemName(Integer foodItemId) {
+    Optional<FoodItem> optionalFoodItem=foodItemRepo.findById(foodItemId);
+    if(!optionalFoodItem.isPresent()){
+      throw new FoodItemNotFound();
+    }
+    FoodItem foodItem=optionalFoodItem.get();
+    FoodItemNameOutDto foodItemNameOutDto=new FoodItemNameOutDto();
+    foodItemNameOutDto.setFoodItemName(foodItem.getFoodName());
+    foodItemNameOutDto.setId(foodItemId);
+    foodItemNameOutDto.setPrice(foodItem.getPrice());
+    return foodItemNameOutDto;
   }
 }
