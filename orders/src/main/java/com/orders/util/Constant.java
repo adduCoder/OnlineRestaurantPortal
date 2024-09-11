@@ -8,6 +8,9 @@ public final class Constant {
   public static final String SESSION_EXPIRED = "Session Expired (greater than 30 seconds)";
   public static final String hi = "HII";
   public static String SUCCESS = "Successfully added";
+  public static String CART_ADDED_SUCCESS = "Successfully added to cart";
+  public static String CART_UPDATED_SUCCESS = "Successfully  UPDATED ORDER";
+
 
   private Constant() {
   }

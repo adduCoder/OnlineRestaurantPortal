@@ -1,9 +1,10 @@
 package com.orders.controller;
 
-import com.orders.dto.indto.CartInDto;
-import com.orders.dto.outdto.AddCartResponse;
-import com.orders.dto.outdto.CartOutDto;
+import com.orders.dto.ApiResponse;
+import com.orders.dto.CartInDto;
+import com.orders.dto.CartOutDto;
 import com.orders.service.CartService;
+import com.orders.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,17 +37,14 @@ public class CartController {
    * Adds a cart or updates an existing cart.
    *
    * @param cartInDto The input data transfer object for adding a cart.
-   * @return A response entity containing the cart ID wrapped in {@link AddCartResponse}.
    */
   @PostMapping("/addCart")
   public ResponseEntity<?> addCart(@Valid @RequestBody CartInDto cartInDto) {
     log.info("Received request to add or update cart with userId: {} and restaurantId: {}",
       cartInDto.getUserId(), cartInDto.getRestaurantId());
     Integer cartId = cartService.addOrUpdateCart(cartInDto);
-    AddCartResponse addCartResponse = new AddCartResponse();
-    addCartResponse.setCartId(cartId);
     log.debug("Cart added/updated with cartId: {}", cartId);
-    return new ResponseEntity<>(addCartResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new ApiResponse(Constant.CART_ADDED_SUCCESS), HttpStatus.OK);
   }
 
   /**

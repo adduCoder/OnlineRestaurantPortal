@@ -1,21 +1,24 @@
 package com.restaurants.service;
 
-import com.restaurants.dto.outdto.UserOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
+import com.restaurants.dto.UserOutDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.dto.indto.RestaurantInDto;
-import com.restaurants.dto.outdto.RestaurantOutDto;
+import com.restaurants.exceptionhandler.NotFound;
 import com.restaurants.exceptionhandler.OperationNotAllowed;
-import com.restaurants.exceptionhandler.UserNotFound;
 import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.util.Constant;
 import com.restaurants.util.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,6 +28,16 @@ public class RestaurantService {
 
   @Autowired
   private UserFClient userFClient;
+
+
+  public static String stringFormatter(String currentString) {
+    if (currentString == null || currentString.isEmpty()) {
+      return currentString;
+    }
+    currentString = currentString.trim();
+    currentString = currentString.replaceAll("\\s+", " ");
+    return currentString.toLowerCase();
+  }
 
   /**
    * Adds a new restaurant.
@@ -40,7 +53,7 @@ public class RestaurantService {
       userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
     }
     catch (Exception e) {
-      throw new UserNotFound();
+      throw new NotFound(Constant.USER_NOT_FOUND);
     }
     if (userOutDto.getRole() == Role.USER) {
       throw new OperationNotAllowed();
@@ -81,5 +94,52 @@ public class RestaurantService {
       restaurantOutDtoList.add(DtoConversion.mapToRestaurantOutDto(restaurant));
     }
     return restaurantOutDtoList;
+  }
+
+  public void updateRestaurant(Integer restaurantId, RestaurantInDto restaurantInDto, MultipartFile multipartFile) {
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    if(!optionalRestaurant.isPresent()){
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+    }
+    UserOutDto userOutDto;
+    try {
+      userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
+    }
+    catch (Exception e) {
+      throw new NotFound(Constant.USER_NOT_FOUND);
+    }
+    if (userOutDto.getRole() == Role.USER) {
+      throw new OperationNotAllowed();
+    }
+
+    Restaurant restaurant = optionalRestaurant.get();
+    restaurant.setRestaurantName(stringFormatter(restaurantInDto.getRestaurantName()));
+    restaurant.setAddress(stringFormatter(restaurantInDto.getAddress()));
+    restaurant.setDescription(stringFormatter(restaurantInDto.getDescription()));
+    restaurant.setContactNumber(restaurantInDto.getContactNumber());
+    restaurant.setAddress(stringFormatter(restaurantInDto.getAddress()));
+    try {
+      if (multipartFile != null && !multipartFile.isEmpty()) {
+        restaurant.setImageData(multipartFile.getBytes());
+        log.info("Image uploaded successfully");
+      }
+      else{
+        restaurant.setImageData(null);
+      }
+    }
+    catch (IOException e) {
+      log.error("Error occurred while processing the image file");
+    }
+    restaurantRepo.save(restaurant);
+  }
+
+  public RestaurantOutDto getRestaurantById(Integer restaurantId) {
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    if(!optionalRestaurant.isPresent()){
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+    }
+    Restaurant restaurant = optionalRestaurant.get();
+    RestaurantOutDto restaurantOutDto = DtoConversion.mapToRestaurantOutDto(restaurant);
+    return restaurantOutDto;
   }
 }

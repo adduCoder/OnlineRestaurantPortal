@@ -1,9 +1,9 @@
 package com.user.controller;
 
 import com.user.dto.AddressInDto;
-import com.user.dto.UpdateAddressInDto;
-import com.user.outdto.AddressResponse;
+import com.user.dto.AddressOutDto;
 import com.user.service.AddressService;
+import com.user.util.AddressOutResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -28,29 +27,29 @@ class AddressControllerTest {
   @InjectMocks
   private AddressController addressController;
 
-  private AddressResponse addressResponse;
-  private AddressInDto AddressInDto;
-  private UpdateAddressInDto updateAddressInDto;
+  private AddressOutDto addressResponse;
+  private AddressInDto addressInDto;
+  private AddressInDto updateAddressInDto;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    addressResponse = new AddressResponse();
+    addressResponse = new AddressOutDto();
     addressResponse.setUserId(1);
     addressResponse.setStreet("MG Road");
     addressResponse.setCity("Bangalore");
     addressResponse.setState("Karnataka");
     addressResponse.setPinCode(560001);
 
-    AddressInDto = new AddressInDto();
-    AddressInDto.setUserId(1);
-    AddressInDto.setStreet("MG Road");
-    AddressInDto.setCity("Bangalore");
-    AddressInDto.setState("Karnataka");
-    AddressInDto.setPinCode(560001);
+    addressInDto = new AddressInDto();
+    addressInDto.setUserId(1);
+    addressInDto.setStreet("MG Road");
+    addressInDto.setCity("Bangalore");
+    addressInDto.setState("Karnataka");
+    addressInDto.setPinCode(560001);
 
-    updateAddressInDto = new UpdateAddressInDto();
+    updateAddressInDto = new AddressInDto();
     updateAddressInDto.setStreet("Brigade Road");
     updateAddressInDto.setCity("Mumbai");
     updateAddressInDto.setState("Maharashtra");
@@ -59,15 +58,19 @@ class AddressControllerTest {
 
   @Test
   void testAddAddress() {
-    when(addressService.createAddress(any(AddressInDto.class))).thenReturn(addressResponse);
-    ResponseEntity<?> response = addressController.addAddress(AddressInDto);
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage("Address Added Successfull!");
+
+    ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
+
+    ResponseEntity<?> response = addressController.addAddress(addressInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals(addressResponse, response.getBody());
+    assertEquals("Address Added Successfull!", ((AddressOutResponse) response.getBody()).getMessage());
   }
 
   @Test
   void testGetAddressByUserId() {
-    List<AddressResponse> addressResponseList = Arrays.asList(addressResponse);
+    List<AddressOutDto> addressResponseList = Arrays.asList(addressResponse);
     when(addressService.getAddressByUserId(anyInt())).thenReturn(addressResponseList);
     ResponseEntity<?> response = addressController.getAddressByUserId(1);
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -76,17 +79,21 @@ class AddressControllerTest {
 
   @Test
   void testDeleteAddress() {
-    when(addressService.deleteAddress(anyInt())).thenReturn("Address deleted successfully");
+    when(addressService.deleteAddress(anyInt())).thenReturn("Address deleted successfull");
     ResponseEntity<?> response = addressController.deleteAddress(1);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Address deleted successfully", response.getBody());
+    assertEquals("Address deleted successfull", response.getBody());
   }
 
   @Test
   void testUpdateAddress() {
-    when(addressService.updateAddress(anyInt(), any(UpdateAddressInDto.class))).thenReturn(addressResponse);
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage("Address Updated Successfull!");
+
+    ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
+
     ResponseEntity<?> response = addressController.updateAddress(1, updateAddressInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(addressResponse, response.getBody());
+    assertEquals("Address Updated Successfull!", ((AddressOutResponse) response.getBody()).getMessage());
   }
 }

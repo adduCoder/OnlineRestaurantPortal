@@ -1,9 +1,10 @@
 package com.user.controller;
 
 import com.user.dto.AddressInDto;
-import com.user.dto.UpdateAddressInDto;
 import com.user.dto.AddressOutDto;
 import com.user.service.AddressService;
+import com.user.util.AddressOutResponse;
+import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,15 +37,16 @@ public class AddressController {
    /**
    * Adds a new address.
    *
-   * @param AddressInDto the address information to add
    * @return ResponseEntity containing the details of the added address and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressInDto AddressInDto) {
-    log.info("Received request to add address for userId: {}", AddressInDto.getUserId());
-    AddressOutDto AddressOutDto = addressService.createAddress(AddressInDto);
-    log.info("Address added successfully for userId: {}", AddressInDto.getUserId());
-    return new ResponseEntity<>(AddressOutDto, HttpStatus.CREATED);
+  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressInDto addressInDto) {
+    log.info("Received request to add address for userId: {}", addressInDto.getUserId());
+    addressService.createAddress(addressInDto);
+    log.info("Address added successfully for userId: {}", addressInDto.getUserId());
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage(Constant.ADDRESS_ADDED_SUCCESS);
+    return new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
   }
 
    /**
@@ -84,11 +86,19 @@ public class AddressController {
    */
   @PutMapping("/update/{addressId}")
   public ResponseEntity<?> updateAddress(@PathVariable Integer addressId,
-                                         @Valid @RequestBody UpdateAddressInDto updateAddressInDto) {
+                                         @Valid @RequestBody AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
-    AddressOutDto AddressOutDto = addressService.updateAddress(addressId, updateAddressInDto);
+    addressService.updateAddress(addressId, updateAddressInDto);
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage(Constant.ADDRESS_UPDATED_SUCCESS);
     log.info("Address with addressId: {} updated successfully", addressId);
-    return new ResponseEntity<>(AddressOutDto, HttpStatus.OK);
+    return new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
+  }
+
+  @GetMapping("/getByAddress/{addressId}")
+  public ResponseEntity<?> getAddressByAddressId(@PathVariable Integer addressId) {
+    AddressOutDto addressOutDto = addressService.getAddressByAddressId(addressId);
+    return new ResponseEntity<>(addressOutDto, HttpStatus.OK);
   }
 
 }

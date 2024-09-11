@@ -1,20 +1,20 @@
 package com.restaurants.service;
 
-import com.restaurants.dto.outdto.FoodItemNameOutDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.FoodItemNameOutDto;
+import com.restaurants.dto.FoodItemOutDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.CategoryNotFound;
-import com.restaurants.exceptionhandler.FoodItemAlreadyExists;
-import com.restaurants.exceptionhandler.FoodItemNotFound;
-import com.restaurants.exceptionhandler.RestaurantNotFound;
-import com.restaurants.dto.indto.FoodItemInDto;
-import com.restaurants.dto.outdto.FoodItemOutDto;
+import com.restaurants.exceptionhandler.AlreadyExists;
+import com.restaurants.exceptionhandler.NotFound;
 import com.restaurants.repository.CategoryRepo;
 import com.restaurants.repository.FoodItemRepo;
 import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,27 +79,26 @@ public class FoodItemService {
   public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
     foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
-
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
       //System.out.println(foodItemInDto.getRestaurantId());
-      throw new RestaurantNotFound();
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
     if (!optionalCategory.isPresent()) {
-      throw new CategoryNotFound();
+      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
     }
     else {
       Category category = optionalCategory.get();
       if (category.getRestaurantId() != foodItemInDto.getRestaurantId()) {
-        throw new CategoryNotFound();
+        throw new NotFound(Constant.CATEGORY_NOT_FOUND);
       }
     }
     List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
     for (FoodItem subFoodItem:foodItemList) {
       if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
-        throw new FoodItemAlreadyExists();
+        throw new AlreadyExists(Constant.FOODITEM_ALREADY_EXISTS);
       }
     }
 
@@ -125,6 +124,10 @@ public class FoodItemService {
    */
   public List<FoodItemOutDto> getAll(Integer restaurantId) {
     log.info("Fetching all food items for restaurant ID: {}", restaurantId);
+    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(restaurantId);
+    if(!optionalRestaurant.isPresent()){
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+    }
     List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(restaurantId);
     List<FoodItemOutDto> foodItemOutDtoList = new ArrayList<>();
     for (FoodItem foodItem : foodItemList) {
@@ -141,43 +144,36 @@ public class FoodItemService {
    */
   public FoodItemOutDto updateFoodItem(Integer foodItemId, FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Updating food item with ID: {}", foodItemId);
-    foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
     Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
     if (!optionalFoodItem.isPresent()) {
       log.error("Food item not found with ID: {}", foodItemId);
-      throw  new FoodItemNotFound();
-    }
-    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
-    for (FoodItem subFoodItem:foodItemList) {
-      if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
-        throw new FoodItemAlreadyExists();
-      }
+      throw  new NotFound(Constant.FOODITEM_NOT_FOUND);
     }
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
-      throw new RestaurantNotFound();
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
     if (!optionalCategory.isPresent()) {
-      throw new CategoryNotFound();
+      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
     }
-
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());
     foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
-
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
         foodItem.setImageData(multipartFile.getBytes());
         log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
       }
+      else{
+        foodItem.setImageData(null);
+      }
     }
     catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
     }
-
     foodItemRepo.save(foodItem);
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);
@@ -186,12 +182,12 @@ public class FoodItemService {
   }
 
   public FoodItemNameOutDto getFoodItemName(Integer foodItemId) {
-    Optional<FoodItem> optionalFoodItem=foodItemRepo.findById(foodItemId);
-    if(!optionalFoodItem.isPresent()){
-      throw new FoodItemNotFound();
+    Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
+    if (!optionalFoodItem.isPresent()) {
+      throw new NotFound(Constant.FOODITEM_NOT_FOUND);
     }
-    FoodItem foodItem=optionalFoodItem.get();
-    FoodItemNameOutDto foodItemNameOutDto=new FoodItemNameOutDto();
+    FoodItem foodItem = optionalFoodItem.get();
+    FoodItemNameOutDto foodItemNameOutDto = new FoodItemNameOutDto();
     foodItemNameOutDto.setFoodItemName(foodItem.getFoodName());
     foodItemNameOutDto.setId(foodItemId);
     foodItemNameOutDto.setPrice(foodItem.getPrice());

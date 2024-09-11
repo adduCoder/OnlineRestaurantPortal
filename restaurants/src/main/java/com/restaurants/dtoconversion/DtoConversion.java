@@ -1,14 +1,14 @@
 package com.restaurants.dtoconversion;
 
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.FoodItemOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.dto.indto.CategoryInDto;
-import com.restaurants.dto.indto.FoodItemInDto;
-import com.restaurants.dto.indto.RestaurantInDto;
-import com.restaurants.dto.outdto.CategoryOutDto;
-import com.restaurants.dto.outdto.FoodItemOutDto;
-import com.restaurants.dto.outdto.RestaurantOutDto;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -22,6 +22,16 @@ public final class DtoConversion {
   private DtoConversion() {
 
   }
+
+  public static String stringFormatter(String currentString) {
+    if (currentString == null || currentString.isEmpty()) {
+      return currentString;
+    }
+    currentString = currentString.trim();
+    currentString = currentString.replaceAll("\\s+", " ");
+    return currentString.toLowerCase();
+  }
+
   public static Restaurant mapToRestaurant(RestaurantInDto restaurantInDto) {
     /**
      * Converts a {@link RestaurantInDto} to a {@link Restaurant} entity.
@@ -32,11 +42,11 @@ public final class DtoConversion {
     log.info("Mapping RestaurantInDto to Restaurant entity: {}", restaurantInDto);
     Restaurant restaurant = new Restaurant();
     restaurant.setUserId(restaurantInDto.getUserId());
-    restaurant.setRestaurantName(restaurantInDto.getRestaurantName());
+    restaurant.setRestaurantName(stringFormatter(restaurantInDto.getRestaurantName()));
     restaurant.setAddress(restaurantInDto.getAddress());
     restaurant.setContactNumber(restaurantInDto.getContactNumber());
    // restaurant.setImageUrl(restaurantInDto.getImageUrl());
-    restaurant.setDescription(restaurantInDto.getDescription());
+    restaurant.setDescription(stringFormatter(restaurantInDto.getDescription()));
     log.info("Mapped Restaurant entity: {}", restaurant);
     return restaurant;
   }
@@ -71,7 +81,7 @@ public final class DtoConversion {
   public static Category mapToCategory(CategoryInDto categoryInDto) {
     log.info("Mapping CategoryInDto to Category entity: {}", categoryInDto);
     Category category = new Category();
-    category.setName(categoryInDto.getName());
+    category.setName(stringFormatter(categoryInDto.getName()));
     category.setRestaurantId(categoryInDto.getRestaurantId());
     log.info("Mapped Category entity: {}", category);
     return category;
@@ -108,11 +118,11 @@ public final class DtoConversion {
       foodItem, restaurantName, categoryName);
     FoodItemOutDto foodItemOutDto = new FoodItemOutDto();
     foodItemOutDto.setId(foodItem.getId());
-    foodItemOutDto.setFoodName(foodItem.getFoodName());
+    foodItemOutDto.setFoodName(stringFormatter(foodItem.getFoodName()));
     foodItemOutDto.setPrice(foodItem.getPrice());
     foodItemOutDto.setIsAvailable(foodItem.getIsAvailable());
     foodItemOutDto.setDescription(foodItem.getDescription());
-    foodItemOutDto.setRestaurantName(restaurantName);
+    foodItemOutDto.setRestaurantName(stringFormatter(restaurantName));
     foodItemOutDto.setCategoryName(categoryName);
     foodItemOutDto.setImageData(foodItem.getImageData());
     log.info("Mapped FoodItemOutDto: {}", foodItemOutDto);
@@ -128,7 +138,7 @@ public final class DtoConversion {
   public static FoodItem mapToFoodItem(FoodItemInDto foodItemInDto) {
     log.info("Mapping FoodItemInDto to FoodItem entity: {}", foodItemInDto);
     FoodItem foodItem = new FoodItem();
-    foodItem.setFoodName(foodItemInDto.getFoodName());
+    foodItem.setFoodName(stringFormatter(foodItemInDto.getFoodName()));
     foodItem.setPrice(foodItemInDto.getPrice());
     foodItem.setCategoryId(foodItemInDto.getCategoryId());
     foodItem.setRestaurantId(foodItemInDto.getRestaurantId());
@@ -137,5 +147,4 @@ public final class DtoConversion {
     log.info("Mapped FoodItem entity: {}", foodItem);
     return foodItem;
   }
-
 }

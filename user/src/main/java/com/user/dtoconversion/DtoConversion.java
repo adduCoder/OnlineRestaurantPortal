@@ -1,11 +1,11 @@
 package com.user.dtoconversion;
 
+import com.user.dto.AddressInDto;
+import com.user.dto.AddressOutDto;
+import com.user.dto.UserInDto;
+import com.user.dto.UserOutDto;
 import com.user.entity.Address;
 import com.user.entity.User;
-import com.user.dto.AddressInDto;
-import com.user.dto.UserInDto;
-import com.user.dto.AddressOutDto;
-import com.user.dto.UserOutDto;
 
 /**
  * Utility class for converting between DTOs (Data Transfer Objects) and entities.
@@ -13,9 +13,20 @@ import com.user.dto.UserOutDto;
  * of data such as entities and DTOs.
  */
 public final class DtoConversion {
+
+
   // Private constructor to prevent instantiation
   private DtoConversion() {
 
+  }
+
+  public static String stringFormatter(String currentString) {
+    if (currentString == null || currentString.isEmpty()) {
+      return currentString;
+    }
+    currentString = currentString.trim();
+    currentString = currentString.replaceAll("\\s+", " ");
+    return currentString.toLowerCase();
   }
 
   /**
@@ -60,11 +71,11 @@ public final class DtoConversion {
    */
   public static Address mapToAddress(AddressInDto AddressInDto) {
     Address address = new Address();
-    address.setStreet(AddressInDto.getCity());
-    address.setState(AddressInDto.getState());
+    address.setStreet(stringFormatter(AddressInDto.getStreet()));
+    address.setState(stringFormatter(AddressInDto.getState()));
     address.setUserId(AddressInDto.getUserId());
     address.setPinCode(AddressInDto.getPinCode());
-    address.setCity(AddressInDto.getCity());
+    address.setCity(stringFormatter(AddressInDto.getCity()));
     return address;
   }
 

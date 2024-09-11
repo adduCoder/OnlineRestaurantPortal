@@ -1,9 +1,9 @@
 package com.orders.dtoconversion;
 
-import com.orders.dto.indto.CartInDto;
-import com.orders.dto.indto.OrderInDto;
-import com.orders.dto.outdto.CartOutDto;
-import com.orders.dto.outdto.OrderOutDto;
+import com.orders.dto.CartInDto;
+import com.orders.dto.OrderInDto;
+import com.orders.dto.CartOutDto;
+import com.orders.dto.OrderOutDto;
 import com.orders.entities.Cart;
 import com.orders.entities.Order;
 import lombok.extern.slf4j.Slf4j;

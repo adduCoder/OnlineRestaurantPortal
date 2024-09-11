@@ -1,10 +1,8 @@
 package com.user.service;
 
+import com.user.dto.AddressOutDto;
 import com.user.entity.Address;
-import com.user.exceptionhandler.NoAddressFound;
 import com.user.dto.AddressInDto;
-import com.user.dto.UpdateAddressInDto;
-import com.user.outdto.AddressResponse;
 import com.user.dto.UserOutDto;
 import com.user.repository.AddressRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +39,8 @@ class AddressServiceTest {
 
   private Address address;
   private AddressInDto AddressInDto;
-  private UpdateAddressInDto updateAddressInDto;
-  private AddressResponse addressResponse;
+  private AddressInDto updateAddressInDto;
+  private AddressOutDto addressResponse;
 
   @BeforeEach
   void setUp() {
@@ -60,12 +58,12 @@ class AddressServiceTest {
     AddressInDto.setState("MP");
     AddressInDto.setPinCode(452001);
     AddressInDto.setUserId(1);
-    updateAddressInDto = new UpdateAddressInDto();
+    updateAddressInDto = new AddressInDto();
     updateAddressInDto.setStreet("Updated Street");
     updateAddressInDto.setCity("Updated City");
     updateAddressInDto.setState("Updated State");
     updateAddressInDto.setPinCode(123456);
-    addressResponse = new AddressResponse();
+    addressResponse = new AddressOutDto();
     addressResponse.setStreet("Tower Square");
     addressResponse.setCity("Indore");
     addressResponse.setState("MP");
@@ -86,7 +84,7 @@ class AddressServiceTest {
   void testCreateAddress() {
     when(userService.getUser(anyInt())).thenReturn(new UserOutDto());
     when(addressRepo.save(any(Address.class))).thenReturn(address);
-    AddressResponse response = addressService.createAddress(AddressInDto);
+    AddressOutDto response = addressService.createAddress(AddressInDto);
 //    verify(userService, times(1)).getUser(anyInt());
     verify(addressRepo, times(1)).save(any(Address.class));
   }
@@ -95,7 +93,7 @@ class AddressServiceTest {
   void testGetAddressByUserId() {
     when(addressRepo.findAllByUserId(anyInt())).thenReturn(addressList);
 
-    List<AddressResponse> responses = addressService.getAddressByUserId(1);
+    List<AddressOutDto> responses = addressService.getAddressByUserId(1);
 
     assertEquals(1, responses.size());
     assertEquals("Tower Square", responses.get(0).getStreet());
@@ -124,7 +122,7 @@ class AddressServiceTest {
   void testUpdateAddress() {
     when(addressRepo.findById(anyInt())).thenReturn(Optional.of(address));
     when(addressRepo.save(any(Address.class))).thenReturn(address);
-    AddressResponse response = addressService.updateAddress(1, updateAddressInDto);
+    AddressOutDto response = addressService.updateAddress(1, updateAddressInDto);
     verify(addressRepo, times(1)).findById(anyInt());
     verify(addressRepo, times(1)).save(any(Address.class));
   }

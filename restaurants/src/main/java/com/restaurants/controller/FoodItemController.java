@@ -1,12 +1,12 @@
 package com.restaurants.controller;
 
-import com.restaurants.dto.outdto.FoodItemNameOutDto;
-import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.RestaurantNotFound;
-import com.restaurants.dto.indto.FoodItemInDto;
-import com.restaurants.dto.outdto.FoodItemOutDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.FoodItemNameOutDto;
+import com.restaurants.dto.FoodItemOutDto;
 import com.restaurants.repository.RestaurantRepo;
 import com.restaurants.service.FoodItemService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -53,12 +52,6 @@ public class FoodItemController {
   @GetMapping("/getAll/{restaurantId}")
   public ResponseEntity<?> getAllFoodItem(@PathVariable Integer restaurantId) {
     log.info("Fetching all food items for restaurant with ID: {}", restaurantId);
-
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
-
-    if (!optionalRestaurant.isPresent()) {
-      throw new RestaurantNotFound();
-    }
     List<FoodItemOutDto> foodItemOutDtoList = foodItemService.getAll(restaurantId);
     log.info("Retrieved food items: {}", foodItemOutDtoList);
     return new ResponseEntity<>(foodItemOutDtoList, HttpStatus.OK);
@@ -75,15 +68,10 @@ public class FoodItemController {
   public ResponseEntity<?> addFoodItem(
     @ModelAttribute @Valid FoodItemInDto foodItemInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-//    try {
-    FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
-
-    return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
-//    } catch (Exception e) {
-//      log.error("Failed to add food item", e);
-//      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    foodItemService.add(foodItemInDto, multipartFile);
+    return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_CREATED_SUCCESS), HttpStatus.CREATED);
   }
-//  }
+
   /**
    * Updates an existing food item.
    *
@@ -96,15 +84,15 @@ public class FoodItemController {
   public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId,  @Valid @ModelAttribute FoodItemInDto foodItemInDto,
                                           @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
     log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
-    FoodItemOutDto foodItemOutDto = foodItemService.updateFoodItem(foodItemId, foodItemInDto, multipartFile);
-    log.info("Updated food item: {}", foodItemOutDto);
-    return new ResponseEntity<>(foodItemOutDto, HttpStatus.OK);
+    foodItemService.updateFoodItem(foodItemId, foodItemInDto, multipartFile);
+    log.info("Updated food item");
+    return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
   @GetMapping("/getName/{foodItemId}")
-  public ResponseEntity<?> getFoodItemName(@PathVariable Integer foodItemId){
-    FoodItemNameOutDto foodItemNameOutDto=foodItemService.getFoodItemName(foodItemId);
-    return new ResponseEntity<>(foodItemNameOutDto,HttpStatus.OK);
+  public ResponseEntity<?> getFoodItemName(@PathVariable Integer foodItemId) {
+    FoodItemNameOutDto foodItemNameOutDto = foodItemService.getFoodItemName(foodItemId);
+    return new ResponseEntity<>(foodItemNameOutDto, HttpStatus.OK);
   }
 
 }

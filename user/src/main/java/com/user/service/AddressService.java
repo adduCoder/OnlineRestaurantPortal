@@ -1,13 +1,14 @@
 package com.user.service;
 
+import com.user.dto.AddressInDto;
+import com.user.dto.AddressOutDto;
 import com.user.dtoconversion.DtoConversion;
 import com.user.entity.Address;
-import com.user.exceptionhandler.NoAddressFound;
-import com.user.dto.AddressInDto;
-import com.user.dto.UpdateAddressInDto;
-import com.user.dto.AddressOutDto;
+import com.user.exceptionhandler.NotFound;
 import com.user.repository.AddressRepo;
+import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,15 +33,14 @@ public class AddressService {
   /**
    * Creates a new address.
    *
-   * @param AddressInDto the request containing address details
    * @return an {@link AddressOutDto} representing the created address
    */
-  public AddressOutDto createAddress(AddressInDto AddressInDto) {
-    log.info("Creating address for userId: {}", AddressInDto.getUserId());
-    Address address = DtoConversion.mapToAddress(AddressInDto);
+  public AddressOutDto createAddress(AddressInDto addressInDto) {
+    log.info("Creating address for userId: {}", addressInDto.getUserId());
+    Address address = DtoConversion.mapToAddress(addressInDto);
     //Integer userId = address.getUserId();
     addressRepo.save(address);
-    log.info("Address created successfully for userId: {}", AddressInDto.getUserId());
+    log.info("Address created successfully for userId: {}", addressInDto.getUserId());
     return DtoConversion.mapToAddressOutDto(address);
   }
 
@@ -54,12 +54,12 @@ public class AddressService {
     //just to check whether user existed with that userId
     log.info("Fetching addresses for userId: {}", userId);
     List<Address> addressList = addressRepo.findAllByUserId(userId);
-    List<AddressOutDto> AddressOutDtoList = new ArrayList<>();
+    List<AddressOutDto> addressOutDtoList = new ArrayList<>();
     for (Address address:addressList) {
-      AddressOutDtoList.add(DtoConversion.mapToAddressOutDto(address));
+      addressOutDtoList.add(DtoConversion.mapToAddressOutDto(address));
     }
-    log.info("Fetched {} addresses for userId: {}", AddressOutDtoList.size(), userId);
-    return AddressOutDtoList;
+    log.info("Fetched {} addresses for userId: {}", addressOutDtoList.size(), userId);
+    return addressOutDtoList;
   }
 
   /**
@@ -67,13 +67,12 @@ public class AddressService {
    *
    * @param addressId the ID of the address to be deleted
    * @return a success message indicating that the address was deleted
-   * @throws NoAddressFound if no address with the given ID is found
    */
   public String deleteAddress(Integer addressId) {
     log.info("Received request to delete address with addressId: {}", addressId);
     Optional<Address> optionalAddress = addressRepo.findById(addressId);
     if (!optionalAddress.isPresent())
-      throw new NoAddressFound();
+      throw new NotFound(Constant.NO_ADDRESS_FOUND);
     Address address = optionalAddress.get();
     addressRepo.delete(address);
     log.info("Address with addressId: {} deleted successfully", addressId);
@@ -86,13 +85,12 @@ public class AddressService {
    * @param addressId the ID of the address to be updated
    * @param updateAddressInDto the request containing updated address details
    * @return an {@link AddressOutDto} representing the updated address
-   * @throws NoAddressFound if no address with the given ID is found
    */
-  public AddressOutDto updateAddress(Integer addressId, UpdateAddressInDto updateAddressInDto) {
+  public AddressOutDto updateAddress(Integer addressId, AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
     Optional<Address> optionalAddress = addressRepo.findById(addressId);
     if (!optionalAddress.isPresent()) {
-      throw new NoAddressFound();
+      throw new NotFound(Constant.NO_ADDRESS_FOUND);
     }
     Address address = optionalAddress.get();
     address.setStreet(updateAddressInDto.getStreet());
@@ -102,6 +100,16 @@ public class AddressService {
     addressRepo.save(address);
     log.info("Address with addressId: {} updated successfully", addressId);
     return DtoConversion.mapToAddressOutDto(address);
+  }
+
+  public AddressOutDto getAddressByAddressId(Integer addressId) {
+    Optional<Address> optionalAddress = addressRepo.findById(addressId);
+    if (!optionalAddress.isPresent()) {
+      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+    }
+    Address address = optionalAddress.get();
+    AddressOutDto addressOutDto = DtoConversion.mapToAddressOutDto(address);
+    return addressOutDto;
   }
 }
 

@@ -1,9 +1,10 @@
 package com.restaurants.controller;
 
-
-import com.restaurants.dto.indto.RestaurantInDto;
-import com.restaurants.dto.outdto.RestaurantOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,24 +43,27 @@ public class RestaurantController {
    *
    * @return ResponseEntity containing the details of the added restaurant and HTTP status
    */
-//  @PostMapping("/add")
-//  public ResponseEntity<?> addRestaurant(@Valid @RequestPart RestaurantInDto restaurantInDto,
-//                                         @RequestPart MultipartFile multipartFile) {
-//    log.info("Adding new restaurant with details: {}", restaurantInDto);
-//    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-//    if (restaurantOutDto == null) {
-//      log.warn("Failed to add restaurant with details: {}", restaurantInDto);
-//      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
-//    log.info("Successfully added restaurant: {}", restaurantOutDto);
-//    return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
-//  }
   @PostMapping("/add")
-  public ResponseEntity<RestaurantOutDto> addRestaurant(
+  public ResponseEntity<?> addRestaurant(
     @Valid @ModelAttribute RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-    return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
+    restaurantService.addRestaurant(restaurantInDto, multipartFile);
+    return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_ADDED_SUCCESS), HttpStatus.CREATED);
+  }
+
+  @PutMapping("/update/{restaurantId}")
+  public ResponseEntity<?> updateRestaurant(
+    @PathVariable Integer restaurantId,
+    @Valid @ModelAttribute RestaurantInDto restaurantInDto,
+    @RequestParam(value="multipartFile", required = false) MultipartFile multipartFile) {
+      restaurantService.updateRestaurant(restaurantId,restaurantInDto,multipartFile);
+      return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS),HttpStatus.OK);
+  }
+
+  @GetMapping("/getRestaurant/{restaurantId}")
+  public ResponseEntity<?> getRestaurantById(@PathVariable Integer restaurantId){
+    RestaurantOutDto restaurantOutDto = restaurantService.getRestaurantById(restaurantId);
+    return new ResponseEntity<>(restaurantOutDto,HttpStatus.OK);
   }
 
   /**

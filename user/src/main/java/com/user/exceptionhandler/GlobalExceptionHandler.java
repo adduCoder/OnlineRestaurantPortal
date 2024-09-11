@@ -1,5 +1,6 @@
 package com.user.exceptionhandler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,21 +21,8 @@ import java.util.stream.Collectors;
  * HTTP responses with error messages.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-  /**
-   * Handles {@link NoCustomerFound} exceptions.
-   *
-   * @param ex the exception to handle
-   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
-   */
-  @ExceptionHandler(NoCustomerFound.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ResponseBody
-  public ErrorResponse handleNoCustomerFound(NoCustomerFound ex) {
-    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-  }
-
   /**
 
    /**
@@ -71,10 +59,10 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
-  @ExceptionHandler(NoAddressFound.class)
+  @ExceptionHandler(NotFound.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleNoAddressFound(NoAddressFound ex) {
+  public ErrorResponse handleNoAddressFound(NotFound ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
@@ -84,10 +72,14 @@ public class GlobalExceptionHandler {
     String message = ex.getMessage();
 
     if (message.contains("InvalidFormatException")) {
-      errors.put("error", "Invalid role provided. Accepted values are USER or OWNER.");
+      errors.put("error", "Invalid data format provided.");
+    } else if (message.contains("NumberFormatException")) {
+      errors.put("error", "Invalid pin code format. Pin code must be numeric.");
     } else {
       errors.put("error", "Invalid request payload.");
     }
+
+    log.error("Request payload error: {}", message);  // Log the exception message for debugging
 
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }

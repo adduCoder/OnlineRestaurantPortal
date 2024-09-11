@@ -1,11 +1,11 @@
 package com.orders.servicetest;
 
-import com.orders.dto.indto.OrderInDto;
-import com.orders.dto.indto.UpdateStatusInDto;
-import com.orders.dto.outdto.FoodItemNameOutDto;
-import com.orders.dto.outdto.OrderItemDetailOutDto;
-import com.orders.dto.outdto.OrderOutDto;
-import com.orders.dto.outdto.UserOutDto;
+import com.orders.dto.OrderInDto;
+import com.orders.dto.UpdateStatusInDto;
+import com.orders.dto.FoodItemNameOutDto;
+import com.orders.dto.OrderItemDetailOutDto;
+import com.orders.dto.OrderOutDto;
+import com.orders.dto.UserOutDto;
 import com.orders.entities.Cart;
 import com.orders.entities.Order;
 import com.orders.entities.OrderStatus;
@@ -17,7 +17,7 @@ import com.orders.repo.OrderRepo;
 import com.orders.service.OrderService;
 import com.orders.service.RestaurantFClient;
 import com.orders.service.UserFClient;
-import com.orders.util.ApiResponse;
+import com.orders.dto.ApiResponse;
 import com.orders.util.Constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

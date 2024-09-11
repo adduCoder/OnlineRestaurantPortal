@@ -1,12 +1,13 @@
 package com.user.controller;
 
-import com.user.exceptionhandler.GlobalExceptionHandler;
 import com.user.dto.AmountInDto;
+import com.user.dto.ApiResponse;
 import com.user.dto.LoginInDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
+import com.user.exceptionhandler.GlobalExceptionHandler;
 import com.user.service.UserService;
-import com.user.util.UserApiResponse;
+import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,17 +72,9 @@ public class UserController {
   @PostMapping("/add")
   public ResponseEntity<?> addUser(@Valid @RequestBody UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
-    Integer createdUser = userService.addUser(userInDto);
-    if (createdUser == null) {
-      log.error("Failed to add user with email: {}", userInDto.getEmail());
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    log.info("User added successfully with ID: {}", createdUser);
-    UserApiResponse userApiResponse=new UserApiResponse();
-    userApiResponse.setMessage("New User Registerd Successfully");
-    userApiResponse.setUserId(createdUser);
-    userApiResponse.setRole(userInDto.getRole());
-    return new ResponseEntity<>(userApiResponse, HttpStatus.CREATED);
+    userService.addUser(userInDto);
+    log.info("User added successfully");
+    return new ResponseEntity<>(new ApiResponse(Constant.USER_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
   /**
@@ -94,12 +87,9 @@ public class UserController {
   @PutMapping("/update/{userId}")
   public ResponseEntity<?> updateUser(@PathVariable Integer userId, @Valid @RequestBody UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
-    UserOutDto userOutDto = userService.updateUser(userId, userInDto);
+    userService.updateUser(userId, userInDto);
     log.info("User updated successfully with ID: {}", userId);
-    UserApiResponse userApiResponse=new UserApiResponse();
-    userApiResponse.setMessage("User Updated Successfully");
-    userApiResponse.setUserId(userId);
-    return new ResponseEntity<>(userApiResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new ApiResponse(Constant.USER_UPDATED_SUCCESS), HttpStatus.OK);
   }
   /**
    * Deletes a user by their ID.
@@ -121,36 +111,31 @@ public class UserController {
    * @param loginInDto the login credentials
    * @return ResponseEntity containing a login response and HTTP status
    */
-   @PostMapping("/login")
-   public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
-     log.info("Received login request for email: {}", loginInDto.getEmail());
-     UserOutDto userOutDto = userService.loginUser(loginInDto);
-    // UserApiResponse userApiResponse=new UserApiResponse();
+  @PostMapping("/login")
+  public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
+    log.info("Received login request for email: {}", loginInDto.getEmail());
+    UserOutDto userOutDto = userService.loginUser(loginInDto);
+    if (userOutDto != null) {
+      log.info("Login successful for email: {}", loginInDto.getEmail());
+      return ResponseEntity.ok(userOutDto);
+    } else {
+      log.error("Login failed: Invalid credentials");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new GlobalExceptionHandler.ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid credentials"));
+    }
+  }
 
-     if (userOutDto != null) {
-       log.info("Login successful for email: {}", loginInDto.getEmail());
-//       userApiResponse.setMessage("Login Successfull");
-//       userApiResponse.setUserId(userOutDto.getId());
-//       userApiResponse.setRole(userOutDto.getRole());
-       return ResponseEntity.ok(userOutDto);
-     }
-     else {
-       log.error("Login failed: Invalid credentials");
-       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GlobalExceptionHandler.ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid credentials"));
-     }
-   }
+  @PutMapping("/deduct/{userId}")
+  public ResponseEntity<?> deductMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto) {
+    userService.deductMoney(userId, amountInDto);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-   @PutMapping("/deduct/{userId}")
-   public ResponseEntity<?> deductMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto){
-     userService.deductMoney(userId,amountInDto);
-     return new ResponseEntity<>(HttpStatus.OK);
-   }
-
-   @PutMapping("/addMoney/{userId}")
-  public ResponseEntity<?> addMoney(@PathVariable Integer userId,@RequestBody AmountInDto amountInDto){
-     userService.addMoney(userId,amountInDto);
-     return new ResponseEntity<>(HttpStatus.OK);
-   }
+  @PutMapping("/addMoney/{userId}")
+  public ResponseEntity<?> addMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto) {
+    userService.addMoney(userId, amountInDto);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }
 
 

@@ -1,5 +1,6 @@
 package com.orders.dto.outdto;
 
+import com.orders.dto.CartOutDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

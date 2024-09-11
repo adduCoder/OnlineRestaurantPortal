@@ -1,16 +1,16 @@
 package com.restaurants.service;
 
-import com.restaurants.dto.indto.CategoryUpdateInDto;
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
+import com.restaurants.dto.CategoryUpdateInDto;
 import com.restaurants.dtoconversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.CategoryAlreadyExists;
-import com.restaurants.exceptionhandler.CategoryNotFound;
-import com.restaurants.exceptionhandler.RestaurantNotFound;
-import com.restaurants.dto.indto.CategoryInDto;
-import com.restaurants.dto.outdto.CategoryOutDto;
+import com.restaurants.exceptionhandler.AlreadyExists;
+import com.restaurants.exceptionhandler.NotFound;
 import com.restaurants.repository.CategoryRepo;
 import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,16 @@ public class CategoryService {
 
   @Autowired
   private RestaurantRepo restaurantRepo;
+
+  public String getRestaurantName(Integer restaurantId){
+    String name = "Not Available";
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    if(optionalRestaurant.isPresent()){
+      Restaurant restaurant = optionalRestaurant.get();
+      name = restaurant.getRestaurantName();
+    }
+    return name;
+  }
   /**
    * Add a new category.
    */
@@ -36,12 +46,12 @@ public class CategoryService {
     categoryInDto.setName(categoryInDto.getName().trim());
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(categoryInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
-      throw new RestaurantNotFound();
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     Optional<Category> existedOptionalCategory =
       categoryRepo.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(), categoryInDto.getRestaurantId());
     if (existedOptionalCategory.isPresent()) {
-      throw new CategoryAlreadyExists();
+      throw new AlreadyExists(Constant.CATEGORY_ALREADY_EXISTS);
     }
     log.info("Category added successfully");
     categoryInDto.setName(categoryInDto.getName().toLowerCase());
@@ -57,10 +67,12 @@ public class CategoryService {
     Optional<Category> optionalCategory = categoryRepo.findById(id);
     if (!optionalCategory.isPresent()) {
       log.error("Category not found with ID: {}", id);
-      throw new CategoryNotFound();
+      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
     }
     log.info("Category fetched successfully with ID: {}", id);
-    return DtoConversion.mapToCategoryOutDto(optionalCategory.get());
+    CategoryOutDto categoryOutDto = DtoConversion.mapToCategoryOutDto(optionalCategory.get());
+    categoryOutDto.setRestaurantName(getRestaurantName(categoryOutDto.getResturantId()));
+    return categoryOutDto;
   }
 
   /**
@@ -70,7 +82,7 @@ public class CategoryService {
     log.info("Fetching all categories for restaurant ID: {}", restaurantId);
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
     if (!optionalRestaurant.isPresent()) {
-      throw new RestaurantNotFound();
+      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     List<Category> categoryList = categoryRepo.findAllByRestaurantId(restaurantId);
     List<CategoryOutDto> categoryOutDtoList = new ArrayList<>();
@@ -89,13 +101,13 @@ public class CategoryService {
     Optional<Category> optionalCategory = categoryRepo.findById(categoryId);
     if (!optionalCategory.isPresent()) {
       log.error("Category not found with ID: {}", categoryId);
-      throw new CategoryNotFound();
+      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
     }
     Category category = optionalCategory.get();
     List<Category> categoryList = categoryRepo.findAllByRestaurantId(category.getRestaurantId());
     for (Category subCategory:categoryList) {
       if (subCategory.getName().equals(categoryUpdateInDto.getName().toLowerCase())) {
-        throw new CategoryAlreadyExists();
+        throw new AlreadyExists(Constant.CATEGORY_ALREADY_EXISTS);
       }
     }
     category.setName(categoryUpdateInDto.getName().toLowerCase());

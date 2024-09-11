@@ -1,6 +1,6 @@
 package com.restaurants.outdto;
 
-import com.restaurants.dto.outdto.CategoryOutDto;
+import com.restaurants.dto.CategoryOutDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

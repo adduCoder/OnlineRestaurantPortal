@@ -1,5 +1,6 @@
 package com.orders.dto.indto;
 
+import com.orders.dto.OrderInDto;
 import com.orders.entities.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

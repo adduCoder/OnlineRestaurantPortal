@@ -1,6 +1,6 @@
 package com.orders.servicetest;
 
-import com.orders.dto.indto.CartInDto;
+import com.orders.dto.CartInDto;
 import com.orders.dtoconversion.DtoConversion;
 import com.orders.entities.Cart;
 import com.orders.repo.CartRepo;

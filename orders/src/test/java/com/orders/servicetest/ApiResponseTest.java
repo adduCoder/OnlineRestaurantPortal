@@ -1,6 +1,5 @@
 package com.orders.servicetest;
 
-import com.orders.service.ApiResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

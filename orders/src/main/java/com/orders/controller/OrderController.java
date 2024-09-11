@@ -1,10 +1,10 @@
 package com.orders.controller;
 
-import com.orders.dto.indto.OrderInDto;
-import com.orders.dto.indto.UpdateStatusInDto;
-import com.orders.dto.outdto.OrderOutDto;
+import com.orders.dto.OrderInDto;
+import com.orders.dto.UpdateStatusInDto;
+import com.orders.dto.OrderOutDto;
 import com.orders.service.OrderService;
-import com.orders.util.ApiResponse;
+import com.orders.dto.ApiResponse;
 import com.orders.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +41,9 @@ public class OrderController {
   public ResponseEntity<?> createOrder(@Valid @RequestBody OrderInDto orderInDto) {
     log.info("Received request to create an order for userId: {}", orderInDto.getUserId());
     orderService.createOrder(orderInDto);
-    ApiResponse apiResponse = new ApiResponse();
-    apiResponse.setMessage(Constant.SUCCESS);
     log.debug("Order successfully created for userId: {}", orderInDto.getUserId());
-    return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    return new ResponseEntity<>(new ApiResponse(Constant.SUCCESS), HttpStatus.CREATED);
   }
-
 
   /**
    * Retrieves an order by its ID.
@@ -70,9 +67,9 @@ public class OrderController {
   @PutMapping("updateStatus/{orderId}")
   public ResponseEntity<?> updateStatus(@PathVariable Integer orderId, @RequestBody UpdateStatusInDto updateStatusInDto) {
     log.info("Received request to update status for orderId: {}", orderId);
-    ApiResponse apiResponse = orderService.updateStatus(orderId, updateStatusInDto);
+    orderService.updateStatus(orderId, updateStatusInDto);
     log.debug("Order status updated successfully for orderId: {}", orderId);
-    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new ApiResponse(Constant.CART_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.orders.dto.outdto;
 
+import com.orders.dto.UserOutDto;
 import com.orders.util.Role;
 import org.junit.jupiter.api.Test;
 

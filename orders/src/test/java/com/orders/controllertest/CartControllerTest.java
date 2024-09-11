@@ -1,9 +1,8 @@
 package com.orders.controllertest;
 
 import com.orders.controller.CartController;
-import com.orders.dto.indto.CartInDto;
-import com.orders.dto.outdto.AddCartResponse;
-import com.orders.dto.outdto.CartOutDto;
+import com.orders.dto.CartInDto;
+import com.orders.dto.CartOutDto;
 import com.orders.service.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
