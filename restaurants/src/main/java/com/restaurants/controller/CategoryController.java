@@ -1,8 +1,11 @@
 package com.restaurants.controller;
 
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.outdto.CategoryOutDto;
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
+import com.restaurants.dto.CategoryUpdateInDto;
 import com.restaurants.service.CategoryService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +32,6 @@ import java.util.List;
 public class CategoryController {
   @Autowired
   private CategoryService categoryService;
-
 
   /**
    * Retrieves a category by its ID.
@@ -73,8 +75,7 @@ public class CategoryController {
       log.error("Failed to add category: {}", categoryInDto);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    log.info("Added category: {}", categoryOutDto);
-    return new ResponseEntity<>(categoryOutDto, HttpStatus.CREATED);
+    return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
   /**
@@ -84,10 +85,10 @@ public class CategoryController {
    * @return ResponseEntity containing the updated category details and HTTP status
    */
   @PutMapping("/update/{categoryId}")
-  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId,@Valid @RequestBody CategoryInDto categoryInDto) {
+  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId, @Valid @RequestBody
+    CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {} with data: {}", categoryId);
-    CategoryOutDto categoryOutDto = categoryService.updateCategory(categoryId, categoryInDto);
-    log.info("Updated category: {}", categoryOutDto);
-    return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
+    categoryService.updateCategory(categoryId, categoryUpdateInDto);
+    return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_UPDATED_SUCCESS), HttpStatus.OK);
   }
 }

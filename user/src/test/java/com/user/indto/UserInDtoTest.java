@@ -1,5 +1,6 @@
 package com.user.indto;
 
+import com.user.dto.UserInDto;
 import com.user.util.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

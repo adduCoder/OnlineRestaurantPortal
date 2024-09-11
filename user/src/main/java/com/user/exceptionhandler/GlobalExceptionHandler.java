@@ -1,13 +1,18 @@
 package com.user.exceptionhandler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -16,21 +21,8 @@ import java.util.stream.Collectors;
  * HTTP responses with error messages.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-  /**
-   * Handles {@link NoCustomerFound} exceptions.
-   *
-   * @param ex the exception to handle
-   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
-   */
-  @ExceptionHandler(NoCustomerFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleNoCustomerFound(NoCustomerFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
   /**
 
    /**
@@ -67,12 +59,31 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
-  @ExceptionHandler(NoAddressFound.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(NotFound.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleNoAddressFound(NoAddressFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  public ErrorResponse handleNoAddressFound(NotFound ex) {
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+    Map<String, String> errors = new HashMap<>();
+    String message = ex.getMessage();
+
+    if (message.contains("InvalidFormatException")) {
+      errors.put("error", "Invalid data format provided.");
+    } else if (message.contains("NumberFormatException")) {
+      errors.put("error", "Invalid pin code format. Pin code must be numeric.");
+    } else {
+      errors.put("error", "Invalid request payload.");
+    }
+
+    log.error("Request payload error: {}", message);  // Log the exception message for debugging
+
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
 
   /**
    * Class representing the error response returned by the exception handlers.
@@ -130,6 +141,5 @@ public class GlobalExceptionHandler {
       this.message = message;
     }
   }
-
 }
 

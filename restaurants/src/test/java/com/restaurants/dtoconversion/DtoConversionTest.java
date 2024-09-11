@@ -3,12 +3,12 @@ package com.restaurants.dtoconversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.indto.FoodItemInDto;
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.CategoryOutDto;
-import com.restaurants.outdto.FoodItemOutDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.CategoryOutDto;
+import com.restaurants.dto.FoodItemOutDto;
+import com.restaurants.dto.RestaurantOutDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

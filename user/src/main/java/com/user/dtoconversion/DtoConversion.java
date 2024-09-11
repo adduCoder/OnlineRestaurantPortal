@@ -1,11 +1,11 @@
 package com.user.dtoconversion;
 
+import com.user.dto.AddressInDto;
+import com.user.dto.AddressOutDto;
+import com.user.dto.UserInDto;
+import com.user.dto.UserOutDto;
 import com.user.entity.Address;
 import com.user.entity.User;
-import com.user.indto.AddressRequest;
-import com.user.indto.UserInDto;
-import com.user.outdto.AddressResponse;
-import com.user.outdto.UserOutDto;
 
 /**
  * Utility class for converting between DTOs (Data Transfer Objects) and entities.
@@ -13,9 +13,20 @@ import com.user.outdto.UserOutDto;
  * of data such as entities and DTOs.
  */
 public final class DtoConversion {
+
+
   // Private constructor to prevent instantiation
   private DtoConversion() {
 
+  }
+
+  public static String stringFormatter(String currentString) {
+    if (currentString == null || currentString.isEmpty()) {
+      return currentString;
+    }
+    currentString = currentString.trim();
+    currentString = currentString.replaceAll("\\s+", " ");
+    return currentString.toLowerCase();
   }
 
   /**
@@ -24,7 +35,7 @@ public final class DtoConversion {
    * @param userInDto the DTO containing user data
    * @return a {@link User} entity with data from the provided DTO
    */
-  public static User requestToUser(UserInDto userInDto) {
+  public static User mapToUser(UserInDto userInDto) {
     User newUser = new User();
     newUser.setEmail(userInDto.getEmail());
     newUser.setName(userInDto.getName());
@@ -41,7 +52,7 @@ public final class DtoConversion {
    * @param user the entity to convert
    * @return a {@link UserOutDto} with data from the provided entity
    */
-  public static UserOutDto userToResponse(User user) {
+  public static UserOutDto mapToUserOutDto(User user) {
     UserOutDto userOutDto = new UserOutDto();
     userOutDto.setId(user.getId());
     userOutDto.setName(user.getName());
@@ -53,36 +64,36 @@ public final class DtoConversion {
   }
 
   /**
-   * Converts an {@link AddressRequest} to an {@link Address} entity.
+   * Converts an {@link AddressInDto} to an {@link Address} entity.
    *
-   * @param addressRequest the DTO containing address data
+   * @param AddressInDto the DTO containing address data
    * @return an {@link Address} entity with data from the provided DTO
    */
-  public static Address requestToAddress(AddressRequest addressRequest) {
+  public static Address mapToAddress(AddressInDto AddressInDto) {
     Address address = new Address();
-    address.setStreet(addressRequest.getCity());
-    address.setState(addressRequest.getState());
-    address.setUserId(addressRequest.getUserId());
-    address.setPinCode(addressRequest.getPinCode());
-    address.setCity(addressRequest.getCity());
+    address.setStreet(stringFormatter(AddressInDto.getStreet()));
+    address.setState(stringFormatter(AddressInDto.getState()));
+    address.setUserId(AddressInDto.getUserId());
+    address.setPinCode(AddressInDto.getPinCode());
+    address.setCity(stringFormatter(AddressInDto.getCity()));
     return address;
   }
 
   /**
-   * Converts an {@link Address} entity to an {@link AddressResponse}.
+   * Converts an {@link Address} entity to an {@link AddressOutDto}.
    *
    * @param address the entity to convert
-   * @return an {@link AddressResponse} with data from the provided entity
+   * @return an {@link AddressOutDto} with data from the provided entity
    */
-  public static AddressResponse addressToResponse(Address address) {
-    AddressResponse addressResponse = new AddressResponse();
-    addressResponse.setAddressId(address.getId());
-    addressResponse.setUserId(address.getUserId());
-    addressResponse.setStreet(address.getStreet());
-    addressResponse.setCity(address.getCity());
-    addressResponse.setState(address.getState());
-    addressResponse.setPinCode(address.getPinCode());
-    return addressResponse;
+  public static AddressOutDto mapToAddressOutDto(Address address) {
+    AddressOutDto AddressOutDto = new AddressOutDto();
+    AddressOutDto.setAddressId(address.getId());
+    AddressOutDto.setUserId(address.getUserId());
+    AddressOutDto.setStreet(address.getStreet());
+    AddressOutDto.setCity(address.getCity());
+    AddressOutDto.setState(address.getState());
+    AddressOutDto.setPinCode(address.getPinCode());
+    return AddressOutDto;
   }
 }
 

@@ -1,7 +1,7 @@
 package com.restaurants.controller;
 
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.outdto.CategoryOutDto;
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
 import com.restaurants.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

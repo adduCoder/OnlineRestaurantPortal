@@ -1,8 +1,8 @@
 package com.restaurants.service;
 
 import com.restaurants.entities.Restaurant;
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.repository.RestaurantRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

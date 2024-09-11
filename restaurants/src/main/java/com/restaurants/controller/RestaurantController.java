@@ -1,23 +1,27 @@
 package com.restaurants.controller;
 
-
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -28,7 +32,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/restaurant")
-@CrossOrigin(origins = "http://localhost:3000") // Adjust this to your frontend URL
+@CrossOrigin(origins = "http://localhost:3000")
 public class RestaurantController {
 
   @Autowired
@@ -39,42 +43,29 @@ public class RestaurantController {
    *
    * @return ResponseEntity containing the details of the added restaurant and HTTP status
    */
-//  @PostMapping("/add")
-//  public ResponseEntity<?> addRestaurant(@Valid @RequestPart RestaurantInDto restaurantInDto,
-//                                         @RequestPart MultipartFile multipartFile) {
-//    log.info("Adding new restaurant with details: {}", restaurantInDto);
-//    RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-//    if (restaurantOutDto == null) {
-//      log.warn("Failed to add restaurant with details: {}", restaurantInDto);
-//      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
-//    log.info("Successfully added restaurant: {}", restaurantOutDto);
-//    return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
-//  }
   @PostMapping("/add")
   public ResponseEntity<?> addRestaurant(
-    @RequestParam("userId") Integer userId,
-    @RequestParam("restaurantName") String restaurantName,
-    @RequestParam("address") String address,
-    @RequestParam("contactNumber") String contactNumber,
-    @RequestParam("description") String description,
+    @Valid @ModelAttribute RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-
-    RestaurantInDto restaurantInDto = new RestaurantInDto();
-    restaurantInDto.setUserId(userId);
-    restaurantInDto.setRestaurantName(restaurantName);
-    restaurantInDto.setAddress(address);
-    restaurantInDto.setContactNumber(contactNumber);
-    restaurantInDto.setDescription(description);
-
-    try {
-      RestaurantOutDto restaurantOutDto = restaurantService.addRestaurant(restaurantInDto, multipartFile);
-      return new ResponseEntity<>(restaurantOutDto, HttpStatus.CREATED);
-    } catch (Exception e) {
-      log.error("Failed to add restaurant", e);
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    restaurantService.addRestaurant(restaurantInDto, multipartFile);
+    return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_ADDED_SUCCESS), HttpStatus.CREATED);
   }
+
+  @PutMapping("/update/{restaurantId}")
+  public ResponseEntity<?> updateRestaurant(
+    @PathVariable Integer restaurantId,
+    @Valid @ModelAttribute RestaurantInDto restaurantInDto,
+    @RequestParam(value="multipartFile", required = false) MultipartFile multipartFile) {
+      restaurantService.updateRestaurant(restaurantId,restaurantInDto,multipartFile);
+      return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS),HttpStatus.OK);
+  }
+
+  @GetMapping("/getRestaurant/{restaurantId}")
+  public ResponseEntity<?> getRestaurantById(@PathVariable Integer restaurantId){
+    RestaurantOutDto restaurantOutDto = restaurantService.getRestaurantById(restaurantId);
+    return new ResponseEntity<>(restaurantOutDto,HttpStatus.OK);
+  }
+
   /**
    * Retrieves all restaurants associated with a specific user.
    *

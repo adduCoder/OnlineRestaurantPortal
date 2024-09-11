@@ -1,9 +1,12 @@
 package com.user.controller;
 
-import com.user.indto.LoginInDto;
-import com.user.indto.UserInDto;
-import com.user.outdto.UserOutDto;
+import com.user.dto.AmountInDto;
+import com.user.dto.LoginInDto;
+import com.user.dto.UserInDto;
+import com.user.dto.UserOutDto;
+import com.user.exceptionhandler.GlobalExceptionHandler;
 import com.user.service.UserService;
+import com.user.util.UserApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -68,18 +71,32 @@ class UserControllerTest {
 
   @Test
   void testAddUser() {
-    when(userService.addUser(any(UserInDto.class))).thenReturn(1);
+    when(userService.addUser(any(UserInDto.class))).thenReturn(1); // Assuming service returns user ID
+
+    UserApiResponse userApiResponse = new UserApiResponse();
+    userApiResponse.setMessage("New User Registerd Successfully");
+    userApiResponse.setUserId(1);
+    userApiResponse.setRole(userInDto.getRole());
+
     ResponseEntity<?> response = userController.addUser(userInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals(1, response.getBody());
+    assertEquals(userApiResponse.getMessage(), ((UserApiResponse) response.getBody()).getMessage());
+    assertEquals(userApiResponse.getUserId(), ((UserApiResponse) response.getBody()).getUserId());
+    assertEquals(userApiResponse.getRole(), ((UserApiResponse) response.getBody()).getRole());
   }
 
   @Test
   void testUpdateUser() {
     when(userService.updateUser(anyInt(), any(UserInDto.class))).thenReturn(userOutDto);
+
+    UserApiResponse userApiResponse = new UserApiResponse();
+    userApiResponse.setMessage("User Updated Successfully");
+    userApiResponse.setUserId(1);
+
     ResponseEntity<?> response = userController.updateUser(1, userInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(userOutDto, response.getBody());
+    assertEquals(userApiResponse.getMessage(), ((UserApiResponse) response.getBody()).getMessage());
+    assertEquals(userApiResponse.getUserId(), ((UserApiResponse) response.getBody()).getUserId());
   }
 
   @Test
@@ -92,12 +109,43 @@ class UserControllerTest {
 
   @Test
   void testLoginUser() {
-    when(userService.loginUser(any(LoginInDto.class))).thenReturn("Login Success");
     LoginInDto loginInDto = new LoginInDto();
     loginInDto.setEmail("arjun@gmail.com");
-    loginInDto.setPassword("password123");
+    loginInDto.setPassword("0123");
+    when(userService.loginUser(any(LoginInDto.class))).thenReturn(userOutDto);
+
     ResponseEntity<?> response = userController.loginUser(loginInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Login Success", response.getBody());
+    assertEquals(userOutDto, response.getBody());
+  }
+
+  @Test
+  void testLoginUserWithInvalidCredentials() {
+    LoginInDto loginInDto = new LoginInDto();
+    loginInDto.setEmail("arjun@gmail.com");
+    loginInDto.setPassword("wrongpassword");
+    when(userService.loginUser(any(LoginInDto.class))).thenReturn(null);
+
+    ResponseEntity<?> response = userController.loginUser(loginInDto);
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid credentials", ((GlobalExceptionHandler.ErrorResponse) response.getBody()).getMessage());
+  }
+
+  @Test
+  void testDeductMoney() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(100.0);
+
+    ResponseEntity<?> response = userController.deductMoney(1, amountInDto);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  void testAddMoney() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(200.0);
+
+    ResponseEntity<?> response = userController.addMoney(1, amountInDto);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 }

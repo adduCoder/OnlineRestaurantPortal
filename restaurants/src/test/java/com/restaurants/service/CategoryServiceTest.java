@@ -1,9 +1,8 @@
 package com.restaurants.service;
 
 import com.restaurants.entities.Category;
-import com.restaurants.exceptionhandler.CategoryNotFound;
-import com.restaurants.indto.CategoryInDto;
-import com.restaurants.outdto.CategoryOutDto;
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
 import com.restaurants.repository.CategoryRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

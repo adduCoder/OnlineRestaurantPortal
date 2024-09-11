@@ -1,13 +1,19 @@
 package com.restaurants.exceptionhandler;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -18,68 +24,73 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  @ExceptionHandler(NotFound.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ErrorResponse handleNotFound(NotFound ex) {
+    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+  }
+
+  @ExceptionHandler(AlreadyExists.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleAlreadyExists(AlreadyExists ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
+  @ExceptionHandler(OperationNotAllowed.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleOperationNotAllowed(OperationNotAllowed ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
   /**
-   * Handles {@link RestaurantNotFound} exceptions.
-   *
-   * @param ex the exception to handle
-   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
-   */
-  @ExceptionHandler(RestaurantNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleNoCustomerFound(RestaurantNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
-  @ExceptionHandler(CategoryNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleCategoryNotFound(CategoryNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
-  @ExceptionHandler(FoodItemNotFound.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleFoodItemNotFound(FoodItemNotFound ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
-  @ExceptionHandler(CategoryAlreadyExists.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleCategoryAlreadyExists(CategoryAlreadyExists ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
-  @ExceptionHandler(FoodItemAlreadyExists.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ResponseBody
-  public ErrorResponse handleFoodItemAlreadyExists(FoodItemAlreadyExists ex) {
-    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
-  }
-
-   /**
    * Handles {@link MethodArgumentNotValidException} exceptions.
    * This exception is typically thrown when validation of method arguments fails.
    *
    * @param ex the exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#BAD_REQUEST} and a list of validation error messages
    */
-  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-    List<String> errorMessages = ex.getBindingResult()
-      .getFieldErrors() // Get the field errors directly
-      .stream()
-      .map(error -> error.getDefaultMessage()) // Get the default message for each error
-      .collect(Collectors.toList());
+  public ErrorResponse handleValidationExceptions(Exception ex) {
+    List<String> errorMessages = null;
+    if (ex instanceof MethodArgumentNotValidException) {
+      errorMessages = ((MethodArgumentNotValidException) ex)
+        .getBindingResult()
+        .getFieldErrors()
+        .stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.toList());
+    } else if (ex instanceof BindException) {
+      errorMessages = ((BindException) ex)
+        .getBindingResult()
+        .getFieldErrors()
+        .stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.toList());
+    }
 
-    String errorMessage = "Validation failed: " + String.join(", ", errorMessages);
+    String errorMessage = errorMessages != null ? String.join(", ", errorMessages) : "Validation error";
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }
 
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+    Map<String, String> errors = new HashMap<>();
+    String message = ex.getMessage();
+
+    if (message.contains("InvalidFormatException")) {
+      errors.put("error", "Invalid data format provided.");
+    } else if (message.contains("NumberFormatException")) {
+      errors.put("error", "Invalid pin code format. Pin code must be numeric.");
+    } else {
+      errors.put("error", "Invalid request payload.");
+    }
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
 
   /**
    * Class representing the error response returned by the exception handlers.

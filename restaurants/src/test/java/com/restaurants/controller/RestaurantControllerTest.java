@@ -1,7 +1,7 @@
 package com.restaurants.controller;
 
-import com.restaurants.indto.RestaurantInDto;
-import com.restaurants.outdto.RestaurantOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

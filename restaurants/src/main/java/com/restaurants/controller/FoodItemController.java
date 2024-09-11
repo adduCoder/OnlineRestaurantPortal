@@ -1,8 +1,12 @@
 package com.restaurants.controller;
 
-import com.restaurants.indto.FoodItemInDto;
-import com.restaurants.outdto.FoodItemOutDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.FoodItemNameOutDto;
+import com.restaurants.dto.FoodItemOutDto;
+import com.restaurants.repository.RestaurantRepo;
 import com.restaurants.service.FoodItemService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +38,9 @@ public class FoodItemController {
 
   @Autowired
   private FoodItemService foodItemService;
+
+  @Autowired
+  private RestaurantRepo restaurantRepo;
 
   /**
    * Retrieves all food items for a specific restaurant.
@@ -62,16 +68,10 @@ public class FoodItemController {
   public ResponseEntity<?> addFoodItem(
     @ModelAttribute @Valid FoodItemInDto foodItemInDto,
     @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
-    try {
-      FoodItemOutDto foodItemOutDto = foodItemService.add(foodItemInDto, multipartFile);
-
-      return new ResponseEntity<>(foodItemOutDto, HttpStatus.CREATED);
-    } catch (Exception e) {
-      log.error("Failed to add food item", e);
-
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    foodItemService.add(foodItemInDto, multipartFile);
+    return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_CREATED_SUCCESS), HttpStatus.CREATED);
   }
+
   /**
    * Updates an existing food item.
    *
@@ -81,10 +81,18 @@ public class FoodItemController {
    */
   @Transactional
   @PutMapping("/update/{foodItemId}")
-  public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId, @RequestBody FoodItemInDto foodItemInDto) {
+  public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId,  @Valid @ModelAttribute FoodItemInDto foodItemInDto,
+                                          @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
     log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
-    FoodItemOutDto foodItemOutDto = foodItemService.updateFoodItem(foodItemId, foodItemInDto);
-    log.info("Updated food item: {}", foodItemOutDto);
-    return new ResponseEntity<>(foodItemOutDto, HttpStatus.OK);
+    foodItemService.updateFoodItem(foodItemId, foodItemInDto, multipartFile);
+    log.info("Updated food item");
+    return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_UPDATED_SUCCESS), HttpStatus.OK);
   }
+
+  @GetMapping("/getName/{foodItemId}")
+  public ResponseEntity<?> getFoodItemName(@PathVariable Integer foodItemId) {
+    FoodItemNameOutDto foodItemNameOutDto = foodItemService.getFoodItemName(foodItemId);
+    return new ResponseEntity<>(foodItemNameOutDto, HttpStatus.OK);
+  }
+
 }

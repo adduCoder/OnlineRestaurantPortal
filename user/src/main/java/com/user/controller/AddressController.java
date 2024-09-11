@@ -1,9 +1,10 @@
 package com.user.controller;
 
-import com.user.indto.AddressRequest;
-import com.user.indto.UpdateAddressRequest;
-import com.user.outdto.AddressResponse;
+import com.user.dto.AddressInDto;
+import com.user.dto.AddressOutDto;
 import com.user.service.AddressService;
+import com.user.util.AddressOutResponse;
+import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,15 +37,16 @@ public class AddressController {
    /**
    * Adds a new address.
    *
-   * @param addressRequest the address information to add
    * @return ResponseEntity containing the details of the added address and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressRequest addressRequest) {
-    log.info("Received request to add address for userId: {}", addressRequest.getUserId());
-    AddressResponse addressResponse = addressService.createAddress(addressRequest);
-    log.info("Address added successfully for userId: {}", addressRequest.getUserId());
-    return new ResponseEntity<>(addressResponse, HttpStatus.CREATED);
+  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressInDto addressInDto) {
+    log.info("Received request to add address for userId: {}", addressInDto.getUserId());
+    addressService.createAddress(addressInDto);
+    log.info("Address added successfully for userId: {}", addressInDto.getUserId());
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage(Constant.ADDRESS_ADDED_SUCCESS);
+    return new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
   }
 
    /**
@@ -56,9 +58,9 @@ public class AddressController {
   @GetMapping("/get/{userId}")
   public ResponseEntity<?> getAddressByUserId(@PathVariable Integer userId) {
     log.info("Fetching addresses for userId: {}", userId);
-    List<AddressResponse> addressResponseList = addressService.getAddressByUserId(userId);
-    log.info("Fetched {} addresses for userId: {}", addressResponseList.size(), userId);
-    return new ResponseEntity<>(addressResponseList, HttpStatus.OK);
+    List<AddressOutDto> AddressOutDtoList = addressService.getAddressByUserId(userId);
+    log.info("Fetched {} addresses for userId: {}", AddressOutDtoList.size(), userId);
+    return new ResponseEntity<>(AddressOutDtoList, HttpStatus.OK);
   }
 
    /**
@@ -79,16 +81,24 @@ public class AddressController {
    * Updates an existing address.
    *
    * @param addressId the ID of the address to update
-   * @param updateAddressRequest the new address information
+   * @param updateAddressInDto the new address information
    * @return ResponseEntity containing the updated address details and HTTP status
    */
   @PutMapping("/update/{addressId}")
   public ResponseEntity<?> updateAddress(@PathVariable Integer addressId,
-                                         @Valid @RequestBody UpdateAddressRequest updateAddressRequest) {
+                                         @Valid @RequestBody AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
-    AddressResponse addressResponse = addressService.updateAddress(addressId, updateAddressRequest);
+    addressService.updateAddress(addressId, updateAddressInDto);
+    AddressOutResponse addressOutResponse = new AddressOutResponse();
+    addressOutResponse.setMessage(Constant.ADDRESS_UPDATED_SUCCESS);
     log.info("Address with addressId: {} updated successfully", addressId);
-    return new ResponseEntity<>(addressResponse, HttpStatus.OK);
+    return new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
+  }
+
+  @GetMapping("/getByAddress/{addressId}")
+  public ResponseEntity<?> getAddressByAddressId(@PathVariable Integer addressId) {
+    AddressOutDto addressOutDto = addressService.getAddressByAddressId(addressId);
+    return new ResponseEntity<>(addressOutDto, HttpStatus.OK);
   }
 
 }

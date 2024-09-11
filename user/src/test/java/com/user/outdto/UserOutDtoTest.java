@@ -1,5 +1,6 @@
 package com.user.outdto;
 
+import com.user.dto.UserOutDto;
 import com.user.util.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
