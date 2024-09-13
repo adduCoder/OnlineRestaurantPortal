@@ -8,6 +8,9 @@ public final class Constant {
   public static final String ADDRESS_UPDATED_SUCCESS = "address updated successfull";
   public static final String USER_UPDATED_SUCCESS = "user updated successfull";
   public static final String USER_CREATED_SUCCESS = "user created successfull";
+  public static final String SENDED_SUCCESS = "email sended successfull";
+  public static final String SENDER = "iadityapatel1729@gmail.com";
+
   private Constant() {
 
   }

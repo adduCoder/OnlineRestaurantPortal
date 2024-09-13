@@ -87,7 +87,9 @@ public class CategoryService {
     List<Category> categoryList = categoryRepo.findAllByRestaurantId(restaurantId);
     List<CategoryOutDto> categoryOutDtoList = new ArrayList<>();
     for (Category category:categoryList) {
-      categoryOutDtoList.add(DtoConversion.mapToCategoryOutDto(category));
+      CategoryOutDto categoryOutDto = DtoConversion.mapToCategoryOutDto(category);
+      categoryOutDto.setRestaurantName(getRestaurantName(categoryOutDto.getResturantId()));
+      categoryOutDtoList.add(categoryOutDto);
     }
     log.info("Found {} categories for restaurant ID: {}", categoryOutDtoList.size(), restaurantId);
     return categoryOutDtoList;

@@ -125,6 +125,8 @@ public final class DtoConversion {
     foodItemOutDto.setRestaurantName(stringFormatter(restaurantName));
     foodItemOutDto.setCategoryName(categoryName);
     foodItemOutDto.setImageData(foodItem.getImageData());
+    foodItemOutDto.setCategoryId(foodItem.getCategoryId());
+    foodItemOutDto.setRestaurantId(foodItem.getRestaurantId());
     log.info("Mapped FoodItemOutDto: {}", foodItemOutDto);
     return foodItemOutDto;
   }

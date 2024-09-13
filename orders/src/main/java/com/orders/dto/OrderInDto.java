@@ -61,4 +61,14 @@ public class OrderInDto {
    */
   public OrderInDto() {
   }
+
+  public OrderInDto(Integer userId, Integer restaurantId, Integer addressId, List<Integer> cartIds, Double totalAmount,
+                    OrderStatus orderStatus) {
+    this.userId = userId;
+    this.restaurantId = restaurantId;
+    this.addressId = addressId;
+    this.cartIds = cartIds;
+    this.totalAmount = totalAmount;
+    this.orderStatus = orderStatus;
+  }
 }

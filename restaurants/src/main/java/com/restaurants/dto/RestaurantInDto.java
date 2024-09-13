@@ -18,9 +18,8 @@ public class RestaurantInDto {
   /**
    * Name of the restaurant.
    */
-  @NotBlank(message = "Restaurant name cannot be blank")
-  @Size(min = 3, message = "Restaurant name must be at least 3 characters long")
-  @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Restaurant name must contain only alphabets, digits, and spaces")
+  @NotBlank(message = "Name cannot be blank")
+  @Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only alphabets and spaces")
   private String restaurantName;
 
   /**
@@ -40,6 +39,7 @@ public class RestaurantInDto {
    * Description of the restaurant.
    */
   @NotBlank(message = "Description cannot be blank")
+  @Pattern(regexp = "^[a-zA-Z ]+$", message = "Description must contain only alphabets and spaces")
   private String description;
 
 }

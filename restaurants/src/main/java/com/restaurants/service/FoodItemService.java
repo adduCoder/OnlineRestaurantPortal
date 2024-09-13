@@ -37,6 +37,13 @@ public class FoodItemService {
   @Autowired
   private CategoryRepo categoryRepo;
 
+  private boolean isValidImageFormat(String contentType) {
+    return contentType != null &&
+      (contentType.equals("image/png") ||
+        contentType.equals("image/jpeg") ||
+        contentType.equals("image/jpg"));
+  }
+
   /**
    * Get restaurant name by FoodItem.
    */
@@ -79,42 +86,60 @@ public class FoodItemService {
   public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
     foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
+
+    // Mapping DTO to FoodItem entity
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
+
+    // Check if the restaurant exists
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
-      //System.out.println(foodItemInDto.getRestaurantId());
       throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
+
+    // Check if the category exists and belongs to the restaurant
     Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
     if (!optionalCategory.isPresent()) {
       throw new NotFound(Constant.CATEGORY_NOT_FOUND);
-    }
-    else {
+    } else {
       Category category = optionalCategory.get();
       if (category.getRestaurantId() != foodItemInDto.getRestaurantId()) {
         throw new NotFound(Constant.CATEGORY_NOT_FOUND);
       }
     }
+
+    // Check for existing food items with the same name
     List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
-    for (FoodItem subFoodItem:foodItemList) {
+    for (FoodItem subFoodItem : foodItemList) {
       if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
         throw new AlreadyExists(Constant.FOODITEM_ALREADY_EXISTS);
       }
     }
 
+    // Validate and process image if uploaded
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
+        String contentType = multipartFile.getContentType();
+
+        // Check if the image format is valid (png, jpg, jpeg)
+        if (!isValidImageFormat(contentType)) {
+          throw new IllegalArgumentException(Constant.BAD_IMAGE_EXTENSION);
+        }
+
         foodItem.setImageData(multipartFile.getBytes());
         log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
     }
+
+    // Convert the food name to lowercase for consistency and save the food item
     foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
     foodItemRepo.save(foodItem);
+
+    // Get restaurant and category names for response
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);
+
     log.info("Food item added successfully");
     return DtoConversion.mapToFoodItemOutDto(foodItem, restaurantName, categoryName);
   }
@@ -139,16 +164,17 @@ public class FoodItemService {
     return foodItemOutDtoList;
   }
 
-  /**
-   * Update an existing food item.
-   */
   public FoodItemOutDto updateFoodItem(Integer foodItemId, FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
     log.info("Updating food item with ID: {}", foodItemId);
+
+    // Retrieve the existing food item
     Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
     if (!optionalFoodItem.isPresent()) {
       log.error("Food item not found with ID: {}", foodItemId);
-      throw  new NotFound(Constant.FOODITEM_NOT_FOUND);
+      throw new NotFound(Constant.FOODITEM_NOT_FOUND);
     }
+
+    // Validate the existence of the restaurant and category
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
       throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
@@ -157,26 +183,40 @@ public class FoodItemService {
     if (!optionalCategory.isPresent()) {
       throw new NotFound(Constant.CATEGORY_NOT_FOUND);
     }
+
+    // Update food item details
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());
     foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
+
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {
+        String contentType = multipartFile.getContentType();
+
+        // Validate the image format
+        if (!isValidImageFormat(contentType)) {
+          throw new IllegalArgumentException(Constant.BAD_IMAGE_EXTENSION);
+        }
+
         foodItem.setImageData(multipartFile.getBytes());
         log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
+      } else {
+        // Optional: Handle cases where no file is uploaded by keeping the current image data
+        // foodItem.setImageData(null); // Uncomment if you want to clear the image data when no file is provided
       }
-      else{
-        foodItem.setImageData(null);
-      }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
     }
+
+    // Save the updated food item
     foodItemRepo.save(foodItem);
+
+    // Retrieve restaurant and category names
     String restaurantName = getRestaurantName(foodItem);
     String categoryName = getCategoryName(foodItem);
+
     log.info("Food item updated successfully with ID: {}", foodItemId);
     return DtoConversion.mapToFoodItemOutDto(foodItem, restaurantName, categoryName);
   }
