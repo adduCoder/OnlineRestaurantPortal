@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class UserService {
+
+  @Autowired
+  private EmailService emailService;
 
   @Autowired
   private UserRepo userRepo;
@@ -96,8 +100,8 @@ public class UserService {
   public void addUser(UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
     User newUser = DtoConversion.mapToUser(userInDto);
-   // String encodedPassword = PasswordEncoder.encodePassword(newUser.getPassword());
-   // newUser.setPassword(encodedPassword);
+    // String encodedPassword = PasswordEncoder.encodePassword(newUser.getPassword());
+    // newUser.setPassword(encodedPassword);
     // Decode Base64 password received from frontend
     String decodedPassword = PasswordEncoder.decodePassword(newUser.getPassword());
     String encodedPassword = PasswordEncoder.encodePassword(decodedPassword);
@@ -127,7 +131,7 @@ public class UserService {
   /**
    * Updates an existing user.
    *
-   * @param userId the ID of the user to be updated
+   * @param userId    the ID of the user to be updated
    * @param userInDto the request containing updated user details
    * @return a {@link UserOutDto} representing the updated user
    */
@@ -161,7 +165,7 @@ public class UserService {
     }
     User user = optionalUser.get();
     List<AddressOutDto> addressList = addressService.getAddressByUserId(userId);
-    for (AddressOutDto AddressOutDto:addressList) {
+    for (AddressOutDto AddressOutDto : addressList) {
       addressService.deleteAddress(AddressOutDto.getAddressId());
     }
     userRepo.delete(user);
@@ -220,5 +224,22 @@ public class UserService {
     user.setWalletBalance(user.getWalletBalance() + amountInDto.getMoney());
     userRepo.save(user);
   }
+
+  public void sendMail(String text) {
+    try {
+      // Define the list of recipients
+      List<String> recipients = Arrays.asList(
+        "iadityapatel1729@gmail.com",
+        "adityapatel21052022@gmail.com",
+        "vyaskhushi2407@gmail.com"
+      );
+      // Send email to all recipients
+      emailService.sendMail(Constant.SENDER, recipients, text);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+    }
+  }
+
 }
 

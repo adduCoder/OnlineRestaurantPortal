@@ -1,6 +1,7 @@
 package com.restaurants.util;
 
 public final class Constant {
+
   private Constant() {
 
   };
@@ -17,5 +18,5 @@ public final class Constant {
   public static final String FOODITEM_UPDATED_SUCCESS = "food item updated success";
   public static final String FOODITEM_NOT_FOUND = "food item not found";
   public static final String OPERATION_NOT_ALLOWED = "This operation can't be performed as you are not an Owner";
-
+  public static final String BAD_IMAGE_EXTENSION = "image should end with either .jpg or .jpeg or .png";
 }

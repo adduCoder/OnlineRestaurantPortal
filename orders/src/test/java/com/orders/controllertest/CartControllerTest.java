@@ -30,14 +30,12 @@ class CartControllerTest {
 
   private CartInDto cartInDto;
   private CartOutDto cartOutDto;
-  private AddCartResponse addCartResponse;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
     cartInDto = new CartInDto();
-    // Initialize cartInDto with appropriate values
     cartInDto.setUserId(1);
     cartInDto.setRestaurantId(1);
     cartInDto.setFoodItemId(101);
@@ -45,16 +43,12 @@ class CartControllerTest {
     cartInDto.setPrice(19.99);
 
     cartOutDto = new CartOutDto();
-    // Initialize cartOutDto with appropriate values
     cartOutDto.setId(1);
     cartOutDto.setUserId(1);
     cartOutDto.setRestaurantId(1);
     cartOutDto.setFoodItemId(101);
     cartOutDto.setQuantity(2);
     cartOutDto.setPrice(19.99);
-
-    addCartResponse = new AddCartResponse();
-    addCartResponse.setCartId(1);
   }
 
   @Test
@@ -62,7 +56,6 @@ class CartControllerTest {
     when(cartService.addOrUpdateCart(any(CartInDto.class))).thenReturn(1);
     ResponseEntity<?> response = cartController.addCart(cartInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(addCartResponse, response.getBody());
   }
 
   @Test

@@ -45,6 +45,13 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
+  @ExceptionHandler(IllegalArgumentException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
+    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+  }
+
   /**
    * Handles {@link MethodArgumentNotValidException} exceptions.
    * This exception is typically thrown when validation of method arguments fails.

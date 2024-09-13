@@ -11,6 +11,7 @@ import com.restaurants.repository.RestaurantRepo;
 import com.restaurants.util.Constant;
 import com.restaurants.util.Role;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,18 @@ public class RestaurantService {
   @Autowired
   private UserFClient userFClient;
 
+  /**
+   * Helper method to check if the file format is valid.
+   *
+   * @param contentType the MIME type of the file
+   * @return true if the file is a valid image format, false otherwise
+   */
+  private boolean isValidImageFormat(String contentType) {
+    return contentType != null &&
+      (contentType.equals("image/png") ||
+        contentType.equals("image/jpeg") ||
+        contentType.equals("image/jpg"));
+  }
 
   public static String stringFormatter(String currentString) {
     if (currentString == null || currentString.isEmpty()) {
@@ -58,13 +71,20 @@ public class RestaurantService {
     if (userOutDto.getRole() == Role.USER) {
       throw new OperationNotAllowed();
     }
-    try {
-      if (multipartFile != null && !multipartFile.isEmpty()) {
-        restaurant.setImageData(multipartFile.getBytes());
+    // Validate and process image
+    if (multipartFile != null && !multipartFile.isEmpty()) {
+      String contentType = multipartFile.getContentType();
+
+      // Check if the file is a valid image format (png, jpg, jpeg)
+      if (!isValidImageFormat(contentType)) {
+        throw new IllegalArgumentException(Constant.BAD_IMAGE_EXTENSION);
       }
-    }
-    catch (IOException e) {
-      log.error("Error occurred while processing the image file");
+
+      try {
+        restaurant.setImageData(multipartFile.getBytes());
+      } catch (IOException e) {
+        log.error("Error occurred while processing the image file", e);
+      }
     }
     restaurantRepo.save(restaurant);
     log.info("Restaurant added successfully ");

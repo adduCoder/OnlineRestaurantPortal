@@ -32,6 +32,9 @@ public class FoodItemOutDto {
    */
   private Boolean isAvailable;
 
+  private Integer categoryId;
+  private Integer restaurantId;
+
   /**
    * Price of the food item.
    */
