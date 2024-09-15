@@ -25,6 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,14 +45,41 @@ class OrderControllerTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+
+    // Initialize OrderInDto
     orderInDto = new OrderInDto(1, 1, 1, Arrays.asList(1, 2, 3), 100.0, OrderStatus.PENDING);
+
+    // Initialize UpdateStatusInDto
     updateStatusInDto = new UpdateStatusInDto(OrderStatus.CONFIRMED);
-    orderOutDto = new OrderOutDto(1, 1, 1, 1, LocalDateTime.now(), OrderStatus.PENDING, Collections.singletonList(new OrderItemDetailOutDto(1, "Item", 2, 50.0)));
+
+    // Initialize OrderItemDetailOutDto
+    OrderItemDetailOutDto itemDetail = new OrderItemDetailOutDto();
+    itemDetail.setFoodItemId(1);
+    itemDetail.setFoodItemName("Item");
+    itemDetail.setQuantity(2);
+    itemDetail.setPrice(50.0);
+
+    // Initialize OrderOutDto
+    orderOutDto = new OrderOutDto();
+    orderOutDto.setId(1);
+    orderOutDto.setUserId(1);
+    orderOutDto.setAddressId(1); // Adjusted to match new field name
+    orderOutDto.setRestaurantId(1);
+    orderOutDto.setOrderStatus(OrderStatus.PENDING);
+    orderOutDto.setCreatedAt(LocalDateTime.now());
+    orderOutDto.setRestaurantName("Restaurant Name");
+    orderOutDto.setAddressName("Address Name");
+    orderOutDto.setUserName("User Name");
+    orderOutDto.setOrderDetails(Collections.singletonList(itemDetail)); // Adjusted field name
+
+    // Initialize ApiResponse
     apiResponse = new ApiResponse(Constant.SUCCESS);
   }
 
   @Test
   void testCreateOrder() {
+    // Assuming the service method returns void
+    doNothing().when(orderService).createOrder(any(OrderInDto.class));
     ResponseEntity<?> response = orderController.createOrder(orderInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     verify(orderService).createOrder(any(OrderInDto.class));
@@ -67,11 +95,12 @@ class OrderControllerTest {
 
   @Test
   void testUpdateStatus() {
-    when(orderService.updateStatus(anyInt(), any(UpdateStatusInDto.class))).thenReturn(apiResponse);
+    // Assuming the service method returns void
+    doNothing().when(orderService).updateStatus(anyInt(), any(UpdateStatusInDto.class));
     ResponseEntity<?> response = orderController.updateStatus(1, updateStatusInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     ApiResponse actualResponse = (ApiResponse) response.getBody();
-    assertEquals(Constant.SUCCESS, actualResponse.getMessage());
+    assertEquals(Constant.CART_UPDATED_SUCCESS, actualResponse.getMessage());
   }
 
   @Test

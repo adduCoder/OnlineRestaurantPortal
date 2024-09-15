@@ -12,4 +12,12 @@ public class UpdateStatusInDto {
    * The new status to set for the order.
    */
   private OrderStatus orderStatus;
+
+  public UpdateStatusInDto() {
+
+  }
+
+  public UpdateStatusInDto(OrderStatus orderStatus) {
+    this.orderStatus = orderStatus;
+  }
 }

@@ -4,10 +4,8 @@ import com.orders.dto.CartInDto;
 import com.orders.dto.CartOutDto;
 import com.orders.dto.FoodItemNameOutDto;
 import com.orders.dto.RestaurantOutDto;
-import com.orders.dto.UserOutDto;
 import com.orders.dtoconversion.DtoConversion;
 import com.orders.entities.Cart;
-import com.orders.exceptionhandler.UserNotFound;
 import com.orders.repo.CartRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,27 +28,26 @@ public class CartService {
   @Autowired
   private RestaurantFClient restaurantFClient;
 
-  public String restaurantName(Integer restaurantId){
-    String response="No Name Available";
+  public String restaurantName(Integer restaurantId) {
+    String response = "No Name Available";
     RestaurantOutDto restaurantOutDto = null;
     try {
       restaurantOutDto = restaurantFClient.getRestaurantById(restaurantId).getBody();
       response = restaurantOutDto.getRestaurantName();
     }
     catch (Exception e) {
-        log.info("exception in fetching data from restor microservice using fclient");
+      log.info("exception in fetching data from restor microservice using fclient");
     }
     return response;
   }
-
-  public String foodItemName(Integer foodItemId){
-    String response="No Name Available";
+  public String foodItemName(Integer foodItemId) {
+    String response = "No Name Available";
     FoodItemNameOutDto foodItemNameOutDto = null;
-    try{
+    try {
       foodItemNameOutDto = restaurantFClient.getFoodItemName(foodItemId).getBody();
       response = foodItemNameOutDto.getFoodItemName();
     }
-    catch (Exception e){
+    catch (Exception e) {
       log.info("exception in fetching data from restro microservice using fclient");
     }
     return response;
@@ -100,7 +97,7 @@ public class CartService {
     List<Cart> cartList = cartRepo.findByUserIdAndRestaurantId(userId, restaurantId);
     List<CartOutDto> cartOutDtoList = new ArrayList<>();
     for (Cart cart : cartList) {
-      CartOutDto cartOutDto=DtoConversion.mapToCartOutDto(cart);
+      CartOutDto cartOutDto = DtoConversion.mapToCartOutDto(cart);
       System.out.println(restaurantName(cartOutDto.getRestaurantId()));
       cartOutDto.setRestaurantName(restaurantName(cartOutDto.getRestaurantId()));
       cartOutDto.setFoodItemName(foodItemName(cartOutDto.getFoodItemId()));

@@ -14,7 +14,6 @@ import com.restaurants.repository.FoodItemRepo;
 import com.restaurants.repository.RestaurantRepo;
 import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -149,8 +148,8 @@ public class FoodItemService {
    */
   public List<FoodItemOutDto> getAll(Integer restaurantId) {
     log.info("Fetching all food items for restaurant ID: {}", restaurantId);
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(restaurantId);
-    if(!optionalRestaurant.isPresent()){
+    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    if (!optionalRestaurant.isPresent()) {
       throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(restaurantId);

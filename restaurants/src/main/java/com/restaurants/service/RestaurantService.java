@@ -11,7 +11,6 @@ import com.restaurants.repository.RestaurantRepo;
 import com.restaurants.util.Constant;
 import com.restaurants.util.Role;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -118,7 +117,7 @@ public class RestaurantService {
 
   public void updateRestaurant(Integer restaurantId, RestaurantInDto restaurantInDto, MultipartFile multipartFile) {
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
-    if(!optionalRestaurant.isPresent()){
+    if (!optionalRestaurant.isPresent()) {
       throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     UserOutDto userOutDto;
@@ -143,7 +142,7 @@ public class RestaurantService {
         restaurant.setImageData(multipartFile.getBytes());
         log.info("Image uploaded successfully");
       }
-      else{
+      else {
         restaurant.setImageData(null);
       }
     }
@@ -155,7 +154,7 @@ public class RestaurantService {
 
   public RestaurantOutDto getRestaurantById(Integer restaurantId) {
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
-    if(!optionalRestaurant.isPresent()){
+    if (!optionalRestaurant.isPresent()) {
       throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
     }
     Restaurant restaurant = optionalRestaurant.get();

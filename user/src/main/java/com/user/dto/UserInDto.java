@@ -47,8 +47,6 @@ public class UserInDto {
    * This field cannot be blank.
    */
   @NotBlank(message = "Password cannot be blank")
-  @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{4,}$",
-    message = "Password must be at least 4 characters long, contain at least one uppercase letter, one lowercase letter, and one digit")
   private String password;
 
 

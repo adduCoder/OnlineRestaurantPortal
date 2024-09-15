@@ -1,6 +1,8 @@
 package com.orders.exceptionhandler;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -122,6 +126,28 @@ public class GlobalExceptionHandler {
 
     String errorMessage = errorMessages != null ? String.join(", ", errorMessages) : "Validation error";
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    Map<String, String> errors = new HashMap<>();
+    String message = ex.getMessage();
+
+    if (message.contains("InvalidFormatException")) {
+      errors.put("error", "Invalid data format provided.");
+    } else {
+      errors.put("error", "Required request body is missing or malformed.");
+    }
+
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  public ErrorResponse handleGeneralException(Exception ex) {
+    String message = "An unexpected error occurred. Please try again later or contact support.";
+    return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
   }
 
 

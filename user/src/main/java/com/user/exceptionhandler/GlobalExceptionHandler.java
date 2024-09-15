@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.validation.FieldError;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,16 +35,27 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-    List<String> errorMessages = ex.getBindingResult()
-      .getFieldErrors() // Get the field errors directly
-      .stream()
-      .map(error -> error.getDefaultMessage()) // Get the default message for each error
-      .collect(Collectors.toList());
+  public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    // Create a map to hold the structured error response
+    Map<String, Object> errorResponse = new HashMap<>();
 
-    String errorMessage = "Validation failed: " + String.join(", ", errorMessages);
-    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+    // Collect the first validation error for each field
+    Map<String, String> fieldErrors = ex.getBindingResult()
+      .getFieldErrors()
+      .stream()
+      .collect(Collectors.toMap(
+        FieldError::getField,     // Field name as key
+        FieldError::getDefaultMessage,  // First error message as value
+        (existing, replacement) -> existing // If multiple errors for the same field, keep the first
+      ));
+
+    // Add the status and the field errors map to the response
+    errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+    errorResponse.put("errors", fieldErrors);
+
+    return errorResponse;
   }
+
 
   /**
    * Handles {@link UserAlreadyExisted} exceptions.
@@ -85,6 +96,15 @@ public class GlobalExceptionHandler {
   }
 
 
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  public ErrorResponse handleGeneralException(Exception ex) {
+    String message = "An unexpected error occurred. Please try again later or contact support.";
+    return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+  }
+
+
   /**
    * Class representing the error response returned by the exception handlers.
    */
@@ -103,7 +123,6 @@ public class GlobalExceptionHandler {
       this.message = message;
     }
 
-    // Getters and setters
     /**
      * Gets the HTTP status code.
      *

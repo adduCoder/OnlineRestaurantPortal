@@ -28,10 +28,10 @@ public class CategoryService {
   @Autowired
   private RestaurantRepo restaurantRepo;
 
-  public String getRestaurantName(Integer restaurantId){
+  public String getRestaurantName(Integer restaurantId) {
     String name = "Not Available";
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
-    if(optionalRestaurant.isPresent()){
+    if (optionalRestaurant.isPresent()) {
       Restaurant restaurant = optionalRestaurant.get();
       name = restaurant.getRestaurantName();
     }

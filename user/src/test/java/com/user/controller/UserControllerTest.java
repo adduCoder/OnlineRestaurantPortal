@@ -1,12 +1,13 @@
 package com.user.controller;
 
 import com.user.dto.AmountInDto;
+import com.user.dto.ApiResponse;
 import com.user.dto.LoginInDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
 import com.user.exceptionhandler.GlobalExceptionHandler;
 import com.user.service.UserService;
-import com.user.util.UserApiResponse;
+import com.user.util.Constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,36 +70,35 @@ class UserControllerTest {
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(userOutDtoList, response.getBody());
   }
-
   @Test
   void testAddUser() {
-    when(userService.addUser(any(UserInDto.class))).thenReturn(1); // Assuming service returns user ID
+    // Mock the service method
+    doNothing().when(userService).addUser(any(UserInDto.class));
 
-    UserApiResponse userApiResponse = new UserApiResponse();
-    userApiResponse.setMessage("New User Registerd Successfully");
-    userApiResponse.setUserId(1);
-    userApiResponse.setRole(userInDto.getRole());
+    ApiResponse expectedResponse = new ApiResponse("user created successfull");
 
     ResponseEntity<?> response = userController.addUser(userInDto);
+
+    ApiResponse actualResponse = (ApiResponse) response.getBody();
+
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals(userApiResponse.getMessage(), ((UserApiResponse) response.getBody()).getMessage());
-    assertEquals(userApiResponse.getUserId(), ((UserApiResponse) response.getBody()).getUserId());
-    assertEquals(userApiResponse.getRole(), ((UserApiResponse) response.getBody()).getRole());
+    assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
   }
 
   @Test
   void testUpdateUser() {
-    when(userService.updateUser(anyInt(), any(UserInDto.class))).thenReturn(userOutDto);
+    doNothing().when(userService).updateUser(anyInt(), any(UserInDto.class));
 
-    UserApiResponse userApiResponse = new UserApiResponse();
-    userApiResponse.setMessage("User Updated Successfully");
-    userApiResponse.setUserId(1);
+    ApiResponse apiResponse = new ApiResponse(Constant.USER_UPDATED_SUCCESS);
 
     ResponseEntity<?> response = userController.updateUser(1, userInDto);
+
+    ApiResponse actualResponse = (ApiResponse) response.getBody();
+
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(userApiResponse.getMessage(), ((UserApiResponse) response.getBody()).getMessage());
-    assertEquals(userApiResponse.getUserId(), ((UserApiResponse) response.getBody()).getUserId());
+    assertEquals(apiResponse.getMessage(), actualResponse.getMessage());
   }
+
 
   @Test
   void testDeleteUser() {

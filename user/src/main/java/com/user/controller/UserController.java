@@ -142,7 +142,6 @@ public class UserController {
     userService.sendMail(text);
     return new ResponseEntity<>(new ApiResponse(Constant.SENDED_SUCCESS), HttpStatus.OK);
   }
-
 }
 
 

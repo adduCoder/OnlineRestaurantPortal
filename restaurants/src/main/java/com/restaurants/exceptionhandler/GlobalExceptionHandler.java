@@ -3,18 +3,15 @@ package com.restaurants.exceptionhandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Global exception handler for the application.
@@ -62,27 +59,34 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(Exception ex) {
-    List<String> errorMessages = null;
+  public Map<String, Object> handleValidationExceptions(Exception ex) {
+    // Create a map to hold the structured error response
+    Map<String, Object> errorResponse = new HashMap<>();
+    Map<String, String> fieldErrors = new HashMap<>();
+
+    // Handle MethodArgumentNotValidException
     if (ex instanceof MethodArgumentNotValidException) {
-      errorMessages = ((MethodArgumentNotValidException) ex)
-        .getBindingResult()
-        .getFieldErrors()
-        .stream()
-        .map(FieldError::getDefaultMessage)
-        .collect(Collectors.toList());
-    } else if (ex instanceof BindException) {
-      errorMessages = ((BindException) ex)
-        .getBindingResult()
-        .getFieldErrors()
-        .stream()
-        .map(FieldError::getDefaultMessage)
-        .collect(Collectors.toList());
+      MethodArgumentNotValidException methodArgumentException = (MethodArgumentNotValidException) ex;
+      methodArgumentException.getBindingResult().getFieldErrors().forEach(error ->
+        fieldErrors.put(error.getField(), error.getDefaultMessage())
+      );
     }
 
-    String errorMessage = errorMessages != null ? String.join(", ", errorMessages) : "Validation error";
-    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+    // Handle BindException
+    else if (ex instanceof BindException) {
+      BindException bindException = (BindException) ex;
+      bindException.getBindingResult().getFieldErrors().forEach(error ->
+        fieldErrors.put(error.getField(), error.getDefaultMessage())
+      );
+    }
+
+    // Add the status and the field errors map to the response
+    errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+    errorResponse.put("errors", fieldErrors);
+
+    return errorResponse; // Return the structured response as a map
   }
+
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
@@ -98,6 +102,16 @@ public class GlobalExceptionHandler {
     }
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
+
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  public ErrorResponse handleGeneralException(Exception ex) {
+    String message = "An unexpected error occurred. Please try again later or contact support.";
+    return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+  }
+
 
   /**
    * Class representing the error response returned by the exception handlers.

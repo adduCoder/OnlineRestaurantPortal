@@ -3,6 +3,8 @@ package com.restaurants.controller;
 import com.restaurants.dto.RestaurantInDto;
 import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.service.RestaurantService;
+import com.restaurants.util.ApiResponse;
+import com.restaurants.util.Constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -68,15 +70,39 @@ class RestaurantControllerTest {
       .thenReturn(restaurantOutDto);
 
     ResponseEntity<?> response = restaurantController.addRestaurant(
-      restaurantInDto.getUserId(),
-      restaurantInDto.getRestaurantName(),
-      restaurantInDto.getAddress(),
-      restaurantInDto.getContactNumber(),
-      restaurantInDto.getDescription(),
+      restaurantInDto,
       multipartFile
     );
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals(new ApiResponse(Constant.RESTAURANT_ADDED_SUCCESS), response.getBody());
+  }
+
+  @Test
+  void testUpdateRestaurant() {
+    // Mock behavior for MultipartFile if needed
+    when(multipartFile.getOriginalFilename()).thenReturn("updated-restaurant.jpg");
+
+    // Adjust service mock to handle MultipartFile
+    when(restaurantService.addRestaurant(any(RestaurantInDto.class), any(MultipartFile.class)))
+      .thenReturn(restaurantOutDto);
+
+
+    ResponseEntity<?> response = restaurantController.updateRestaurant(
+      1,
+      restaurantInDto,
+      multipartFile
+    );
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS), response.getBody());
+  }
+
+  @Test
+  void testGetRestaurantById() {
+    when(restaurantService.getRestaurantById(anyInt())).thenReturn(restaurantOutDto);
+    ResponseEntity<?> response = restaurantController.getRestaurantById(1);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(restaurantOutDto, response.getBody());
   }
 

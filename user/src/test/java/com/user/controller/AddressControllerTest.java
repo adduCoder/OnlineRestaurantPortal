@@ -59,14 +59,15 @@ class AddressControllerTest {
   @Test
   void testAddAddress() {
     AddressOutResponse addressOutResponse = new AddressOutResponse();
-    addressOutResponse.setMessage("Address Added Successfull!");
+    addressOutResponse.setMessage("address added successfull"); // Update this line
 
     ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
 
     ResponseEntity<?> response = addressController.addAddress(addressInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals("Address Added Successfull!", ((AddressOutResponse) response.getBody()).getMessage());
+    assertEquals("address added successfull", ((AddressOutResponse) response.getBody()).getMessage()); // Update this line
   }
+
 
   @Test
   void testGetAddressByUserId() {
@@ -88,12 +89,13 @@ class AddressControllerTest {
   @Test
   void testUpdateAddress() {
     AddressOutResponse addressOutResponse = new AddressOutResponse();
-    addressOutResponse.setMessage("Address Updated Successfull!");
+    addressOutResponse.setMessage("address updated successfull");
 
     ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
 
     ResponseEntity<?> response = addressController.updateAddress(1, updateAddressInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Address Updated Successfull!", ((AddressOutResponse) response.getBody()).getMessage());
+    assertEquals("address updated successfull", ((AddressOutResponse) response.getBody()).getMessage());
   }
+
 }

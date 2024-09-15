@@ -8,7 +8,6 @@ import com.user.exceptionhandler.NotFound;
 import com.user.repository.AddressRepo;
 import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +29,6 @@ public class AddressService {
   @Autowired
   private AddressRepo addressRepo;
 
-  /**
-   * Creates a new address.
-   *
-   * @return an {@link AddressOutDto} representing the created address
-   */
   public AddressOutDto createAddress(AddressInDto addressInDto) {
     log.info("Creating address for userId: {}", addressInDto.getUserId());
     Address address = DtoConversion.mapToAddress(addressInDto);

@@ -15,7 +15,6 @@ import com.user.util.PasswordEncoder;
 import com.user.util.Role;
 import com.user.util.UserApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,13 +89,7 @@ public class UserService {
     return userOutDtoList;
   }
 
-  /**
-   * Adds a new user.
-   *
-   * @param userInDto the request containing the details of the user to be added
-   * @return the ID of the newly added user
-   * @throws UserAlreadyExisted if a user with the given email already exists
-   */
+
   public void addUser(UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
     User newUser = DtoConversion.mapToUser(userInDto);
@@ -128,18 +121,11 @@ public class UserService {
     userApiResponse.setRole(newUser.getRole());
   }
 
-  /**
-   * Updates an existing user.
-   *
-   * @param userId    the ID of the user to be updated
-   * @param userInDto the request containing updated user details
-   * @return a {@link UserOutDto} representing the updated user
-   */
+
   public void updateUser(Integer userId, UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
     Optional<User> optionalUser = userRepo.findById(userId);
     if (!optionalUser.isPresent()) {
-      log.warn("No user found with ID: {}", userId);
       throw new NotFound(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
@@ -184,22 +170,17 @@ public class UserService {
     email = stringFormatter(email);
     String providedPassword = loginInDto.getPassword();
 
-    // Fetch user by email
     Optional<User> optionalUser = userRepo.findByEmail(email);
     if (!optionalUser.isPresent()) {
       return null;
     }
 
     User user = optionalUser.get();
-    String storedPassword = user.getPassword(); // Encoded password from the database
-    //System.out.println(storedPassword+" "+providedPassword);
-    // Decode both passwords for comparison
+    String storedPassword = user.getPassword();
     String decodedStoredPassword = PasswordEncoder.decodePassword(storedPassword);
     String decodedProvidedPassword = PasswordEncoder.decodePassword(providedPassword);
-    System.out.println(decodedStoredPassword + " " + decodedProvidedPassword);
-    // Check if the decoded passwords match
     if (decodedStoredPassword.equals(decodedProvidedPassword)) {
-      return DtoConversion.mapToUserOutDto(user); // Convert user to DTO
+      return DtoConversion.mapToUserOutDto(user);
     } else {
       return null;
     }

@@ -55,15 +55,15 @@ public class RestaurantController {
   public ResponseEntity<?> updateRestaurant(
     @PathVariable Integer restaurantId,
     @Valid @ModelAttribute RestaurantInDto restaurantInDto,
-    @RequestParam(value="multipartFile", required = false) MultipartFile multipartFile) {
-      restaurantService.updateRestaurant(restaurantId,restaurantInDto,multipartFile);
-      return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS),HttpStatus.OK);
+    @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
+    restaurantService.updateRestaurant(restaurantId, restaurantInDto, multipartFile);
+    return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
   @GetMapping("/getRestaurant/{restaurantId}")
-  public ResponseEntity<?> getRestaurantById(@PathVariable Integer restaurantId){
+  public ResponseEntity<?> getRestaurantById(@PathVariable Integer restaurantId) {
     RestaurantOutDto restaurantOutDto = restaurantService.getRestaurantById(restaurantId);
-    return new ResponseEntity<>(restaurantOutDto,HttpStatus.OK);
+    return new ResponseEntity<>(restaurantOutDto, HttpStatus.OK);
   }
 
   /**

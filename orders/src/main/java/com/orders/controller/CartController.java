@@ -33,11 +33,6 @@ public class CartController {
   @Autowired
   private CartService cartService;
 
-  /**
-   * Adds a cart or updates an existing cart.
-   *
-   * @param cartInDto The input data transfer object for adding a cart.
-   */
   @PostMapping("/addCart")
   public ResponseEntity<?> addCart(@Valid @RequestBody CartInDto cartInDto) {
     log.info("Received request to add or update cart with userId: {} and restaurantId: {}",

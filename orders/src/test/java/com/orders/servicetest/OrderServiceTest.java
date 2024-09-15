@@ -17,8 +17,6 @@ import com.orders.repo.OrderRepo;
 import com.orders.service.OrderService;
 import com.orders.service.RestaurantFClient;
 import com.orders.service.UserFClient;
-import com.orders.dto.ApiResponse;
-import com.orders.util.Constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -166,10 +164,8 @@ public class OrderServiceTest {
     updateStatusInDto.setOrderStatus(OrderStatus.CANCELLED);
 
     // Act
-    ApiResponse response = orderService.updateStatus(1, updateStatusInDto);
+    orderService.updateStatus(1, updateStatusInDto);
 
-    // Assert
-    assertEquals(Constant.UPDATED, response.getMessage());
   }
 
   @Test

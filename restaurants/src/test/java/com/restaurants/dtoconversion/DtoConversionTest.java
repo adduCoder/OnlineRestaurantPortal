@@ -1,18 +1,19 @@
 package com.restaurants.dtoconversion;
 
+import com.restaurants.dto.CategoryInDto;
+import com.restaurants.dto.CategoryOutDto;
+import com.restaurants.dto.FoodItemInDto;
+import com.restaurants.dto.FoodItemOutDto;
+import com.restaurants.dto.RestaurantInDto;
+import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.dto.CategoryInDto;
-import com.restaurants.dto.FoodItemInDto;
-import com.restaurants.dto.RestaurantInDto;
-import com.restaurants.dto.CategoryOutDto;
-import com.restaurants.dto.FoodItemOutDto;
-import com.restaurants.dto.RestaurantOutDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DtoConversionTest {
 
@@ -32,27 +33,25 @@ class DtoConversionTest {
     restaurantInDto.setAddress("123 Main St");
     restaurantInDto.setContactNumber("7896541230");
     restaurantInDto.setDescription("Best Indian Cuisine");
-    //restaurantInDto.setImageUrl("http://image.url/spicehub.jpg");
 
     // Initialize Restaurant Entity
     restaurant = new Restaurant();
     restaurant.setId(1);
     restaurant.setUserId(1);
-    restaurant.setRestaurantName("Spice Hub");
+    restaurant.setRestaurantName("spice hub"); // formatted to match stringFormatter output
     restaurant.setAddress("123 Main St");
     restaurant.setContactNumber("7896541230");
-    restaurant.setDescription("Best Indian Cuisine");
-    //restaurant.setImageUrl("http://image.url/spicehub.jpg");
+    restaurant.setDescription("best indian cuisine"); // formatted to match stringFormatter output
 
     // Initialize CategoryInDto
     categoryInDto = new CategoryInDto();
-    categoryInDto.setName("Desserts");
+    categoryInDto.setName("desserts");
     categoryInDto.setRestaurantId(1);
 
     // Initialize Category Entity
     category = new Category();
     category.setId(1);
-    category.setName("Desserts");
+    category.setName("desserts"); // formatted to match stringFormatter output
     category.setRestaurantId(1);
 
     // Initialize FoodItemInDto
@@ -67,7 +66,7 @@ class DtoConversionTest {
     // Initialize FoodItem Entity
     foodItem = new FoodItem();
     foodItem.setId(1);
-    foodItem.setFoodName("Gulab Jamun");
+    foodItem.setFoodName("gulab jamun"); // formatted to match stringFormatter output
     foodItem.setRestaurantId(1);
     foodItem.setDescription("Sweet Indian dessert");
     foodItem.setCategoryId(1);
@@ -80,11 +79,10 @@ class DtoConversionTest {
     Restaurant result = DtoConversion.mapToRestaurant(restaurantInDto);
     assertNotNull(result);
     assertEquals(restaurantInDto.getUserId(), result.getUserId());
-    assertEquals(restaurantInDto.getRestaurantName(), result.getRestaurantName());
+    assertEquals(restaurantInDto.getRestaurantName().toLowerCase(), result.getRestaurantName());
     assertEquals(restaurantInDto.getAddress(), result.getAddress());
     assertEquals(restaurantInDto.getContactNumber(), result.getContactNumber());
-    //assertEquals(restaurantInDto.getDescription(), result.getDescription());
-    //assertEquals(restaurantInDto.getImageUrl(), result.getImageUrl());
+    assertEquals(restaurantInDto.getDescription().toLowerCase(), result.getDescription());
   }
 
   @Test
@@ -95,7 +93,6 @@ class DtoConversionTest {
     assertEquals(restaurant.getUserId(), result.getUserId());
     assertEquals(restaurant.getRestaurantName(), result.getRestaurantName());
     assertEquals(restaurant.getDescription(), result.getDescription());
-    //assertEquals(restaurant.getImageUrl(), result.getImageUrl());
     assertEquals(restaurant.getAddress(), result.getAddress());
     assertEquals(restaurant.getContactNumber(), result.getContactNumber());
   }
@@ -104,7 +101,7 @@ class DtoConversionTest {
   void testMapToCategory() {
     Category result = DtoConversion.mapToCategory(categoryInDto);
     assertNotNull(result);
-    assertEquals(categoryInDto.getName(), result.getName());
+    assertEquals(categoryInDto.getName().toLowerCase(), result.getName());
     assertEquals(categoryInDto.getRestaurantId(), result.getRestaurantId());
   }
 
@@ -121,7 +118,7 @@ class DtoConversionTest {
   void testMapToFoodItem() {
     FoodItem result = DtoConversion.mapToFoodItem(foodItemInDto);
     assertNotNull(result);
-    assertEquals(foodItemInDto.getFoodName(), result.getFoodName());
+    assertEquals(foodItemInDto.getFoodName().toLowerCase(), result.getFoodName());
     assertEquals(foodItemInDto.getPrice(), result.getPrice());
     assertEquals(foodItemInDto.getCategoryId(), result.getCategoryId());
     assertEquals(foodItemInDto.getRestaurantId(), result.getRestaurantId());

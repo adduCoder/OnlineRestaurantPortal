@@ -2,12 +2,12 @@ package com.orders.service;
 
 import com.orders.dto.AddressOutDto;
 import com.orders.dto.AmountInDto;
-import com.orders.dto.OrderInDto;
-import com.orders.dto.RestaurantOutDto;
-import com.orders.dto.UpdateStatusInDto;
 import com.orders.dto.FoodItemNameOutDto;
+import com.orders.dto.OrderInDto;
 import com.orders.dto.OrderItemDetailOutDto;
 import com.orders.dto.OrderOutDto;
+import com.orders.dto.RestaurantOutDto;
+import com.orders.dto.UpdateStatusInDto;
 import com.orders.dto.UserOutDto;
 import com.orders.dtoconversion.DtoConversion;
 import com.orders.entities.Cart;
@@ -19,8 +19,6 @@ import com.orders.exceptionhandler.SessionExpiredException;
 import com.orders.exceptionhandler.UserNotFound;
 import com.orders.repo.CartRepo;
 import com.orders.repo.OrderRepo;
-import com.orders.dto.ApiResponse;
-import com.orders.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +45,7 @@ public class OrderService {
   @Autowired
   private RestaurantFClient restaurantFClient;
 
-  public String getRestaurantName(Integer restaurantId){
+  public String getRestaurantName(Integer restaurantId) {
     String response = "NA";
     RestaurantOutDto restaurantOutDto = null;
     try {
@@ -60,28 +58,28 @@ public class OrderService {
     return response;
   }
 
-  public String getAddress(Integer addressId){
+  public String getAddress(Integer addressId) {
     String response = "NA";
     AddressOutDto addressOutDto = null;
-    try{
+    try  {
       addressOutDto = userFClient.getAddressByAddressId(addressId).getBody();
-      response = addressOutDto.getStreet()+" "+addressOutDto.getCity()+" "+addressOutDto.getState();
+      response = addressOutDto.getStreet() + "  " + addressOutDto.getCity() + " " + addressOutDto.getState();
     }
-    catch (Exception e){
+    catch (Exception e) {
       System.out.println(e);
     }
     return response;
   }
 
 
-  public String getUserName(Integer userId){
+  public String getUserName(Integer userId) {
     String response = "NA";
     UserOutDto userOutDto = null;
-    try{
+    try {
       userOutDto = userFClient.getUserById(userId);
       response = userOutDto.getName();
     }
-    catch (Exception e){
+    catch (Exception e) {
       System.out.println(e);
     }
     return response;
@@ -232,15 +230,6 @@ public class OrderService {
     return orderOutDto;
   }
 
-
-  /**
-   * Updates the status of an order. If the order is cancelled and more than 30 seconds have passed,
-   * it throws a SessionExpiredException. Refunds the total amount if the order is cancelled.
-   *
-   * @param orderId the ID of the order
-   * @param updateStatusInDto the DTO containing the new status
-   * @return an ApiResponse indicating the update result
-   */
   public void updateStatus(Integer orderId, UpdateStatusInDto updateStatusInDto) {
     log.info("Updating status for order ID: {}", orderId);
     Optional<Order> optionalOrder = orderRepo.findById(orderId);
