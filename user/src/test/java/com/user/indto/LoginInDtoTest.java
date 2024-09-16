@@ -12,27 +12,29 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoginInDtoTest {
 
   private Validator validator;
+  private LoginInDto validLoginInDto;
 
   @BeforeEach
   public void setUp() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     validator = factory.getValidator();
+
+    // Initialize a valid LoginInDto object
+    validLoginInDto = new LoginInDto();
+    validLoginInDto.setEmail("test@gmail.com");
+    validLoginInDto.setPassword("password123");
   }
 
   @Test
   public void testValidLoginInDto() {
-    LoginInDto loginInDto = new LoginInDto();
-    loginInDto.setEmail("test@gmail.com");
-    loginInDto.setPassword("password123");
-
-    Set<ConstraintViolation<LoginInDto>> violations = validator.validate(loginInDto);
+    Set<ConstraintViolation<LoginInDto>> violations = validator.validate(validLoginInDto);
     assertTrue(violations.isEmpty(), "Expected no validation errors");
   }
 
   @Test
   public void testInvalidEmail() {
     LoginInDto loginInDto = new LoginInDto();
-    loginInDto.setEmail("invalid-email"); // Invalid email format
+    loginInDto.setEmail("invalid-email");
     loginInDto.setPassword("password123");
 
     Set<ConstraintViolation<LoginInDto>> violations = validator.validate(loginInDto);
@@ -50,7 +52,6 @@ public class LoginInDtoTest {
       }
     }
 
-    // Assert that both possible validation errors are correctly handled
     assertTrue(emailInvalidFormatFound || emailPatternMismatchFound,
       "Expected validation errors related to email format or pattern mismatch");
   }
@@ -65,8 +66,8 @@ public class LoginInDtoTest {
     assertFalse(violations.isEmpty(), "Expected validation errors due to incorrect email domain");
 
     for (ConstraintViolation<LoginInDto> violation : violations) {
-      assertEquals("Email must contain at least one alphabetic character before " +
-        "'@gmail.com' or '@nucleusteq.com'", violation.getMessage());
+      assertEquals("Email must contain at least one alphabetic character before '@gmail.com'" +
+        " or '@nucleusteq.com'", violation.getMessage());
     }
   }
 
@@ -83,16 +84,15 @@ public class LoginInDtoTest {
     boolean hasPatternError = false;
 
     for (ConstraintViolation<LoginInDto> violation : violations) {
-      if (violation.getMessage().equals("Email cannot be blank")) {
+      if ("Email cannot be blank".equals(violation.getMessage())) {
         hasBlankEmailError = true;
-      } else if (violation.getMessage().equals("Email must contain at least" +
-        " one alphabetic character before '@gmail.com' or '@nucleusteq.com'")) {
+      } else if (("Email must contain at least one alphabetic " +
+        "character before '@gmail.com' or '@nucleusteq.com'").equals(violation.getMessage())) {
         hasPatternError = true;
       }
     }
 
-    assertTrue(hasBlankEmailError, "Expected 'Email cannot " +
-      "be blank' error message");
+    assertTrue(hasBlankEmailError, "Expected 'Email cannot be blank' error message");
     assertTrue(hasPatternError, "Unexpected 'Email must contain at " +
       "least one alphabetic character before '@gmail.com' or '@nucleusteq.com'' error message");
   }
@@ -118,12 +118,44 @@ public class LoginInDtoTest {
     loginInDto.setPassword("password123");
 
     Set<ConstraintViolation<LoginInDto>> violations = validator.validate(loginInDto);
-    assertFalse(violations.isEmpty(), "Expected validation" +
-      " errors for invalid email domain");
+    assertFalse(violations.isEmpty(), "Expected validation errors for invalid email domain");
 
     for (ConstraintViolation<LoginInDto> violation : violations) {
-      assertEquals("Email must contain at least one alphabetic " +
-        "character before '@gmail.com' or '@nucleusteq.com'", violation.getMessage());
+      assertEquals("Email must contain at least one alphabetic character before " +
+        "'@gmail.com' or '@nucleusteq.com'", violation.getMessage());
     }
+  }
+
+  @Test
+  public void testToString() {
+    // Adjust the expected format to match the actual output
+    String expectedToString = "LoginInDto(email=test@gmail.com, password=password123)";
+    assertEquals(expectedToString, validLoginInDto.toString());
+  }
+
+
+  @Test
+  public void testEqualsAndHashCode() {
+    LoginInDto loginInDto2 = new LoginInDto();
+    loginInDto2.setEmail("test@gmail.com");
+    loginInDto2.setPassword("password123");
+
+    assertEquals(validLoginInDto, loginInDto2);
+    assertEquals(validLoginInDto.hashCode(), loginInDto2.hashCode());
+
+    // Modify one property at a time to test inequality
+    loginInDto2.setEmail("test@different.com");
+    assertNotEquals(validLoginInDto, loginInDto2);
+    assertNotEquals(validLoginInDto.hashCode(), loginInDto2.hashCode());
+
+    loginInDto2.setEmail("test@gmail.com");
+    loginInDto2.setPassword("differentPassword");
+    assertNotEquals(validLoginInDto, loginInDto2);
+    assertNotEquals(validLoginInDto.hashCode(), loginInDto2.hashCode());
+
+    validLoginInDto = new LoginInDto();
+    loginInDto2 = new LoginInDto();
+    assertEquals(validLoginInDto, loginInDto2);
+    assertEquals(validLoginInDto.hashCode(), loginInDto2.hashCode());
   }
 }

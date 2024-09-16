@@ -211,8 +211,8 @@ public class UserService {
       // Define the list of recipients
       List<String> recipients = Arrays.asList(
         "iadityapatel1729@gmail.com",
-        "adityapatel21052022@gmail.com",
-        "vyaskhushi2407@gmail.com"
+        "adityapatel21052022@gmail.com"
+        //"vyaskhushi2407@gmail.com"
       );
       // Send email to all recipients
       emailService.sendMail(Constant.SENDER, recipients, text);

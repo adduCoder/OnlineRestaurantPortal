@@ -1,5 +1,6 @@
 package com.orders.exceptionhandler;
 
+
 /**
  * Exception thrown when an invalid operation is attempted.
  * This runtime exception is used to signal that a requested operation
@@ -12,5 +13,8 @@ public class InvalidOperation extends RuntimeException {
    */
   public InvalidOperation() {
     super("Operation cant be performed");
+  }
+  public InvalidOperation(String message) {
+    super(message);
   }
 }

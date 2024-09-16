@@ -15,4 +15,7 @@ public class SessionExpiredException extends RuntimeException {
   public SessionExpiredException() {
     super(Constant.SESSION_EXPIRED);
   }
+  public SessionExpiredException(String message) {
+    super(message);
+  }
 }

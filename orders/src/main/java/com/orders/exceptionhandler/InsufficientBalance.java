@@ -15,4 +15,7 @@ public class InsufficientBalance extends RuntimeException {
   public InsufficientBalance() {
     super(Constant.INSUFFICIENT_AMOUNT);
   }
+  public InsufficientBalance(String message) {
+    super(message);
+  }
 }

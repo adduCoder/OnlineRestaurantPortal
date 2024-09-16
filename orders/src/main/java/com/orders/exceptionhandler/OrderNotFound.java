@@ -15,4 +15,8 @@ public class OrderNotFound extends RuntimeException {
   public OrderNotFound() {
     super(Constant.ORDER_NOT_FOUND);
   }
+
+  public OrderNotFound(String message) {
+    super(message);
+  }
 }

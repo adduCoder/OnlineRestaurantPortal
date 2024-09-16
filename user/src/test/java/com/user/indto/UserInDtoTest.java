@@ -20,13 +20,13 @@ public class UserInDtoTest {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     validator = factory.getValidator();
 
-    // Initialize a valid UserInDto object with Indian names and emails
+    // Initialize a valid UserInDto object
     validUserInDto = new UserInDto();
     validUserInDto.setName("Aarav Kumar");
     validUserInDto.setEmail("aarav.kumar@gmail.com");
     validUserInDto.setPhoneNo("9876543210");
     validUserInDto.setPassword("password123");
-    validUserInDto.setRole(Role.USER);
+    validUserInDto.setRole(Role.USER); // Use existing roles
   }
 
   @Test
@@ -66,7 +66,6 @@ public class UserInDtoTest {
     }
   }
 
-
   @Test
   public void testEmailEnding() {
     validUserInDto.setEmail("aarav.kumar@otherdomain.com"); // Email not ending with @gmail.com or @nucleusteq.com
@@ -75,8 +74,8 @@ public class UserInDtoTest {
     assertFalse(violations.isEmpty(), "Expected validation errors due to incorrect email domain");
 
     for (ConstraintViolation<UserInDto> violation : violations) {
-      assertEquals("Email must contain at least one alphabetic character before '@gmail.com' " +
-        "or '@nucleusteq.com'", violation.getMessage());
+      assertEquals("Email must contain at least one alphabetic character before " +
+        "'@gmail.com' or '@nucleusteq.com'", violation.getMessage());
     }
   }
 
@@ -114,5 +113,55 @@ public class UserInDtoTest {
     for (ConstraintViolation<UserInDto> violation : violations) {
       assertEquals("Role cannot be blank", violation.getMessage());
     }
+  }
+
+  @Test
+  public void testToString() {
+    String expectedToString = "UserInDto{name='Aarav Kumar'," +
+      " email='aarav.kumar@gmail.com', phoneNo='9876543210', password='password123', role=USER}";
+    assertEquals(expectedToString, validUserInDto.toString());
+  }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    UserInDto userInDto2 = new UserInDto();
+    userInDto2.setName("Aarav Kumar");
+    userInDto2.setEmail("aarav.kumar@gmail.com");
+    userInDto2.setPhoneNo("9876543210");
+    userInDto2.setPassword("password123");
+    userInDto2.setRole(Role.USER);
+
+    assertEquals(validUserInDto, userInDto2);
+    assertEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    // Modify one property at a time to test inequality
+    userInDto2.setName("Aarav Kumar Updated");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    userInDto2.setName("Aarav Kumar");
+    userInDto2.setEmail("new.email@gmail.com");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    userInDto2.setEmail("aarav.kumar@gmail.com");
+    userInDto2.setPhoneNo("1234567890");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    userInDto2.setPhoneNo("9876543210");
+    userInDto2.setPassword("newpassword");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    userInDto2.setPassword("password123");
+    userInDto2.setRole(Role.OWNER);
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
+
+    validUserInDto = new UserInDto();
+    userInDto2 = new UserInDto();
+    assertEquals(validUserInDto, userInDto2);
+    assertEquals(validUserInDto.hashCode(), userInDto2.hashCode());
   }
 }

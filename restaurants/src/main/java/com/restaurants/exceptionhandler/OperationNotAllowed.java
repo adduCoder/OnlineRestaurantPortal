@@ -6,4 +6,8 @@ public class OperationNotAllowed extends RuntimeException {
   public OperationNotAllowed() {
     super(Constant.OPERATION_NOT_ALLOWED);
   }
+
+  public OperationNotAllowed(String message) {
+    super(message);
+  }
 }

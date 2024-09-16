@@ -20,5 +20,9 @@ public class UserAlreadyExisted extends RuntimeException {
     super(Constant.USER_ALREADY_EXISTED);
   }
 
+  public UserAlreadyExisted(String message) {
+    super(message);
+  }
+
 }
 

@@ -137,6 +137,7 @@ public class UserController {
     userService.addMoney(userId, amountInDto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
   @PostMapping("/send")
   public ResponseEntity<?> sendEmail(@RequestParam String text) {
     userService.sendMail(text);

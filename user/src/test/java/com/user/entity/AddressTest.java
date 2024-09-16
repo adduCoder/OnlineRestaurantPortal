@@ -3,7 +3,7 @@ package com.user.entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AddressTest {
 
@@ -84,5 +84,56 @@ public class AddressTest {
   public void testSetUserId() {
     address.setUserId(102);
     assertEquals(102, address.getUserId());
+  }
+
+  @Test
+  public void testToString() {
+    String expectedToString = "Address(id=1, street=Tower Square, state=MP, city=Indore, pinCode=452001, userId=101)";
+    assertEquals(expectedToString, address.toString());
+  }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    Address address2 = new Address();
+    address2.setId(1);
+    address2.setStreet("Tower Square");
+    address2.setCity("Indore");
+    address2.setState("MP");
+    address2.setPinCode(452001);
+    address2.setUserId(101);
+
+    assertEquals(address, address2);
+    assertEquals(address.hashCode(), address2.hashCode());
+
+    // Modify one property at a time to test inequality
+    address2.setStreet("Different Street");
+    assertNotEquals(address, address2);
+    assertNotEquals(address.hashCode(), address2.hashCode());
+
+    address2.setStreet("Tower Square");
+    address2.setCity("Different City");
+    assertNotEquals(address, address2);
+    assertNotEquals(address.hashCode(), address2.hashCode());
+
+    address2.setCity("Indore");
+    address2.setState("Different State");
+    assertNotEquals(address, address2);
+    assertNotEquals(address.hashCode(), address2.hashCode());
+
+    address2.setState("MP");
+    address2.setPinCode(123456);
+    assertNotEquals(address, address2);
+    assertNotEquals(address.hashCode(), address2.hashCode());
+
+    address2.setPinCode(452001);
+    address2.setUserId(202);
+    assertNotEquals(address, address2);
+    assertNotEquals(address.hashCode(), address2.hashCode());
+
+    // Test with two new empty Address instances
+    Address address3 = new Address();
+    Address address4 = new Address();
+    assertEquals(address3, address4);
+    assertEquals(address3.hashCode(), address4.hashCode());
   }
 }
