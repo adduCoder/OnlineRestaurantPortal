@@ -1,4 +1,5 @@
 package com.user.service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -7,25 +8,37 @@ import org.springframework.stereotype.Service;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
 
+/**
+ * Service class for handling email sending operations.
+ * This class uses {@link JavaMailSender} to send emails with specified content.
+ */
 @Service
+@Slf4j
 public class EmailService {
-
+  /**
+   * The {@link JavaMailSender} used to send emails.
+   */
   @Autowired
   private JavaMailSender javaMailSender;
 
-  public void sendMail(String from, List<String> to, String text) {
+  /**
+   * Sends an email to a list of recipients with the specified content.
+   *
+   * @param from  the email address of the sender
+   * @param to    a list of email addresses of the recipients
+   * @param text  the content of the email
+   */
+  public void sendMail(final String from, final List<String> to, final String text) {
     try {
       MimeMessage message = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message);
       helper.setFrom(from);
-      // Convert List<String> to array
       helper.setTo(to.toArray(new String[0]));
       helper.setText(text);
-      System.out.println(text);
       javaMailSender.send(message);
     } catch (Exception e) {
-      e.printStackTrace(); // Log the exception
+      log.error("Error sending email from: {} to: {}", from, to, e);
     }
   }
-
 }
+

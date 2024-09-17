@@ -14,10 +14,10 @@ public class RestaurantInDtoTest {
   public void setUp() {
     restaurantInDto = new RestaurantInDto();
     restaurantInDto.setUserId(1);
-    restaurantInDto.setRestaurantName("Cafe Mocha");
-    restaurantInDto.setAddress("123 Coffee Street, Indore");
-    restaurantInDto.setContactNumber("7896541230");
-    restaurantInDto.setDescription("A cozy place for coffee lovers");
+    restaurantInDto.setRestaurantName("Test Restaurant");
+    restaurantInDto.setAddress("123 Test Avenue, Test City");
+    restaurantInDto.setContactNumber("1234567890");
+    restaurantInDto.setDescription("Test description for the restaurant");
   }
 
   @Test
@@ -33,79 +33,67 @@ public class RestaurantInDtoTest {
 
   @Test
   public void testGetRestaurantName() {
-    assertEquals("Cafe Mocha", restaurantInDto.getRestaurantName());
+    assertEquals("Test Restaurant", restaurantInDto.getRestaurantName());
   }
 
   @Test
   public void testSetRestaurantName() {
-    restaurantInDto.setRestaurantName("Bistro Delight");
-    assertEquals("Bistro Delight", restaurantInDto.getRestaurantName());
+    restaurantInDto.setRestaurantName("Updated Restaurant");
+    assertEquals("Updated Restaurant", restaurantInDto.getRestaurantName());
   }
 
   @Test
   public void testGetAddress() {
-    assertEquals("123 Coffee Street, Indore", restaurantInDto.getAddress());
+    assertEquals("123 Test Avenue, Test City", restaurantInDto.getAddress());
   }
 
   @Test
   public void testSetAddress() {
-    restaurantInDto.setAddress("456 Tea Avenue, Bhopal");
-    assertEquals("456 Tea Avenue, Bhopal", restaurantInDto.getAddress());
+    restaurantInDto.setAddress("456 Updated Avenue, Updated City");
+    assertEquals("456 Updated Avenue, Updated City", restaurantInDto.getAddress());
   }
 
   @Test
   public void testGetContactNumber() {
-    assertEquals("7896541230", restaurantInDto.getContactNumber());
+    assertEquals("1234567890", restaurantInDto.getContactNumber());
   }
 
   @Test
   public void testSetContactNumber() {
-    restaurantInDto.setContactNumber("9876543210");
-    assertEquals("9876543210", restaurantInDto.getContactNumber());
+    restaurantInDto.setContactNumber("0987654321");
+    assertEquals("0987654321", restaurantInDto.getContactNumber());
   }
 
   @Test
   public void testGetDescription() {
-    assertEquals("A cozy place for coffee lovers", restaurantInDto.getDescription());
+    assertEquals("Test description for the restaurant", restaurantInDto.getDescription());
   }
 
   @Test
   public void testSetDescription() {
-    restaurantInDto.setDescription("A perfect spot for brunch");
-    assertEquals("A perfect spot for brunch", restaurantInDto.getDescription());
+    restaurantInDto.setDescription("Updated description");
+    assertEquals("Updated description", restaurantInDto.getDescription());
   }
-
-
-
-//  @Test
-//  public void testToString() {
-//    String expected = "RestaurantInDto(userId=1, " +
-//      "restaurantName=Cafe Mocha, address=123 Coffee Street, Indore, contactNumber=7896541230" +
-//      ", description=A cozy place for coffee lovers, imageUrl=http://example.com/image.jpg)";
-//    assertEquals(expected, restaurantInDto.toString());
-//  }
 
   @Test
   public void testHashCode() {
     RestaurantInDto restaurantInDto1 = new RestaurantInDto();
     restaurantInDto1.setUserId(1);
-    restaurantInDto1.setRestaurantName("Cafe Mocha");
-    restaurantInDto1.setAddress("123 Coffee Street, Indore");
-    restaurantInDto1.setContactNumber("7896541230");
-    restaurantInDto1.setDescription("A cozy place for coffee lovers");
-    //restaurantInDto1.setImageUrl("http://example.com/image.jpg");
+    restaurantInDto1.setRestaurantName("Test Restaurant");
+    restaurantInDto1.setAddress("123 Test Avenue, Test City");
+    restaurantInDto1.setContactNumber("1234567890");
+    restaurantInDto1.setDescription("Test description for the restaurant");
 
     RestaurantInDto restaurantInDto2 = new RestaurantInDto();
     restaurantInDto2.setUserId(1);
-    restaurantInDto2.setRestaurantName("Cafe Mocha");
-    restaurantInDto2.setAddress("123 Coffee Street, Indore");
-    restaurantInDto2.setContactNumber("7896541230");
-    restaurantInDto2.setDescription("A cozy place for coffee lovers");
-    //restaurantInDto2.setImageUrl("http://example.com/image.jpg");
+    restaurantInDto2.setRestaurantName("Test Restaurant");
+    restaurantInDto2.setAddress("123 Test Avenue, Test City");
+    restaurantInDto2.setContactNumber("1234567890");
+    restaurantInDto2.setDescription("Test description for the restaurant");
 
     assertEquals(restaurantInDto1.hashCode(), restaurantInDto2.hashCode());
 
-    restaurantInDto2.setRestaurantName("Bistro Delight");
+    restaurantInDto2.setRestaurantName("Updated Restaurant");
     assertNotEquals(restaurantInDto1.hashCode(), restaurantInDto2.hashCode());
   }
 
@@ -113,23 +101,21 @@ public class RestaurantInDtoTest {
   public void testEquals() {
     RestaurantInDto restaurantInDto1 = new RestaurantInDto();
     restaurantInDto1.setUserId(1);
-    restaurantInDto1.setRestaurantName("Cafe Mocha");
-    restaurantInDto1.setAddress("123 Coffee Street, Indore");
-    restaurantInDto1.setContactNumber("7896541230");
-    restaurantInDto1.setDescription("A cozy place for coffee lovers");
-    //restaurantInDto1.setImageUrl("http://example.com/image.jpg");
+    restaurantInDto1.setRestaurantName("Test Restaurant");
+    restaurantInDto1.setAddress("123 Test Avenue, Test City");
+    restaurantInDto1.setContactNumber("1234567890");
+    restaurantInDto1.setDescription("Test description for the restaurant");
 
     RestaurantInDto restaurantInDto2 = new RestaurantInDto();
     restaurantInDto2.setUserId(1);
-    restaurantInDto2.setRestaurantName("Cafe Mocha");
-    restaurantInDto2.setAddress("123 Coffee Street, Indore");
-    restaurantInDto2.setContactNumber("7896541230");
-    restaurantInDto2.setDescription("A cozy place for coffee lovers");
-    //restaurantInDto2.setImageUrl("http://example.com/image.jpg");
+    restaurantInDto2.setRestaurantName("Test Restaurant");
+    restaurantInDto2.setAddress("123 Test Avenue, Test City");
+    restaurantInDto2.setContactNumber("1234567890");
+    restaurantInDto2.setDescription("Test description for the restaurant");
 
     assertEquals(restaurantInDto1, restaurantInDto2);
 
-    restaurantInDto2.setRestaurantName("Bistro Delight");
+    restaurantInDto2.setRestaurantName("Updated Restaurant");
     assertNotEquals(restaurantInDto1, restaurantInDto2);
 
     assertEquals(restaurantInDto1, restaurantInDto1);

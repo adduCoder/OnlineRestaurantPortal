@@ -1,4 +1,4 @@
-package com.user.exceptionhandler;
+package com.user.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,21 +35,17 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
-    // Create a map to hold the structured error response
+  public Map<String, Object> handleValidationExceptions(final MethodArgumentNotValidException ex) {
     Map<String, Object> errorResponse = new HashMap<>();
-
-    // Collect the first validation error for each field
     Map<String, String> fieldErrors = ex.getBindingResult()
       .getFieldErrors()
       .stream()
       .collect(Collectors.toMap(
-        FieldError::getField,     // Field name as key
-        FieldError::getDefaultMessage,  // First error message as value
-        (existing, replacement) -> existing // If multiple errors for the same field, keep the first
+        FieldError::getField,
+        FieldError::getDefaultMessage,
+        (existing, replacement) -> existing
       ));
 
-    // Add the status and the field errors map to the response
     errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
     errorResponse.put("errors", fieldErrors);
 
@@ -66,19 +62,35 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UserAlreadyExisted.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse userAlreadyExisted(UserAlreadyExisted ex) {
+  public ErrorResponse userAlreadyExisted(final UserAlreadyExisted ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
+  /**
+   * Handles {@link NotFound} exceptions.
+   * This exception is thrown when a requested resource is not found.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND} and the exception message
+   */
   @ExceptionHandler(NotFound.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleNoAddressFound(NotFound ex) {
+  public ErrorResponse handleNoAddressFound(final NotFound ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
+
+
+  /**
+   * Handles {@link HttpMessageNotReadableException} exceptions.
+   * This exception is thrown when the request payload cannot be read or parsed.
+   *
+   * @param ex the exception to handle
+   * @return a {@link ResponseEntity} containing an error message and HTTP status
+   */
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+  public ResponseEntity<Map<String, String>> handleMessageNotReadable(final HttpMessageNotReadableException ex) {
     Map<String, String> errors = new HashMap<>();
     String message = ex.getMessage();
 
@@ -96,10 +108,17 @@ public class GlobalExceptionHandler {
   }
 
 
+  /**
+   * Handles general {@link Exception} instances.
+   * This method handles unexpected exceptions that are not specifically handled by other methods.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#INTERNAL_SERVER_ERROR} and a general error message
+   */
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ResponseBody
-  public ErrorResponse handleGeneralException(Exception ex) {
+  public ErrorResponse handleGeneralException(final Exception ex) {
     String message = "An unexpected error occurred. Please try again later or contact support.";
     return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
   }
@@ -109,7 +128,17 @@ public class GlobalExceptionHandler {
    * Class representing the error response returned by the exception handlers.
    */
   public static class ErrorResponse {
+    /**
+     * Gets the HTTP status code.
+     *
+     * @return the HTTP status code
+     */
     private int status;
+    /**
+     * Sets the HTTP status code.
+     *
+     * @param status the HTTP status code to set
+     */
     private String message;
 
     /**
@@ -118,7 +147,7 @@ public class GlobalExceptionHandler {
      * @param status  the HTTP status code
      * @param message the error message
      */
-    public ErrorResponse(int status, String message) {
+    public ErrorResponse(final int status, final String message) {
       this.status = status;
       this.message = message;
     }
@@ -137,7 +166,7 @@ public class GlobalExceptionHandler {
      *
      * @param status the HTTP status code
      */
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
       this.status = status;
     }
 
@@ -156,7 +185,7 @@ public class GlobalExceptionHandler {
      *
      * @param message the error message
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
       this.message = message;
     }
   }

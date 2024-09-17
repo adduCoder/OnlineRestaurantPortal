@@ -11,15 +11,15 @@ public class RestaurantTest {
 
   @BeforeEach
   public void setUp() {
-    // Initialize the Restaurant object
+    // Initialize the Restaurant object with placeholder data
     restaurant = new Restaurant();
-    restaurant.setId(1);
-    restaurant.setUserId(1001);
-    restaurant.setRestaurantName("The Spice House");
-    restaurant.setAddress("123 Main St, Springfield");
-    restaurant.setContactNumber("9876543210");
-    restaurant.setDescription("A place for authentic spices and cuisine");
-    //restaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    restaurant.setId(1); // Placeholder ID
+    restaurant.setUserId(1001); // Placeholder User ID
+    restaurant.setRestaurantName("Test Restaurant"); // Placeholder Restaurant Name
+    restaurant.setAddress("123 Test St, Test City"); // Placeholder Address
+    restaurant.setContactNumber("1234567890"); // Placeholder Contact Number
+    restaurant.setDescription("A test description for restaurant"); // Placeholder Description
+    //restaurant.setImageUrl("http://example.com/testrestaurant.jpg"); // Uncomment if needed
   }
 
   @Test
@@ -27,42 +27,42 @@ public class RestaurantTest {
     // Test the fields of the Restaurant entity
     assertEquals(1, restaurant.getId());
     assertEquals(1001, restaurant.getUserId());
-    assertEquals("The Spice House", restaurant.getRestaurantName());
-    assertEquals("123 Main St, Springfield", restaurant.getAddress());
-    assertEquals("9876543210", restaurant.getContactNumber());
-    assertEquals("A place for authentic spices and cuisine", restaurant.getDescription());
-    //assertEquals("http://example.com/spicehouse.jpg", restaurant.getImageUrl());
+    assertEquals("Test Restaurant", restaurant.getRestaurantName());
+    assertEquals("123 Test St, Test City", restaurant.getAddress());
+    assertEquals("1234567890", restaurant.getContactNumber());
+    assertEquals("A test description for restaurant", restaurant.getDescription());
+    //assertEquals("http://example.com/testrestaurant.jpg", restaurant.getImageUrl()); // Uncomment if needed
   }
 
   @Test
   public void testRestaurantMutations() {
     // Test setting new values for the Restaurant entity
-    restaurant.setRestaurantName("The Herb Garden");
-    assertEquals("The Herb Garden", restaurant.getRestaurantName());
+    restaurant.setRestaurantName("Updated Restaurant");
+    assertEquals("Updated Restaurant", restaurant.getRestaurantName());
 
-    restaurant.setAddress("456 Elm St, Metropolis");
-    assertEquals("456 Elm St, Metropolis", restaurant.getAddress());
+    restaurant.setAddress("456 Update Ave, Update City");
+    assertEquals("456 Update Ave, Update City", restaurant.getAddress());
 
-    restaurant.setContactNumber("8765432109");
-    assertEquals("8765432109", restaurant.getContactNumber());
+    restaurant.setContactNumber("0987654321");
+    assertEquals("0987654321", restaurant.getContactNumber());
   }
 
   @Test
   public void testRestaurantEquality() {
     // Test equality and hashcode
     Restaurant anotherRestaurant = new Restaurant();
-    anotherRestaurant.setId(1);
-    anotherRestaurant.setUserId(1001);
-    anotherRestaurant.setRestaurantName("The Spice House");
-    anotherRestaurant.setAddress("123 Main St, Springfield");
-    anotherRestaurant.setContactNumber("9876543210");
-    anotherRestaurant.setDescription("A place for authentic spices and cuisine");
-    //anotherRestaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    anotherRestaurant.setId(1); // Placeholder ID
+    anotherRestaurant.setUserId(1001); // Placeholder User ID
+    anotherRestaurant.setRestaurantName("Test Restaurant"); // Placeholder Restaurant Name
+    anotherRestaurant.setAddress("123 Test St, Test City"); // Placeholder Address
+    anotherRestaurant.setContactNumber("1234567890"); // Placeholder Contact Number
+    anotherRestaurant.setDescription("A test description for restaurant"); // Placeholder Description
+    //anotherRestaurant.setImageUrl("http://example.com/testrestaurant.jpg"); // Uncomment if needed
 
     assertEquals(restaurant, anotherRestaurant);
     assertEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
 
-    anotherRestaurant.setId(2);
+    anotherRestaurant.setId(2); // Different ID
     assertNotEquals(restaurant, anotherRestaurant);
     assertNotEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
   }

@@ -22,8 +22,14 @@ public class CartOutDto {
    */
   private Integer restaurantId;
 
+  /**
+   * name of the restaurant where the food item is ordered from.
+   */
   private String restaurantName;
 
+  /**
+   * name of the foodIem  ordered .
+   */
   private String foodItemName;
   /**
    * The ID of the food item in the cart.

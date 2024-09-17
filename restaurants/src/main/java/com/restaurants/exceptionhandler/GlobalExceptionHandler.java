@@ -15,37 +15,61 @@ import java.util.Map;
 
 /**
  * Global exception handler for the application.
- * This class handles exceptions thrown by controllers and returns appropriate
- * HTTP responses with error messages.
+ * This class handles various exceptions thrown by controllers
+ * and returns appropriate HTTP responses with error messages.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  /**
+   * Handles the {@link NotFound} exception.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
+   */
   @ExceptionHandler(NotFound.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleNotFound(NotFound ex) {
+  public ErrorResponse handleNotFound(final NotFound ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
+  /**
+   * Handles the {@link AlreadyExists} exception.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT}
+   */
   @ExceptionHandler(AlreadyExists.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleAlreadyExists(AlreadyExists ex) {
+  public ErrorResponse handleAlreadyExists(final AlreadyExists ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
+  /**
+   * Handles the {@link OperationNotAllowed} exception.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT}
+   */
   @ExceptionHandler(OperationNotAllowed.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleOperationNotAllowed(OperationNotAllowed ex) {
+  public ErrorResponse handleOperationNotAllowed(final OperationNotAllowed ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
+  /**
+   * Handles the {@link IllegalArgumentException}.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT}
+   */
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
+  public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
@@ -59,21 +83,17 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public Map<String, Object> handleValidationExceptions(Exception ex) {
+  public Map<String, Object> handleValidationExceptions(final Exception ex) {
     // Create a map to hold the structured error response
     Map<String, Object> errorResponse = new HashMap<>();
     Map<String, String> fieldErrors = new HashMap<>();
 
     // Handle MethodArgumentNotValidException
     if (ex instanceof MethodArgumentNotValidException) {
-      MethodArgumentNotValidException methodArgumentException = (MethodArgumentNotValidException) ex;
-      methodArgumentException.getBindingResult().getFieldErrors().forEach(error ->
-        fieldErrors.put(error.getField(), error.getDefaultMessage())
-      );
-    }
-
-    // Handle BindException
-    else if (ex instanceof BindException) {
+        MethodArgumentNotValidException methodArgumentException = (MethodArgumentNotValidException) ex;
+        methodArgumentException.getBindingResult().getFieldErrors().forEach(error ->
+          fieldErrors.put(error.getField(), error.getDefaultMessage()));
+    } else if (ex instanceof BindException) {
       BindException bindException = (BindException) ex;
       bindException.getBindingResult().getFieldErrors().forEach(error ->
         fieldErrors.put(error.getField(), error.getDefaultMessage())
@@ -87,9 +107,14 @@ public class GlobalExceptionHandler {
     return errorResponse; // Return the structured response as a map
   }
 
-
+  /**
+   * Handles the {@link HttpMessageNotReadableException} when an invalid request payload is provided.
+   *
+   * @param ex the exception to handle
+   * @return a {@link ResponseEntity} with an error message and status {@link HttpStatus#BAD_REQUEST}
+   */
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<Map<String, String>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+  public ResponseEntity<Map<String, String>> handleMessageNotReadable(final HttpMessageNotReadableException ex) {
     Map<String, String> errors = new HashMap<>();
     String message = ex.getMessage();
 
@@ -103,11 +128,16 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
-
+  /**
+   * Handles generic exceptions not explicitly caught by other handlers.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#INTERNAL_SERVER_ERROR}
+   */
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ResponseBody
-  public ErrorResponse handleGeneralException(Exception ex) {
+  public ErrorResponse handleGeneralException(final Exception ex) {
     String message = "An unexpected error occurred. Please try again later or contact support.";
     return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
   }
@@ -117,7 +147,14 @@ public class GlobalExceptionHandler {
    * Class representing the error response returned by the exception handlers.
    */
   public static class ErrorResponse {
+    /**
+     * The HTTP status code of the error response.
+     */
     private int status;
+
+    /**
+     * The error message describing the cause of the error.
+     */
     private String message;
 
     /**
@@ -126,7 +163,7 @@ public class GlobalExceptionHandler {
      * @param status  the HTTP status code
      * @param message the error message
      */
-    public ErrorResponse(int status, String message) {
+    public ErrorResponse(final int status, final  String message) {
       this.status = status;
       this.message = message;
     }
@@ -146,7 +183,7 @@ public class GlobalExceptionHandler {
      *
      * @param status the HTTP status code
      */
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
       this.status = status;
     }
 
@@ -165,7 +202,7 @@ public class GlobalExceptionHandler {
      *
      * @param message the error message
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
       this.message = message;
     }
   }

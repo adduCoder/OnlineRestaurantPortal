@@ -19,13 +19,4 @@ public class UserApplicationTests {
   void contextLoads() {
     assertNotNull(applicationContext, "The application context should have loaded.");
   }
-//
-//  @Test
-//  void testMain() {
-//     try {
-//      UserApplication.main(new String[] {});
-//    } catch (Exception e) {
-//       throw new RuntimeException("Failed to start the application", e);
-//    }
-//  }
 }

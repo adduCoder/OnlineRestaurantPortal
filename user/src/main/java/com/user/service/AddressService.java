@@ -2,9 +2,9 @@ package com.user.service;
 
 import com.user.dto.AddressInDto;
 import com.user.dto.AddressOutDto;
-import com.user.dtoconversion.DtoConversion;
+import com.user.conversion.DtoConversion;
 import com.user.entity.Address;
-import com.user.exceptionhandler.NotFound;
+import com.user.exception.NotFound;
 import com.user.repository.AddressRepo;
 import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +27,22 @@ import java.util.Optional;
 @Service
 public class AddressService {
 
+  /**
+   * Repository for accessing address data from the database.
+   * <p>
+   * This is used to perform CRUD operations on address entities.
+   * </p>
+   */
   @Autowired
   private AddressRepo addressRepo;
 
-  public AddressOutDto createAddress(AddressInDto addressInDto) {
+  /**
+   * Creates a new address and saves it to the repository.
+   *
+   * @param addressInDto the DTO containing address data to be saved
+   * @return an {@link AddressOutDto} representing the created address
+   */
+  public AddressOutDto createAddress(final AddressInDto addressInDto) {
     log.info("Creating address for userId: {}", addressInDto.getUserId());
     Address address = DtoConversion.mapToAddress(addressInDto);
     //Integer userId = address.getUserId();
@@ -45,7 +57,7 @@ public class AddressService {
    * @param userId the ID of the user whose addresses are to be retrieved
    * @return a list of {@link AddressOutDto} containing the addresses for the specified user
    */
-  public List<AddressOutDto> getAddressByUserId(Integer userId) {
+  public List<AddressOutDto> getAddressByUserId(final Integer userId) {
     //just to check whether user existed with that userId
     log.info("Fetching addresses for userId: {}", userId);
     List<Address> addressList = addressRepo.findAllByUserId(userId);
@@ -63,11 +75,12 @@ public class AddressService {
    * @param addressId the ID of the address to be deleted
    * @return a success message indicating that the address was deleted
    */
-  public String deleteAddress(Integer addressId) {
+  public String deleteAddress(final Integer addressId) {
     log.info("Received request to delete address with addressId: {}", addressId);
     Optional<Address> optionalAddress = addressRepo.findById(addressId);
-    if (!optionalAddress.isPresent())
+    if (!optionalAddress.isPresent()) {
       throw new NotFound(Constant.NO_ADDRESS_FOUND);
+    }
     Address address = optionalAddress.get();
     addressRepo.delete(address);
     log.info("Address with addressId: {} deleted successfully", addressId);
@@ -81,7 +94,7 @@ public class AddressService {
    * @param updateAddressInDto the request containing updated address details
    * @return an {@link AddressOutDto} representing the updated address
    */
-  public AddressOutDto updateAddress(Integer addressId, AddressInDto updateAddressInDto) {
+  public AddressOutDto updateAddress(final Integer addressId, final AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
     Optional<Address> optionalAddress = addressRepo.findById(addressId);
     if (!optionalAddress.isPresent()) {
@@ -97,7 +110,14 @@ public class AddressService {
     return DtoConversion.mapToAddressOutDto(address);
   }
 
-  public AddressOutDto getAddressByAddressId(Integer addressId) {
+  /**
+   * Retrieves an address by its ID.
+   *
+   * @param addressId the ID of the address to be retrieved
+   * @return an {@link AddressOutDto} representing the retrieved address
+   * @throws NotFound if no address with the specified ID is found
+   */
+  public AddressOutDto getAddressByAddressId(final Integer addressId) {
     Optional<Address> optionalAddress = addressRepo.findById(addressId);
     if (!optionalAddress.isPresent()) {
       throw new NotFound(Constant.NO_ADDRESS_FOUND);

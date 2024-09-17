@@ -33,56 +33,89 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class responsible for managing orders in the system.
+ */
 @Service
 @Slf4j
 public class OrderService {
+  /**
+   * Repository for managing order entities.
+   */
   @Autowired
   private OrderRepo orderRepo;
 
+  /**
+   * Repository for managing cart entities.
+   */
   @Autowired
   private CartRepo cartRepo;
 
+  /**
+   * Feign client for interacting with user-related services.
+   */
   @Autowired
   private UserFClient userFClient;
 
+
+  /**
+   * Feign client for interacting with restaurant-related services.
+   */
   @Autowired
   private RestaurantFClient restaurantFClient;
 
-  public String getRestaurantName(Integer restaurantId) {
+
+  /**
+   * Retrieves the restaurant name by its ID.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return the name of the restaurant
+   */
+  public String getRestaurantName(final Integer restaurantId) {
     String response = "NA";
     RestaurantOutDto restaurantOutDto = null;
     try {
       restaurantOutDto = restaurantFClient.getRestaurantById(restaurantId).getBody();
       response = restaurantOutDto.getRestaurantName();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       log.info("exception in fetching data from restro microservice using fclient");
     }
     return response;
   }
 
-  public String getAddress(Integer addressId) {
+
+  /**
+   * Retrieves the address details by address ID.
+   *
+   * @param addressId the ID of the address
+   * @return a formatted address string
+   */
+  public String getAddress(final Integer addressId) {
     String response = "NA";
     AddressOutDto addressOutDto = null;
     try  {
       addressOutDto = userFClient.getAddressByAddressId(addressId).getBody();
       response = addressOutDto.getStreet() + "  " + addressOutDto.getCity() + " " + addressOutDto.getState();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       System.out.println(e);
     }
     return response;
   }
 
 
-  public String getUserName(Integer userId) {
+  /**
+   * Retrieves the user name by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the name of the user
+   */
+  public String getUserName(final Integer userId) {
     String response = "NA";
     UserOutDto userOutDto = null;
     try {
       userOutDto = userFClient.getUserById(userId);
       response = userOutDto.getName();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       System.out.println(e);
     }
     return response;
@@ -95,7 +128,7 @@ public class OrderService {
    * @param cartIds the list of cart IDs
    * @return a string representing the order details
    */
-  public String toOrderDetails(List<Integer> cartIds) {
+  public String toOrderDetails(final List<Integer> cartIds) {
     StringBuilder result = new StringBuilder();
     for (Integer cartId : cartIds) {
       Optional<Cart> optionalCart = cartRepo.findById(cartId);
@@ -121,7 +154,7 @@ public class OrderService {
    * @param orderDetails the string representing the order details
    * @return a list of OrderItemDetailOutDto
    */
-  public List<OrderItemDetailOutDto> orderDetailsForOrderOutDto(String orderDetails) {
+  public List<OrderItemDetailOutDto> orderDetailsForOrderOutDto(final String orderDetails) {
     List<OrderItemDetailOutDto> itemDetails = new ArrayList<>();
     String[] items = orderDetails.split(",");
 
@@ -178,7 +211,7 @@ public class OrderService {
    *
    * @param orderInDto the DTO containing order details
    */
-  public void createOrder(OrderInDto orderInDto) {
+  public void createOrder(final OrderInDto orderInDto) {
     UserOutDto userOutDto = null;
     try {
       userOutDto = userFClient.getUserById(orderInDto.getUserId());
@@ -222,7 +255,7 @@ public class OrderService {
    * @param orderId the ID of the order
    * @return the OrderOutDto containing order details
    */
-  public OrderOutDto getOrder(Integer orderId) {
+  public OrderOutDto getOrder(final Integer orderId) {
     Optional<Order> optionalOrder = orderRepo.findById(orderId);
     if (!optionalOrder.isPresent()) {
       log.error("Order not found with ID: {}", orderId);
@@ -238,7 +271,19 @@ public class OrderService {
     return orderOutDto;
   }
 
-  public void updateStatus(Integer orderId, UpdateStatusInDto updateStatusInDto) {
+  /**
+   * Updates the status of an order based on the provided order ID and status update details.
+   * If the status is set to CANCELLED and the time difference between the current time and the
+   * order's last update exceeds 30 seconds, a session expiration exception is thrown. Otherwise,
+   * the refund amount is processed and added back to the user's account.
+   *
+   * @param orderId the ID of the order to be updated
+   * @param updateStatusInDto the DTO containing the new status for the order
+   * @throws OrderNotFound if the order with the specified ID does not exist
+   * @throws UserNotFound if the user associated with the order cannot be found
+   * @throws SessionExpiredException if the order is attempted to be cancelled after the allowed time
+   */
+  public void updateStatus(final Integer orderId, final UpdateStatusInDto updateStatusInDto) {
     log.info("Updating status for order ID: {}", orderId);
     Optional<Order> optionalOrder = orderRepo.findById(orderId);
     if (!optionalOrder.isPresent()) {
@@ -278,7 +323,7 @@ public class OrderService {
    * @param userId the ID of the user
    * @return a list of OrderOutDto for the user
    */
-  public List<OrderOutDto> getOrdersByUser(Integer userId) {
+  public List<OrderOutDto> getOrdersByUser(final Integer userId) {
     List<Order> orderList = orderRepo.findByUserId(userId);
     List<OrderOutDto> orderOutDtoList = new ArrayList<>();
     for (Order order : orderList) {
@@ -298,7 +343,7 @@ public class OrderService {
    * @param restaurantId the ID of the restaurant
    * @return a list of OrderOutDto for the restaurant
    */
-  public List<OrderOutDto> getOrdersByRestaurant(Integer restaurantId) {
+  public List<OrderOutDto> getOrdersByRestaurant(final Integer restaurantId) {
     List<Order> orderList = orderRepo.findByRestaurantId(restaurantId);
     List<OrderOutDto> orderOutDtoList = new ArrayList<>();
     for (Order order : orderList) {

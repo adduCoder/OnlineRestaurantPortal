@@ -28,50 +28,50 @@ class DtoConversionTest {
   void setUp() {
     // Initialize RestaurantInDto
     restaurantInDto = new RestaurantInDto();
-    restaurantInDto.setUserId(1);
-    restaurantInDto.setRestaurantName("Spice Hub");
-    restaurantInDto.setAddress("123 Main St");
-    restaurantInDto.setContactNumber("7896541230");
-    restaurantInDto.setDescription("Best Indian Cuisine");
+    restaurantInDto.setUserId(1); // Placeholder User ID
+    restaurantInDto.setRestaurantName("Test Restaurant");
+    restaurantInDto.setAddress("123 Test St, Test City, TC");
+    restaurantInDto.setContactNumber("0000000000");
+    restaurantInDto.setDescription("Test Description");
 
     // Initialize Restaurant Entity
     restaurant = new Restaurant();
-    restaurant.setId(1);
-    restaurant.setUserId(1);
-    restaurant.setRestaurantName("spice hub"); // formatted to match stringFormatter output
-    restaurant.setAddress("123 Main St");
-    restaurant.setContactNumber("7896541230");
-    restaurant.setDescription("best indian cuisine"); // formatted to match stringFormatter output
+    restaurant.setId(1); // Placeholder Restaurant ID
+    restaurant.setUserId(1); // Placeholder User ID
+    restaurant.setRestaurantName("test restaurant");
+    restaurant.setAddress("123 Test St, Test City, TC");
+    restaurant.setContactNumber("0000000000");
+    restaurant.setDescription("test description");
 
     // Initialize CategoryInDto
     categoryInDto = new CategoryInDto();
-    categoryInDto.setName("desserts");
-    categoryInDto.setRestaurantId(1);
+    categoryInDto.setName("Test Category");
+    categoryInDto.setRestaurantId(1); // Placeholder Restaurant ID
 
     // Initialize Category Entity
     category = new Category();
-    category.setId(1);
-    category.setName("desserts"); // formatted to match stringFormatter output
-    category.setRestaurantId(1);
+    category.setId(1); // Placeholder Category ID
+    category.setName("test category");
+    category.setRestaurantId(1); // Placeholder Restaurant ID
 
     // Initialize FoodItemInDto
     foodItemInDto = new FoodItemInDto();
-    foodItemInDto.setFoodName("Gulab Jamun");
-    foodItemInDto.setRestaurantId(1);
-    foodItemInDto.setDescription("Sweet Indian dessert");
-    foodItemInDto.setCategoryId(1);
+    foodItemInDto.setFoodName("Test Food Item");
+    foodItemInDto.setRestaurantId(1); // Placeholder Restaurant ID
+    foodItemInDto.setDescription("Test Description");
+    foodItemInDto.setCategoryId(1); // Placeholder Category ID
     foodItemInDto.setIsAvailable(true);
-    foodItemInDto.setPrice(2.99);
+    foodItemInDto.setPrice(9.99);
 
     // Initialize FoodItem Entity
     foodItem = new FoodItem();
-    foodItem.setId(1);
-    foodItem.setFoodName("gulab jamun"); // formatted to match stringFormatter output
-    foodItem.setRestaurantId(1);
-    foodItem.setDescription("Sweet Indian dessert");
-    foodItem.setCategoryId(1);
+    foodItem.setId(1); // Placeholder Food Item ID
+    foodItem.setFoodName("test food item");
+    foodItem.setRestaurantId(1); // Placeholder Restaurant ID
+    foodItem.setDescription("Test Description");
+    foodItem.setCategoryId(1); // Placeholder Category ID
     foodItem.setIsAvailable(true);
-    foodItem.setPrice(2.99);
+    foodItem.setPrice(9.99);
   }
 
   @Test
@@ -111,7 +111,7 @@ class DtoConversionTest {
     assertNotNull(result);
     assertEquals(category.getId(), result.getId());
     assertEquals(category.getName(), result.getName());
-    assertEquals(category.getRestaurantId(), result.getResturantId());
+    assertEquals(category.getRestaurantId(), result.getId());
   }
 
   @Test

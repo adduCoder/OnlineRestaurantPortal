@@ -14,7 +14,7 @@ public class RestaurantsApplication {
    * The main method to start the Spring Boot application.
    * @param args Command-line arguments.
    */
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     log.info("Starting RestaurantsApplication...");
     SpringApplication.run(RestaurantsApplication.class, args);
     log.info("RestaurantsApplication started successfully.");

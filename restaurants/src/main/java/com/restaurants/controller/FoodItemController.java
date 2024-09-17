@@ -35,10 +35,11 @@ import java.util.List;
 @RequestMapping("/foodItem")
 @CrossOrigin(origins = "http://localhost:3000")
 public class FoodItemController {
-
+  /** Service for handling food item operations. */
   @Autowired
   private FoodItemService foodItemService;
 
+  /** Repository for accessing restaurant data. */
   @Autowired
   private RestaurantRepo restaurantRepo;
 
@@ -50,7 +51,7 @@ public class FoodItemController {
    */
   @Transactional
   @GetMapping("/getAll/{restaurantId}")
-  public ResponseEntity<?> getAllFoodItem(@PathVariable Integer restaurantId) {
+  public ResponseEntity<?> getAllFoodItem(@PathVariable final Integer restaurantId) {
     log.info("Fetching all food items for restaurant with ID: {}", restaurantId);
     List<FoodItemOutDto> foodItemOutDtoList = foodItemService.getAll(restaurantId);
     log.info("Retrieved food items: {}", foodItemOutDtoList);
@@ -60,37 +61,44 @@ public class FoodItemController {
   /**
    * Adds a food item.
    *
-   * @param multipartFile the file associated with the food item
+   * @param foodItemInDto the details of the food item to add
+   * @param multipartFile the file associated with the food item (optional)
    * @return a response entity with the result of the operation
    */
   @Transactional
   @PostMapping("/addFoodItem")
   public ResponseEntity<?> addFoodItem(
-    @ModelAttribute @Valid FoodItemInDto foodItemInDto,
-    @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
+    @ModelAttribute @Valid final FoodItemInDto foodItemInDto,
+    @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
     foodItemService.add(foodItemInDto, multipartFile);
     return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
   /**
    * Updates an existing food item.
-   *
+   * @param multipartFile the new file associated with the food item (optional)
    * @param foodItemId the ID of the food item to update
    * @param foodItemInDto the new food item information
    * @return ResponseEntity containing the updated food item details and HTTP status
    */
   @Transactional
   @PutMapping("/update/{foodItemId}")
-  public ResponseEntity<?> updateFoodItem(@PathVariable Integer foodItemId,  @Valid @ModelAttribute FoodItemInDto foodItemInDto,
-                                          @RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile) {
+  public ResponseEntity<?> updateFoodItem(@PathVariable final Integer foodItemId,  @Valid @ModelAttribute final FoodItemInDto
+    foodItemInDto, @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
     log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
     foodItemService.updateFoodItem(foodItemId, foodItemInDto, multipartFile);
     log.info("Updated food item");
     return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
+  /**
+   * Retrieves the name of a food item by its ID.
+   *
+   * @param foodItemId the ID of the food item to retrieve
+   * @return ResponseEntity containing the food item name and HTTP status
+   */
   @GetMapping("/getName/{foodItemId}")
-  public ResponseEntity<?> getFoodItemName(@PathVariable Integer foodItemId) {
+  public ResponseEntity<?> getFoodItemName(@PathVariable final Integer foodItemId) {
     FoodItemNameOutDto foodItemNameOutDto = foodItemService.getFoodItemName(foodItemId);
     return new ResponseEntity<>(foodItemNameOutDto, HttpStatus.OK);
   }

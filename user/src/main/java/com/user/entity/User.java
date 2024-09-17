@@ -1,5 +1,6 @@
 package com.user.entity;
 
+import com.user.util.Constant;
 import com.user.util.Role;
 import lombok.Data;
 
@@ -57,7 +58,7 @@ public class User {
    * This field is initialized to 1000.0 by default.
    */
   @Column(name = "walletBalance")
-  private Double walletBalance = 1000.0;
+  private Double walletBalance = Constant.DEFAULT_WALLET_BALANCE;
 
   /**
    * The phone number of the user.

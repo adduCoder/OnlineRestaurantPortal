@@ -15,5 +15,11 @@ public interface FoodItemRepo extends JpaRepository<FoodItem, Integer> {
    */
   List<FoodItem> findAllByRestaurantId(Integer restaurantId);
 
+  /**
+   * Finds a food item by its name.
+   *
+   * @param foodName the name of the food item
+   * @return an {@link Optional} containing the found food item, or empty if no food item matches
+   */
   Optional<FoodItem> findByfoodName(String foodName);
 }

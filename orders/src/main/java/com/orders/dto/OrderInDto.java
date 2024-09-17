@@ -8,35 +8,47 @@ import java.util.List;
 
 /**
  * Data Transfer Object (DTO) for capturing input related to an order.
- * This includes details about the user, restaurant, address, cart items, total amount, and order status.
+ * <p>
+ * This class encapsulates all necessary details required for placing an order,
+ * including user ID, restaurant ID, delivery address ID, cart IDs, total amount,
+ * and the current status of the order.
+ * </p>
  */
 @Data
 public class OrderInDto {
 
   /**
    * The ID of the user placing the order.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private Integer userId;
 
   /**
    * The ID of the restaurant where the order is placed.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private Integer restaurantId;
 
   /**
    * The ID of the address where the order will be delivered.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private Integer addressId;
 
   /**
    * The list of cart IDs associated with the order.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private List<Integer> cartIds;
@@ -44,26 +56,42 @@ public class OrderInDto {
 
   /**
    * The total amount for the order.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private Double totalAmount;
 
   /**
    * The status of the order.
+   * <p>
    * This field is required and cannot be null.
+   * </p>
    */
   @NotNull
   private OrderStatus orderStatus;
 
   /**
-   * Default constructor for OrderInDto.
+   * Default constructor for {@link OrderInDto}.
    */
   public OrderInDto() {
   }
 
-  public OrderInDto(Integer userId, Integer restaurantId, Integer addressId, List<Integer> cartIds, Double totalAmount,
-                    OrderStatus orderStatus) {
+  /**
+   * Constructs an {@link OrderInDto} with the specified details.
+   *
+   * @param userId The ID of the user placing the order.
+   * @param restaurantId The ID of the restaurant where the order is placed.
+   * @param addressId The ID of the address where the order will be delivered.
+   * @param cartIds The list of cart IDs associated with the order.
+   * @param totalAmount The total amount for the order.
+   * @param orderStatus The status of the order.
+   */
+  public OrderInDto(
+    final Integer userId, final Integer restaurantId,
+    final Integer addressId, final List<Integer> cartIds, final Double totalAmount,
+                    final OrderStatus orderStatus) {
     this.userId = userId;
     this.restaurantId = restaurantId;
     this.addressId = addressId;

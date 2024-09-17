@@ -23,22 +23,29 @@ public final class DtoConversion {
 
   }
 
-  public static String stringFormatter(String currentString) {
+  /**
+   * Formats the input string by trimming, replacing multiple spaces with single space,
+   * and converting the string to lowercase.
+   *
+   * @param currentString the string to be formatted
+   * @return the formatted string
+   */
+  public static String stringFormatter(final String currentString) {
     if (currentString == null || currentString.isEmpty()) {
       return currentString;
     }
-    currentString = currentString.trim();
-    currentString = currentString.replaceAll("\\s+", " ");
-    return currentString.toLowerCase();
+    String formattedString = currentString.trim();
+    formattedString = formattedString.replaceAll("\\s+", " ");
+    return formattedString.toLowerCase();
   }
 
-  public static Restaurant mapToRestaurant(RestaurantInDto restaurantInDto) {
-    /**
-     * Converts a {@link RestaurantInDto} to a {@link Restaurant} entity.
-     *
-     * @param restaurantInDto the DTO to convert
-     * @return the converted Restaurant entity
-     */
+  /**
+   * Converts a {@link RestaurantInDto} to a {@link Restaurant} entity.
+   *
+   * @param restaurantInDto the DTO to convert
+   * @return the converted Restaurant entity
+   */
+  public static Restaurant mapToRestaurant(final RestaurantInDto restaurantInDto) {
     log.info("Mapping RestaurantInDto to Restaurant entity: {}", restaurantInDto);
     Restaurant restaurant = new Restaurant();
     restaurant.setUserId(restaurantInDto.getUserId());
@@ -57,7 +64,7 @@ public final class DtoConversion {
    * @param restaurant the entity to convert
    * @return the converted RestaurantOutDto
    */
-  public static RestaurantOutDto mapToRestaurantOutDto(Restaurant restaurant) {
+  public static RestaurantOutDto mapToRestaurantOutDto(final Restaurant restaurant) {
     log.info("Mapping Restaurant entity to RestaurantOutDto: {}", restaurant);
     RestaurantOutDto restaurantOutDto = new RestaurantOutDto();
     restaurantOutDto.setId(restaurant.getId());
@@ -78,7 +85,7 @@ public final class DtoConversion {
    * @param categoryInDto the DTO to convert
    * @return the converted Category entity
    */
-  public static Category mapToCategory(CategoryInDto categoryInDto) {
+  public static Category mapToCategory(final CategoryInDto categoryInDto) {
     log.info("Mapping CategoryInDto to Category entity: {}", categoryInDto);
     Category category = new Category();
     category.setName(stringFormatter(categoryInDto.getName()));
@@ -94,7 +101,7 @@ public final class DtoConversion {
    * @param category the entity to convert
    * @return the converted CategoryOutDto
    */
-  public static CategoryOutDto mapToCategoryOutDto(Category category) {
+  public static CategoryOutDto mapToCategoryOutDto(final Category category) {
     log.info("Mapping Category entity to CategoryOutDto: {}", category);
     CategoryOutDto categoryOutDto = new CategoryOutDto();
     categoryOutDto.setId(category.getId());
@@ -112,8 +119,8 @@ public final class DtoConversion {
    * @param categoryName    the name of the category
    * @return the converted FoodItemOutDto
    */
-  public static FoodItemOutDto mapToFoodItemOutDto(FoodItem foodItem, String restaurantName,
-                                                   String categoryName) {
+  public static FoodItemOutDto mapToFoodItemOutDto(final FoodItem foodItem, final String restaurantName,
+                                                   final String categoryName) {
     log.info("Mapping FoodItem entity to FoodItemOutDto: {}, Restaurant: {}, Category: {}",
       foodItem, restaurantName, categoryName);
     FoodItemOutDto foodItemOutDto = new FoodItemOutDto();
@@ -137,7 +144,7 @@ public final class DtoConversion {
    * @param foodItemInDto the DTO to convert
    * @return the converted FoodItem entity
    */
-  public static FoodItem mapToFoodItem(FoodItemInDto foodItemInDto) {
+  public static FoodItem mapToFoodItem(final FoodItemInDto foodItemInDto) {
     log.info("Mapping FoodItemInDto to FoodItem entity: {}", foodItemInDto);
     FoodItem foodItem = new FoodItem();
     foodItem.setFoodName(stringFormatter(foodItemInDto.getFoodName()));

@@ -39,22 +39,22 @@ class CategoryControllerTest {
     MockitoAnnotations.openMocks(this);
 
     categoryInDto = new CategoryInDto();
-    categoryInDto.setRestaurantId(1);
-    categoryInDto.setName("Italian");
+    categoryInDto.setRestaurantId(100); // Placeholder ID
+    categoryInDto.setName("TestCategory");
 
     categoryOutDto = new CategoryOutDto();
-    categoryOutDto.setId(1);
-    categoryOutDto.setName("Italian");
+    categoryOutDto.setId(100); // Placeholder ID
+    categoryOutDto.setName("TestCategory");
 
     categoryUpdateInDto = new CategoryUpdateInDto();
-    categoryUpdateInDto.setName("Updated Italian");
+    categoryUpdateInDto.setName("Updated TestCategory");
   }
 
   @Test
   void testGetCategoryById() {
     // Mock the service call
     when(categoryService.getCategory(anyInt())).thenReturn(categoryOutDto);
-    ResponseEntity<?> response = categoryController.getCategoryById(1);
+    ResponseEntity<?> response = categoryController.getCategoryById(100); // Placeholder ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(categoryOutDto, response.getBody());
   }
@@ -63,7 +63,7 @@ class CategoryControllerTest {
   void testGetAllCategory() {
     List<CategoryOutDto> categoryOutDtoList = Arrays.asList(categoryOutDto);
     when(categoryService.getAllCategory(anyInt())).thenReturn(categoryOutDtoList);
-    ResponseEntity<?> response = categoryController.getAllCategory(1);
+    ResponseEntity<?> response = categoryController.getAllCategory(100); // Placeholder ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(categoryOutDtoList, response.getBody());
   }
@@ -87,7 +87,7 @@ class CategoryControllerTest {
   void testUpdateCategory() {
     when(categoryService.updateCategory(anyInt(), any(CategoryUpdateInDto.class)))
       .thenReturn(categoryOutDto); // Ensure this matches your actual service implementation
-    ResponseEntity<?> response = categoryController.updateCategory(1, categoryUpdateInDto);
+    ResponseEntity<?> response = categoryController.updateCategory(100, categoryUpdateInDto); // Placeholder ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(new ApiResponse(Constant.CATEGORY_UPDATED_SUCCESS), response.getBody());
   }

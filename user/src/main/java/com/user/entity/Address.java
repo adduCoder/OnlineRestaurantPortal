@@ -36,19 +36,18 @@ public class Address {
   @Column(name = "state", nullable = false)
   private String state;
 
-  @Column(name = "city", nullable = false)
-  private String city;
-
   /**
    * The city where the address is located.
    * This field cannot be null.
    */
-  @Column(name = "pincode", nullable = false)
+  @Column(name = "city", nullable = false)
+  private String city;
 
   /**
    * The postal code (PIN code) for the address.
    * This field cannot be null.
    */
+  @Column(name = "pincode", nullable = false)
   private Integer pinCode;
 
   /**

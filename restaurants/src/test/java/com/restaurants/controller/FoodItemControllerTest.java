@@ -43,31 +43,31 @@ class FoodItemControllerTest {
     MockitoAnnotations.openMocks(this);
 
     foodItemInDto = new FoodItemInDto();
-    foodItemInDto.setFoodName("Pasta");
-    foodItemInDto.setRestaurantId(1);
-    foodItemInDto.setDescription("Creamy Alfredo Pasta");
-    foodItemInDto.setCategoryId(2);
+    foodItemInDto.setFoodName("TestFoodItem");
+    foodItemInDto.setRestaurantId(100); // Placeholder ID
+    foodItemInDto.setDescription("Test Description");
+    foodItemInDto.setCategoryId(200); // Placeholder ID
     foodItemInDto.setIsAvailable(true);
-    foodItemInDto.setPrice(250.0);
+    foodItemInDto.setPrice(123.45);
 
     foodItemOutDto = new FoodItemOutDto();
-    foodItemOutDto.setId(1);
-    foodItemOutDto.setFoodName("Pasta");
-    foodItemOutDto.setRestaurantName("Restaurant A");
-    foodItemOutDto.setDescription("Creamy Alfredo Pasta");
-    foodItemOutDto.setCategoryName("Italian");
+    foodItemOutDto.setId(100); // Placeholder ID
+    foodItemOutDto.setFoodName("TestFoodItem");
+    foodItemOutDto.setRestaurantName("TestRestaurant");
+    foodItemOutDto.setDescription("Test Description");
+    foodItemOutDto.setCategoryName("TestCategory");
     foodItemOutDto.setIsAvailable(true);
-    foodItemOutDto.setPrice(250.0);
+    foodItemOutDto.setPrice(123.45);
 
     foodItemNameOutDto = new FoodItemNameOutDto();
-    foodItemNameOutDto.setFoodItemName("Pasta");
+    foodItemNameOutDto.setFoodItemName("TestFoodItem");
   }
 
   @Test
   void testGetAllFoodItem() {
     List<FoodItemOutDto> foodItemOutDtoList = Arrays.asList(foodItemOutDto);
     when(foodItemService.getAll(anyInt())).thenReturn(foodItemOutDtoList);
-    ResponseEntity<?> response = foodItemController.getAllFoodItem(1);
+    ResponseEntity<?> response = foodItemController.getAllFoodItem(100); // Placeholder ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(foodItemOutDtoList, response.getBody());
   }
@@ -84,19 +84,6 @@ class FoodItemControllerTest {
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals(new ApiResponse(Constant.FOODITEM_CREATED_SUCCESS), response.getBody());
   }
-//
-//  @Test
-//  void testAddFoodItemBadRequest() {
-//    doThrow(new RuntimeException("Failed to add")).when(foodItemService).add(any(FoodItemInDto.class), any(MultipartFile.class));
-//
-//    ResponseEntity<?> response = foodItemController.addFoodItem(
-//      foodItemInDto,
-//      multipartFile
-//    );
-//    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-//    // You might need to adjust this if your controller has specific error handling
-//    assertEquals(new ApiResponse("Failed to add"), response.getBody());
-//  }
 
   @Test
   void testUpdateFoodItem() {
@@ -104,7 +91,7 @@ class FoodItemControllerTest {
       .thenReturn(foodItemOutDto);
 
     ResponseEntity<?> response = foodItemController.updateFoodItem(
-      1,
+      100, // Placeholder ID
       foodItemInDto,
       multipartFile
     );
@@ -115,7 +102,7 @@ class FoodItemControllerTest {
   @Test
   void testGetFoodItemName() {
     when(foodItemService.getFoodItemName(anyInt())).thenReturn(foodItemNameOutDto);
-    ResponseEntity<?> response = foodItemController.getFoodItemName(1);
+    ResponseEntity<?> response = foodItemController.getFoodItemName(100); // Placeholder ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(foodItemNameOutDto, response.getBody());
   }

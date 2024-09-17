@@ -11,37 +11,37 @@ public class FoodItemTest {
 
   @BeforeEach
   public void setUp() {
-    // Initialize the FoodItem object
+    // Initialize the FoodItem object with placeholder data
     foodItem = new FoodItem();
-    foodItem.setId(1);
-    foodItem.setFoodName("Pizza");
-    foodItem.setRestaurantId(101);
-    foodItem.setDescription("Cheesy Margherita Pizza");
-    foodItem.setCategoryId(10);
-    foodItem.setIsAvailable(true);
-    foodItem.setPrice(12.99);
+    foodItem.setId(1); // Placeholder ID
+    foodItem.setFoodName("Test Food"); // Placeholder Food Name
+    foodItem.setRestaurantId(100); // Placeholder Restaurant ID
+    foodItem.setDescription("Test Description"); // Placeholder Description
+    foodItem.setCategoryId(20); // Placeholder Category ID
+    foodItem.setIsAvailable(true); // Placeholder Availability
+    foodItem.setPrice(9.99); // Placeholder Price
   }
 
   @Test
   public void testFoodItemFields() {
     // Test the fields of the FoodItem entity
     assertEquals(1, foodItem.getId());
-    assertEquals("Pizza", foodItem.getFoodName());
-    assertEquals(101, foodItem.getRestaurantId());
-    assertEquals("Cheesy Margherita Pizza", foodItem.getDescription());
-    assertEquals(10, foodItem.getCategoryId());
+    assertEquals("Test Food", foodItem.getFoodName());
+    assertEquals(100, foodItem.getRestaurantId());
+    assertEquals("Test Description", foodItem.getDescription());
+    assertEquals(20, foodItem.getCategoryId());
     assertTrue(foodItem.getIsAvailable());
-    assertEquals(12.99, foodItem.getPrice());
+    assertEquals(9.99, foodItem.getPrice());
   }
 
   @Test
   public void testFoodItemMutations() {
     // Test setting new values for the FoodItem entity
-    foodItem.setFoodName("Pasta");
-    assertEquals("Pasta", foodItem.getFoodName());
+    foodItem.setFoodName("Updated Food");
+    assertEquals("Updated Food", foodItem.getFoodName());
 
-    foodItem.setPrice(10.99);
-    assertEquals(10.99, foodItem.getPrice());
+    foodItem.setPrice(8.99);
+    assertEquals(8.99, foodItem.getPrice());
 
     foodItem.setIsAvailable(false);
     assertFalse(foodItem.getIsAvailable());
@@ -51,18 +51,18 @@ public class FoodItemTest {
   public void testFoodItemEquality() {
     // Test equality and hashcode
     FoodItem anotherFoodItem = new FoodItem();
-    anotherFoodItem.setId(1);
-    anotherFoodItem.setFoodName("Pizza");
-    anotherFoodItem.setRestaurantId(101);
-    anotherFoodItem.setDescription("Cheesy Margherita Pizza");
-    anotherFoodItem.setCategoryId(10);
-    anotherFoodItem.setIsAvailable(true);
-    anotherFoodItem.setPrice(12.99);
+    anotherFoodItem.setId(1); // Same placeholder ID
+    anotherFoodItem.setFoodName("Test Food"); // Same placeholder Food Name
+    anotherFoodItem.setRestaurantId(100); // Same placeholder Restaurant ID
+    anotherFoodItem.setDescription("Test Description"); // Same placeholder Description
+    anotherFoodItem.setCategoryId(20); // Same placeholder Category ID
+    anotherFoodItem.setIsAvailable(true); // Same placeholder Availability
+    anotherFoodItem.setPrice(9.99); // Same placeholder Price
 
     assertEquals(foodItem, anotherFoodItem);
     assertEquals(foodItem.hashCode(), anotherFoodItem.hashCode());
 
-    anotherFoodItem.setId(2);
+    anotherFoodItem.setId(2); // Different ID
     assertNotEquals(foodItem, anotherFoodItem);
     assertNotEquals(foodItem.hashCode(), anotherFoodItem.hashCode());
   }

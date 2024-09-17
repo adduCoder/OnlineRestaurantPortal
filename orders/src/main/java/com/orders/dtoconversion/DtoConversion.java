@@ -19,7 +19,7 @@ public class DtoConversion {
    * @param cartInDto The input DTO containing cart details.
    * @return The corresponding {@link Cart} entity.
    */
-  public static Cart mapToCart(CartInDto cartInDto) {
+  public static Cart mapToCart(final CartInDto cartInDto) {
     log.debug("Converting CartInDto to Cart: {}", cartInDto);
     Cart cart = new Cart();
     cart.setUserId(cartInDto.getUserId());
@@ -37,7 +37,7 @@ public class DtoConversion {
    * @param cart The input entity containing cart details.
    * @return The corresponding {@link CartOutDto}.
    */
-  public static CartOutDto mapToCartOutDto(Cart cart) {
+  public static CartOutDto mapToCartOutDto(final Cart cart) {
     log.info("Converting Cart to CartOutDto: {}", cart);
     CartOutDto cartOutDto = new CartOutDto();
     cartOutDto.setId(cart.getId());
@@ -56,7 +56,7 @@ public class DtoConversion {
    * @param order The input entity containing order details.
    * @return The corresponding {@link OrderOutDto}.
    */
-  public static OrderOutDto mapToOrderOutDto(Order order) {
+  public static OrderOutDto mapToOrderOutDto(final Order order) {
     log.debug("Converting Order to OrderOutDto: {}", order);
     OrderOutDto orderOutDto = new OrderOutDto();
     orderOutDto.setId(order.getId());
@@ -77,7 +77,7 @@ public class DtoConversion {
    * @param orderInDto The input DTO containing order details.
    * @return The corresponding {@link Order} entity.
    */
-  public static Order mapToOrder(OrderInDto orderInDto) {
+  public static Order mapToOrder(final OrderInDto orderInDto) {
     log.debug("Converting OrderInDto to Order: {}", orderInDto);
     Order order = new Order();
     order.setUserId(orderInDto.getUserId());

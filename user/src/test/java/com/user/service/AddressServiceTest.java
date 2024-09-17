@@ -4,7 +4,7 @@ import com.user.dto.AddressInDto;
 import com.user.dto.AddressOutDto;
 import com.user.dto.UserOutDto;
 import com.user.entity.Address;
-import com.user.exceptionhandler.NotFound; // Import the correct exception class
+import com.user.exception.NotFound; // Import the correct exception class
 import com.user.repository.AddressRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,15 +47,15 @@ class AddressServiceTest {
     MockitoAnnotations.openMocks(this);
     address = new Address();
     address.setId(1);
-    address.setStreet("Tower Square");
-    address.setCity("Indore");
+    address.setStreet("Test Street");
+    address.setCity("Test City");
     address.setState("MP");
     address.setPinCode(452001);
     address.setUserId(1);
 
     addressInDto = new AddressInDto();
-    addressInDto.setStreet("Tower Square");
-    addressInDto.setCity("Indore");
+    addressInDto.setStreet("Test Street");
+    addressInDto.setCity("Test City");
     addressInDto.setState("MP");
     addressInDto.setPinCode(452001);
     addressInDto.setUserId(1);
@@ -67,8 +67,8 @@ class AddressServiceTest {
     updateAddressInDto.setPinCode(123456);
 
     addressResponse = new AddressOutDto();
-    addressResponse.setStreet("Tower Square");
-    addressResponse.setCity("Indore");
+    addressResponse.setStreet("Test Street");
+    addressResponse.setCity("Test City");
     addressResponse.setState("MP");
     addressResponse.setPinCode(452001);
     addressResponse.setUserId(1);
@@ -76,8 +76,8 @@ class AddressServiceTest {
     addressList = new ArrayList<>();
     Address address = new Address();
     address.setUserId(1);
-    address.setStreet("Tower Square");
-    address.setCity("Indore");
+    address.setStreet("Test Street");
+    address.setCity("Test City");
     address.setState("MP");
     address.setPinCode(452001);
     addressList.add(address);
@@ -96,8 +96,8 @@ class AddressServiceTest {
     when(addressRepo.findAllByUserId(anyInt())).thenReturn(addressList);
     List<AddressOutDto> responses = addressService.getAddressByUserId(1);
     assertEquals(1, responses.size());
-    assertEquals("Tower Square", responses.get(0).getStreet());
-    assertEquals("Indore", responses.get(0).getCity());
+    assertEquals("Test Street", responses.get(0).getStreet());
+    assertEquals("Test City", responses.get(0).getCity());
     assertEquals("MP", responses.get(0).getState());
     assertEquals(452001, responses.get(0).getPinCode());
     verify(addressRepo, times(1)).findAllByUserId(anyInt());

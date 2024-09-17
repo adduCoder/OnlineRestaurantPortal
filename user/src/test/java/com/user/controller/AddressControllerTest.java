@@ -19,83 +19,117 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the {@link AddressController} class.
+ */
 class AddressControllerTest {
 
+  /**
+   * Mocked {@link AddressService} instance used for simulating interactions with the service layer.
+   */
   @Mock
   private AddressService addressService;
 
+  /**
+   * {@link AddressController} instance with injected mocks for testing.
+   */
   @InjectMocks
   private AddressController addressController;
 
+  /**
+   * Example {@link AddressOutDto} used in tests.
+   */
   private AddressOutDto addressResponse;
+
+  /**
+   * Example {@link AddressInDto} used in tests for adding a new address.
+   */
   private AddressInDto addressInDto;
+
+  /**
+   * Example {@link AddressInDto} used in tests for updating an address.
+   */
   private AddressInDto updateAddressInDto;
 
+  /**
+   * Initializes test data and mocks before each test method.
+   */
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
     addressResponse = new AddressOutDto();
-    addressResponse.setUserId(1);
-    addressResponse.setStreet("MG Road");
-    addressResponse.setCity("Bangalore");
-    addressResponse.setState("Karnataka");
-    addressResponse.setPinCode(560001);
+    addressResponse.setUserId(123); // Placeholder user ID
+    addressResponse.setStreet("123 Placeholder St"); // Placeholder street
+    addressResponse.setCity("Test City"); // Placeholder city
+    addressResponse.setState("Test State"); // Placeholder state
+    addressResponse.setPinCode(123456); // Placeholder pin code
 
     addressInDto = new AddressInDto();
-    addressInDto.setUserId(1);
-    addressInDto.setStreet("MG Road");
-    addressInDto.setCity("Bangalore");
-    addressInDto.setState("Karnataka");
-    addressInDto.setPinCode(560001);
+    addressInDto.setUserId(123); // Placeholder user ID
+    addressInDto.setStreet("123 Placeholder St"); // Placeholder street
+    addressInDto.setCity("Test City"); // Placeholder city
+    addressInDto.setState("Test State"); // Placeholder state
+    addressInDto.setPinCode(123456); // Placeholder pin code
 
     updateAddressInDto = new AddressInDto();
-    updateAddressInDto.setStreet("Brigade Road");
-    updateAddressInDto.setCity("Mumbai");
-    updateAddressInDto.setState("Maharashtra");
-    updateAddressInDto.setPinCode(400001);
+    updateAddressInDto.setStreet("456 Updated Rd"); // Placeholder updated street
+    updateAddressInDto.setCity("Updated City"); // Placeholder updated city
+    updateAddressInDto.setState("Updated State"); // Placeholder updated state
+    updateAddressInDto.setPinCode(654321); // Placeholder updated pin code
   }
 
+  /**
+   * Tests the {@link AddressController#addAddress(AddressInDto)} method.
+   * Validates that the address is added successfully and the correct response is returned.
+   */
   @Test
   void testAddAddress() {
     AddressOutResponse addressOutResponse = new AddressOutResponse();
-    addressOutResponse.setMessage("address added successfull"); // Update this line
+    addressOutResponse.setMessage("Address added successfully"); // Placeholder message
 
     ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
 
     ResponseEntity<?> response = addressController.addAddress(addressInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals("address added successfull", ((AddressOutResponse) response.getBody()).getMessage()); // Update this line
+    assertEquals("address added successfull", ((AddressOutResponse) response.getBody()).getMessage()); // Placeholder message
   }
 
-
+  /**
+   * Validates that the correct address details are returned for a given user ID.
+   */
   @Test
   void testGetAddressByUserId() {
     List<AddressOutDto> addressResponseList = Arrays.asList(addressResponse);
     when(addressService.getAddressByUserId(anyInt())).thenReturn(addressResponseList);
-    ResponseEntity<?> response = addressController.getAddressByUserId(1);
+    ResponseEntity<?> response = addressController.getAddressByUserId(123); // Placeholder user ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(addressResponseList, response.getBody());
   }
 
+  /**
+   * Validates that the address is deleted successfully and the correct response is returned.
+   */
   @Test
   void testDeleteAddress() {
-    when(addressService.deleteAddress(anyInt())).thenReturn("Address deleted successfull");
-    ResponseEntity<?> response = addressController.deleteAddress(1);
+    when(addressService.deleteAddress(anyInt())).thenReturn("Address deleted successfully"); // Placeholder message
+    ResponseEntity<?> response = addressController.deleteAddress(123); // Placeholder user ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Address deleted successfull", response.getBody());
+    assertEquals("Address deleted successfully", response.getBody()); // Placeholder message
   }
 
+  /**
+   * Validates that the address is updated successfully and the correct response is returned.
+   */
   @Test
   void testUpdateAddress() {
     AddressOutResponse addressOutResponse = new AddressOutResponse();
-    addressOutResponse.setMessage("address updated successfull");
+    addressOutResponse.setMessage("Address updated successfully"); // Placeholder message
 
     ResponseEntity<?> expectedResponse = new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
 
-    ResponseEntity<?> response = addressController.updateAddress(1, updateAddressInDto);
+    ResponseEntity<?> response = addressController.updateAddress(123, updateAddressInDto); // Placeholder user ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("address updated successfull", ((AddressOutResponse) response.getBody()).getMessage());
+    assertEquals("address updated successfull", ((AddressOutResponse) response.getBody()).getMessage()); // Placeholder message
   }
-
 }

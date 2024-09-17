@@ -13,37 +13,37 @@ public class AddressOutDtoTest {
 
     // Test addressId
     assertNull(dto.getAddressId());
-    Integer addressId = 1;
+    Integer addressId = 1001;
     dto.setAddressId(addressId);
     assertEquals(addressId, dto.getAddressId());
 
     // Test userId
     assertNull(dto.getUserId());
-    Integer userId = 2;
+    Integer userId = 2002;
     dto.setUserId(userId);
     assertEquals(userId, dto.getUserId());
 
     // Test street
     assertNull(dto.getStreet());
-    String street = "123 Main St";
+    String street = "Test Street";
     dto.setStreet(street);
     assertEquals(street, dto.getStreet());
 
     // Test city
     assertNull(dto.getCity());
-    String city = "Jaipur";
+    String city = "Test City";
     dto.setCity(city);
     assertEquals(city, dto.getCity());
 
     // Test state
     assertNull(dto.getState());
-    String state = "Rajasthan";
+    String state = "Test State";
     dto.setState(state);
     assertEquals(state, dto.getState());
 
     // Test pinCode
     assertNull(dto.getPinCode());
-    Integer pinCode = 302001;
+    Integer pinCode = 123456;
     dto.setPinCode(pinCode);
     assertEquals(pinCode, dto.getPinCode());
   }
@@ -51,34 +51,34 @@ public class AddressOutDtoTest {
   @Test
   public void testToString() {
     AddressOutDto dto = new AddressOutDto();
-    dto.setAddressId(1);
-    dto.setUserId(2);
-    dto.setStreet("123 Main St");
-    dto.setCity("Jaipur");
-    dto.setState("Rajasthan");
-    dto.setPinCode(302001);
+    dto.setAddressId(1001);
+    dto.setUserId(2002);
+    dto.setStreet("Test Street");
+    dto.setCity("Test City");
+    dto.setState("Test State");
+    dto.setPinCode(123456);
 
-    String expectedToString = "AddressOutDto(addressId=1, userId=2, street=123 Main St, city=Jaipur, state=Rajasthan, pinCode=302001)";
+    String expectedToString = "AddressOutDto(addressId=1001, userId=2002, street=Test Street, city=Test City, state=Test State, pinCode=123456)";
     assertEquals(expectedToString, dto.toString());
   }
 
   @Test
   public void testEqualsAndHashCode() {
-    AddressOutDto dto1 = buildAddressOutDto(1, 2, "123 Main St", "Jaipur", "Rajasthan", 302001);
-    AddressOutDto dto2 = buildAddressOutDto(1, 2, "123 Main St", "Jaipur", "Rajasthan", 302001);
+    AddressOutDto dto1 = buildAddressOutDto(1001, 2002, "Test Street", "Test City", "Test State", 123456);
+    AddressOutDto dto2 = buildAddressOutDto(1001, 2002, "Test Street", "Test City", "Test State", 123456);
 
     assertEquals(dto1, dto2);
     assertEquals(dto1.hashCode(), dto2.hashCode());
 
-    dto2.setAddressId(2);
+    dto2.setAddressId(2002);
     assertNotEquals(dto1, dto2);
     assertNotEquals(dto1.hashCode(), dto2.hashCode());
 
-    dto2 = buildAddressOutDto(1, 2, "456 Elm St", "Jaipur", "Rajasthan", 302001);
+    dto2 = buildAddressOutDto(1001, 2002, "Different Street", "Test City", "Test State", 123456);
     assertNotEquals(dto1, dto2);
     assertNotEquals(dto1.hashCode(), dto2.hashCode());
 
-    dto2 = buildAddressOutDto(1, 2, "123 Main St", "Delhi", "Delhi", 110001);
+    dto2 = buildAddressOutDto(1001, 2002, "Test Street", "Different City", "Test State", 123456);
     assertNotEquals(dto1, dto2);
     assertNotEquals(dto1.hashCode(), dto2.hashCode());
 

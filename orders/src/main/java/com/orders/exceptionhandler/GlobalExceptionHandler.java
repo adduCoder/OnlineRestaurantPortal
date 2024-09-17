@@ -18,94 +18,111 @@ import java.util.stream.Collectors;
 
 /**
  * Global exception handler for the application.
- * This class handles exceptions thrown by controllers and returns appropriate
- * HTTP responses with error messages.
+ * <p>
+ * This class handles various exceptions thrown by controllers and returns appropriate
+ * HTTP responses with error messages. It includes specific handlers for different types
+ * of exceptions and a general handler for unforeseen errors.
+ * </p>
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 
+
   /**
    * Handles {@link OrderNotFound} exceptions.
+   * <p>
    * This exception is thrown when an order is not found in the system.
+   * </p>
    *
-   * @param ex the exception to handle
+   * @param ex the {@link OrderNotFound} exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
    */
   @ExceptionHandler(OrderNotFound.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleOrderNotFound(OrderNotFound ex) {
+  public ErrorResponse handleOrderNotFound(final OrderNotFound ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   /**
    * Handles {@link SessionExpiredException} exceptions.
+   * <p>
    * This exception is thrown when a user session has expired.
+   * </p>
    *
-   * @param ex the exception to handle
+   * @param ex the {@link SessionExpiredException} exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
    */
   @ExceptionHandler(SessionExpiredException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleSessionExpiredException(SessionExpiredException ex) {
+  public ErrorResponse handleSessionExpiredException(final SessionExpiredException ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   /**
    * Handles {@link InsufficientBalance} exceptions.
+   * <p>
    * This exception is thrown when a user has insufficient balance.
+   * </p>
    *
-   * @param ex the exception to handle
+   * @param ex the {@link InsufficientBalance} exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
    */
   @ExceptionHandler(InsufficientBalance.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleInsufficientBalance(InsufficientBalance ex) {
+  public ErrorResponse handleInsufficientBalance(final InsufficientBalance ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
   /**
    * Handles {@link InvalidOperation} exceptions.
+   * <p>
    * This exception is thrown when an invalid operation is attempted.
+   * </p>
    *
-   * @param ex the exception to handle
-   * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
+   * @param ex the {@link InvalidOperation} exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#FORBIDDEN}
    */
+
   @ExceptionHandler(InvalidOperation.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
   @ResponseBody
-  public ErrorResponse handleInvalidOperation(InvalidOperation ex) {
+  public ErrorResponse handleInvalidOperation(final InvalidOperation ex) {
     return new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage());
   }
 
   /**
    * Handles {@link UserNotFound} exceptions.
+   * <p>
    * This exception is thrown when a user is not found in the system.
+   * </p>
    *
-   * @param ex the exception to handle
+   * @param ex the {@link UserNotFound} exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT}
    */
   @ExceptionHandler(UserNotFound.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleCategoryAlreadyExists(UserNotFound ex) {
+  public ErrorResponse handleCategoryAlreadyExists(final UserNotFound ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
   /**
-   * Handles {@link MethodArgumentNotValidException} exceptions.
-   * This exception is typically thrown when validation of method arguments fails.
+   * Handles {@link MethodArgumentNotValidException} and {@link BindException} exceptions.
+   * <p>
+   * These exceptions are typically thrown when validation of method arguments fails.
+   * </p>
    *
-   * @param ex the exception to handle
+   * @param ex the {@link Exception} to handle (either {@link MethodArgumentNotValidException} or {@link BindException})
    * @return an {@link ErrorResponse} with status {@link HttpStatus#BAD_REQUEST} and a list of validation error messages
    */
   @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(Exception ex) {
+  public ErrorResponse handleValidationExceptions(final Exception ex) {
     List<String> errorMessages = null;
 
     if (ex instanceof MethodArgumentNotValidException) {
@@ -128,8 +145,17 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }
 
+  /**
+   * Handles {@link MethodArgumentNotValidException} and {@link BindException} exceptions.
+   * <p>
+   * These exceptions are typically thrown when validation of method arguments fails.
+   * </p>
+   *
+   * @param ex the {@link Exception} to handle (either {@link MethodArgumentNotValidException} or {@link BindException})
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#BAD_REQUEST} and a list of validation error messages
+   */
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+  public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex) {
     Map<String, String> errors = new HashMap<>();
     String message = ex.getMessage();
 
@@ -142,10 +168,19 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
+  /**
+   * Handles general exceptions.
+   * <p>
+   * This exception handler is used for unforeseen errors that do not fall into other specific categories.
+   * </p>
+   *
+   * @param ex the general {@link Exception} to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#INTERNAL_SERVER_ERROR}
+   */
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ResponseBody
-  public ErrorResponse handleGeneralException(Exception ex) {
+  public ErrorResponse handleGeneralException(final Exception ex) {
     String message = "An unexpected error occurred. Please try again later or contact support.";
     return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
   }
@@ -155,8 +190,16 @@ public class GlobalExceptionHandler {
    * Class representing the error response returned by the exception handlers.
    */
   public static class ErrorResponse {
+    /**
+     * The HTTP status code of the error response.
+     */
     private int status;
+
+    /**
+     * The error message to be included in the response.
+     */
     private String message;
+
 
     /**
      * Constructs an {@link ErrorResponse} with the specified status and message.
@@ -164,7 +207,7 @@ public class GlobalExceptionHandler {
      * @param status  the HTTP status code
      * @param message the error message
      */
-    public ErrorResponse(int status, String message) {
+    public ErrorResponse(final int status, final String message) {
       this.status = status;
       this.message = message;
     }
@@ -185,7 +228,7 @@ public class GlobalExceptionHandler {
      *
      * @param status the HTTP status code
      */
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
       this.status = status;
     }
 
@@ -204,7 +247,7 @@ public class GlobalExceptionHandler {
      *
      * @param message the error message
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
       this.message = message;
     }
   }

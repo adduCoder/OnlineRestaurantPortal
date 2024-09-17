@@ -43,33 +43,6 @@ public class CategoryServiceTest {
   public void setUp() {
     MockitoAnnotations.openMocks(this);
   }
-//  @Test
-//  public void testAddCategory() {
-//    CategoryInDto categoryInDto = new CategoryInDto();
-//    categoryInDto.setRestaurantId(1);
-//    categoryInDto.setName("Category1");
-//
-//    Category category = new Category();
-//    category.setId(1);
-//    category.setName("category1");
-//    category.setRestaurantId(1);
-//
-//    Restaurant restaurant = new Restaurant();
-//    restaurant.setId(1);
-//    restaurant.setRestaurantName("Restaurant1");
-//
-//    when(restaurantRepo.findById(1)).thenReturn(Optional.of(restaurant));
-//    when(categoryRepo.findByNameAndRestaurantId("category1", 1)).thenReturn(Optional.empty());
-//    when(categoryRepo.save(any(Category.class))).thenReturn(category);
-//
-//    CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
-//
-//    assertNotNull(categoryOutDto);
-//    assertEquals(1, categoryOutDto.getId());
-//    assertEquals("category1", categoryOutDto.getName());
-//    assertEquals("Restaurant1", categoryOutDto.getRestaurantName());  // Ensure this is being set correctly
-//  }
-
 
   @Test
   public void testAddCategoryRestaurantNotFound() {

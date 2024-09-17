@@ -15,5 +15,12 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
    */
   List<Category> findAllByRestaurantId(Integer restaurantId);
 
+  /**
+   * Finds a category by its name and the associated restaurant ID.
+   *
+   * @param categoryName the name of the category
+   * @param restaurantId the ID of the restaurant
+   * @return an {@link Optional} containing the found category, or empty if no category matches
+   */
   Optional<Category> findByNameAndRestaurantId(String categoryName, Integer restaurantId);
 }

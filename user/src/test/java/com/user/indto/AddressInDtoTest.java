@@ -12,27 +12,27 @@ public class AddressInDtoTest {
     AddressInDto addressInDto = new AddressInDto();
 
     assertNull(addressInDto.getStreet());
-    String street = "Tower Square";
+    String street = "Imaginary Street";
     addressInDto.setStreet(street);
     assertEquals(street, addressInDto.getStreet());
 
     assertNull(addressInDto.getState());
-    String state = "MP";
+    String state = "XY";
     addressInDto.setState(state);
     assertEquals(state, addressInDto.getState());
 
     assertNull(addressInDto.getCity());
-    String city = "Indore";
+    String city = "Fictionland";
     addressInDto.setCity(city);
     assertEquals(city, addressInDto.getCity());
 
     assertNull(addressInDto.getPinCode());
-    Integer pinCode = 452001;
+    Integer pinCode = 123456;
     addressInDto.setPinCode(pinCode);
     assertEquals(pinCode, addressInDto.getPinCode());
 
     assertNull(addressInDto.getUserId());
-    Integer userId = 1;
+    Integer userId = 42;
     addressInDto.setUserId(userId);
     assertEquals(userId, addressInDto.getUserId());
   }
@@ -41,32 +41,32 @@ public class AddressInDtoTest {
   public void testToString() {
     AddressInDto addressInDto = new AddressInDto();
 
-    String street = "Tower Square";
+    String street = "Imaginary Street";
     addressInDto.setStreet(street);
 
-    String state = "MP";
+    String state = "XY";
     addressInDto.setState(state);
 
-    String city = "Indore";
+    String city = "Fictionland";
     addressInDto.setCity(city);
 
-    Integer pinCode = 452001;
+    Integer pinCode = 123456;
     addressInDto.setPinCode(pinCode);
 
-    Integer userId = 1;
+    Integer userId = 42;
     addressInDto.setUserId(userId);
 
-    assertEquals("AddressInDto(street=Tower Square, state=MP, city=Indore, pinCode=452001, userId=1)",
+    assertEquals("AddressInDto(street=Imaginary Street, state=XY, city=Fictionland, pinCode=123456, userId=42)",
       addressInDto.toString());
   }
 
   @Test
   public void testEqualsAndHashcode() {
-    String street = "Tower Square";
-    String state = "MP";
-    String city = "Indore";
-    Integer pinCode = 452001;
-    Integer userId = 1;
+    String street = "Imaginary Street";
+    String state = "XY";
+    String city = "Fictionland";
+    Integer pinCode = 123456;
+    Integer userId = 42;
 
     AddressInDto addressInDto1 = buildAddressInDto(street, state, city, pinCode, userId);
 

@@ -41,21 +41,21 @@ class RestaurantControllerTest {
     MockitoAnnotations.openMocks(this);
 
     restaurantInDto = new RestaurantInDto();
-    restaurantInDto.setUserId(1);
-    restaurantInDto.setRestaurantName("Spicy Treats");
-    restaurantInDto.setAddress("MG Road, Indore, MP");
-    restaurantInDto.setContactNumber("9876543210");
-    restaurantInDto.setDescription("A place for spicy delights");
+    restaurantInDto.setUserId(1); // Placeholder User ID
+    restaurantInDto.setRestaurantName("Test Restaurant");
+    restaurantInDto.setAddress("123 Test St, Test City, TC");
+    restaurantInDto.setContactNumber("0000000000");
+    restaurantInDto.setDescription("Test description");
     // Uncomment if using imageUrl
     // restaurantInDto.setImageUrl("http://example.com/image.jpg");
 
     restaurantOutDto = new RestaurantOutDto();
-    restaurantOutDto.setId(1);
-    restaurantOutDto.setUserId(1);
-    restaurantOutDto.setRestaurantName("Spicy Treats");
-    restaurantOutDto.setAddress("MG Road, Indore, MP");
-    restaurantOutDto.setContactNumber("9876543210");
-    restaurantOutDto.setDescription("A place for spicy delights");
+    restaurantOutDto.setId(1); // Placeholder Restaurant ID
+    restaurantOutDto.setUserId(1); // Placeholder User ID
+    restaurantOutDto.setRestaurantName("Test Restaurant");
+    restaurantOutDto.setAddress("123 Test St, Test City, TC");
+    restaurantOutDto.setContactNumber("0000000000");
+    restaurantOutDto.setDescription("Test description");
     // Uncomment if using imageUrl
     // restaurantOutDto.setImageUrl("http://example.com/image.jpg");
   }
@@ -63,7 +63,7 @@ class RestaurantControllerTest {
   @Test
   void testAddRestaurant() {
     // Mock behavior for MultipartFile if needed
-    when(multipartFile.getOriginalFilename()).thenReturn("restaurant.jpg");
+    when(multipartFile.getOriginalFilename()).thenReturn("test-restaurant.jpg");
 
     // Adjust service mock to handle MultipartFile
     when(restaurantService.addRestaurant(any(RestaurantInDto.class), any(MultipartFile.class)))
@@ -80,16 +80,14 @@ class RestaurantControllerTest {
 
   @Test
   void testUpdateRestaurant() {
-    // Mock behavior for MultipartFile if needed
     when(multipartFile.getOriginalFilename()).thenReturn("updated-restaurant.jpg");
 
     // Adjust service mock to handle MultipartFile
     when(restaurantService.addRestaurant(any(RestaurantInDto.class), any(MultipartFile.class)))
       .thenReturn(restaurantOutDto);
 
-
     ResponseEntity<?> response = restaurantController.updateRestaurant(
-      1,
+      1, // Placeholder Restaurant ID
       restaurantInDto,
       multipartFile
     );
@@ -101,7 +99,7 @@ class RestaurantControllerTest {
   @Test
   void testGetRestaurantById() {
     when(restaurantService.getRestaurantById(anyInt())).thenReturn(restaurantOutDto);
-    ResponseEntity<?> response = restaurantController.getRestaurantById(1);
+    ResponseEntity<?> response = restaurantController.getRestaurantById(1); // Placeholder Restaurant ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(restaurantOutDto, response.getBody());
   }
@@ -110,7 +108,7 @@ class RestaurantControllerTest {
   void testGetAllRestaurant() {
     List<RestaurantOutDto> restaurantOutDtoList = Arrays.asList(restaurantOutDto);
     when(restaurantService.getAll(anyInt())).thenReturn(restaurantOutDtoList);
-    ResponseEntity<?> response = restaurantController.getAllRestaurant(1);
+    ResponseEntity<?> response = restaurantController.getAllRestaurant(1); // Placeholder User ID
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(restaurantOutDtoList, response.getBody());
   }

@@ -19,16 +19,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing categories in the restaurant system.
+ * This class handles operations related to categories, such as adding, retrieving, updating, and listing categories.
+ */
 @Slf4j
 @Service
 public class CategoryService {
+
+  /**
+   * Repository for performing CRUD operations on categories.
+   */
   @Autowired
   private CategoryRepo categoryRepo;
 
+  /**
+   * Repository for performing CRUD operations on restaurants.
+   */
   @Autowired
   private RestaurantRepo restaurantRepo;
 
-  public String getRestaurantName(Integer restaurantId) {
+  /**
+   * Retrieves the name of a restaurant by its ID.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return the name of the restaurant, or "Not Available" if the restaurant is not found
+   */
+  public String getRestaurantName(final Integer restaurantId) {
     String name = "Not Available";
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
     if (optionalRestaurant.isPresent()) {
@@ -37,10 +54,18 @@ public class CategoryService {
     }
     return name;
   }
+
+
   /**
-   * Add a new category.
+   * Adds a new category.
+   *
+   * @param categoryInDto the data transfer object containing the category information
+   * @return the added category as a {@link CategoryOutDto}
+   * @throws NotFound if the restaurant with the given ID does not exist
+   * @throws AlreadyExists if a category with the same name already exists for the restaurant
    */
-  public CategoryOutDto addCategory(CategoryInDto categoryInDto) {
+
+  public CategoryOutDto addCategory(final CategoryInDto categoryInDto) {
     log.info("Adding a new category with name: {}", categoryInDto.getName());
     //Category category = categoryRepo.save(DtoConversion.mapToCategory(categoryInDto));
     categoryInDto.setName(categoryInDto.getName().trim());
@@ -60,9 +85,13 @@ public class CategoryService {
   }
 
   /**
-   * Get a category by ID.
+   * Retrieves a category by its ID.
+   *
+   * @param id the ID of the category
+   * @return the category as a {@link CategoryOutDto}
+   * @throws NotFound if the category with the given ID does not exist
    */
-  public CategoryOutDto getCategory(Integer id) {
+  public CategoryOutDto getCategory(final Integer id) {
     log.info("Fetching category with ID: {}", id);
     Optional<Category> optionalCategory = categoryRepo.findById(id);
     if (!optionalCategory.isPresent()) {
@@ -76,9 +105,13 @@ public class CategoryService {
   }
 
   /**
-   * Get all categories for a restaurant.
+   * Retrieves all categories for a given restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a list of categories as {@link CategoryOutDto} objects
+   * @throws NotFound if the restaurant with the given ID does not exist
    */
-  public List<CategoryOutDto> getAllCategory(Integer restaurantId) {
+  public List<CategoryOutDto> getAllCategory(final Integer restaurantId) {
     log.info("Fetching all categories for restaurant ID: {}", restaurantId);
     Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
     if (!optionalRestaurant.isPresent()) {
@@ -96,9 +129,15 @@ public class CategoryService {
   }
 
   /**
-   * Update a category.
+   * Updates an existing category.
+   *
+   * @param categoryId the ID of the category to update
+   * @param categoryUpdateInDto the data transfer object containing updated category information
+   * @return the updated category as a {@link CategoryOutDto}
+   * @throws NotFound if the category with the given ID does not exist
+   * @throws AlreadyExists if a category with the updated name already exists for the restaurant
    */
-  public CategoryOutDto updateCategory(Integer categoryId, CategoryUpdateInDto categoryUpdateInDto) {
+  public CategoryOutDto updateCategory(final Integer categoryId, final CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {}", categoryId);
     Optional<Category> optionalCategory = categoryRepo.findById(categoryId);
     if (!optionalCategory.isPresent()) {

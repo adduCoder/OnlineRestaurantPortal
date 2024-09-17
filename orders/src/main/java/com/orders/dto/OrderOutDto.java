@@ -8,6 +8,11 @@ import java.util.List;
 
 /**
  * Data Transfer Object (DTO) for representing the details of an order in the response.
+ * <p>
+ * This class encapsulates all the details related to an order that will be included in the response.
+ * It includes information about the order's ID, user, address, restaurant, status, details of items in the order,
+ * and additional metadata like creation time and names.
+ * </p>
  */
 @Data
 public class OrderOutDto {
@@ -35,8 +40,6 @@ public class OrderOutDto {
    * The current status of the order.
    */
   private OrderStatus orderStatus;
-  // private String orderDetails;
-  // Use a Map for order details
   /**
    * The details of the items in the order.
    * Each item includes information about the food item and its quantity.
@@ -48,7 +51,28 @@ public class OrderOutDto {
    * The date and time when the order was created.
    */
   private LocalDateTime createdAt;
+
+  /**
+   * The name of the restaurant where the order was placed.
+   * <p>
+   * This field provides the name of the restaurant associated with the order.
+   * </p>
+   */
   private String restaurantName;
+
+  /**
+   * The name of the address where the order is to be delivered.
+   * <p>
+   * This field provides the name or description of the delivery address.
+   * </p>
+   */
   private String addressName;
+
+  /**
+   * The name of the user who placed the order.
+   * <p>
+   * This field provides the name of the user associated with the order.
+   * </p>
+   */
   private String userName;
 }

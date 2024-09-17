@@ -1,5 +1,6 @@
 package com.user.dto;
 
+import com.user.util.Constant;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -17,7 +18,7 @@ public class AddressInDto {
    * This field cannot be blank and must be at least 3 characters long.
    */
   @NotBlank(message = "Street cannot be blank")
-  @Size(min = 3, message = "Street must be at least 3 characters long")
+  @Size(min = Constant.MIN_STREET_LENGTH, message = "Street must be at least 3 characters long")
   private String street;
 
   /**
@@ -25,7 +26,7 @@ public class AddressInDto {
    * This field cannot be blank and must be at least 2 characters long.
    */
   @NotBlank(message = "state cannot be blank")
-  @Size(min = 2, message = "state must be at least 3 characters long")
+  @Size(min = Constant.MIN_STATE_LENGTH, message = "state must be at least 3 characters long")
   private String state;
 
   /**
@@ -33,7 +34,7 @@ public class AddressInDto {
    * This field cannot be blank and must be at least 3 characters long.
    */
   @NotBlank(message = "city cannot be blank")
-  @Size(min = 3, message = "city must be at least 3 characters long")
+  @Size(min = Constant.MIN_CITY_LENGTH, message = "city must be at least 3 characters long")
   private String city;
 
   /**

@@ -65,13 +65,19 @@ public class UserInDto {
    * @return true if this object is equal to the other object; false otherwise
    */
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof UserInDto)) return false;
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof UserInDto)) {
+      return false;
+    }
     UserInDto userInDto = (UserInDto) o;
-    return Objects.equals(name, userInDto.name) && Objects.equals(email, userInDto.email) &&
-      Objects.equals(phoneNo, userInDto.phoneNo) && Objects.equals(password, userInDto.password) &&
-      role == userInDto.role;
+    return Objects.equals(name, userInDto.name)
+      && Objects.equals(email, userInDto.email)
+      && Objects.equals(phoneNo, userInDto.phoneNo)
+      && Objects.equals(password, userInDto.password)
+      && role == userInDto.role;
   }
 
   /**
@@ -94,12 +100,12 @@ public class UserInDto {
    */
   @Override
   public String toString() {
-    return "UserInDto{" +
-      "name='" + name + '\'' +
-      ", email='" + email + '\'' +
-      ", phoneNo='" + phoneNo + '\'' +
-      ", password='" + password + '\'' +
-      ", role=" + role +
-      '}';
+    return "UserInDto{"
+      + "name='" + name + '\''
+      + ", email='" + email + '\''
+      + ", phoneNo='" + phoneNo + '\''
+      + ", password='" + password + '\''
+      + ", role=" + role
+      + '}';
   }
 }

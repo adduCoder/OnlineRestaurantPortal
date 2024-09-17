@@ -31,8 +31,13 @@ public class FoodItemOutDto {
    * Availability status of the food item.
    */
   private Boolean isAvailable;
-
+  /**
+   * Id of category.
+   */
   private Integer categoryId;
+  /**
+   * Id of Restaurant.
+   */
   private Integer restaurantId;
 
   /**
