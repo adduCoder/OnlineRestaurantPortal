@@ -14,11 +14,14 @@ import com.orders.entities.Cart;
 import com.orders.entities.Order;
 import com.orders.entities.OrderStatus;
 import com.orders.exceptionhandler.InsufficientBalance;
+import com.orders.exceptionhandler.InvalidOperation;
 import com.orders.exceptionhandler.OrderNotFound;
 import com.orders.exceptionhandler.SessionExpiredException;
 import com.orders.exceptionhandler.UserNotFound;
 import com.orders.repo.CartRepo;
 import com.orders.repo.OrderRepo;
+import com.orders.util.Constant;
+import com.orders.util.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -183,6 +186,11 @@ public class OrderService {
       log.error("User not found: {}", e.getMessage());
       throw new UserNotFound();
     }
+
+    if (userOutDto.getRole() == Role.OWNER) {
+      throw new InvalidOperation(Constant.OWNER_NOT_ALLOWED);
+    }
+
     if (userOutDto != null && userOutDto.getWalletBalance() < orderInDto.getTotalAmount()) {
       log.error("Insufficient balance for user ID: {}. Order total: {}", orderInDto.getUserId(), orderInDto.getTotalAmount());
       throw new InsufficientBalance();

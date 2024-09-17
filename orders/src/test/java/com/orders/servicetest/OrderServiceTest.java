@@ -33,7 +33,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 
 public class OrderServiceTest {
@@ -68,21 +67,23 @@ public class OrderServiceTest {
 
     UserOutDto userOutDto = new UserOutDto();
     userOutDto.setWalletBalance(100.0);
+    // Mock the userFClient to return the userOutDto
+    Mockito.when(userFClient.getUserById(1)).thenReturn(userOutDto);
 
+    // Mock cartRepo behavior
     Mockito.when(cartRepo.existsById(1)).thenReturn(true);
     Mockito.when(cartRepo.existsById(2)).thenReturn(true);
     Mockito.when(cartRepo.findById(1)).thenReturn(Optional.of(new Cart()));
     Mockito.when(cartRepo.findById(2)).thenReturn(Optional.of(new Cart()));
 
-
     // Act
     orderService.createOrder(orderInDto);
 
     // Assert
-    Mockito.verify(orderRepo, Mockito.times(1)).save(any(Order.class));
-    Mockito.verify(cartRepo, Mockito.times(2)).deleteById(anyInt());
-
+    Mockito.verify(orderRepo, Mockito.times(1)).save(Mockito.any(Order.class));
+    Mockito.verify(cartRepo, Mockito.times(2)).deleteById(Mockito.anyInt());
   }
+
 
   @Test
   public void testCreateOrder_InsufficientBalance() {

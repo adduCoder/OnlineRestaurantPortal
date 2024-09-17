@@ -10,8 +10,7 @@ public final class Constant {
   public static String SUCCESS = "Successfully added";
   public static String CART_ADDED_SUCCESS = "Successfully added to cart";
   public static String CART_UPDATED_SUCCESS = "Successfully  UPDATED ORDER";
-
-
+  public static String OWNER_NOT_ALLOWED = "Owner not allowed to perform operation";
   private Constant() {
   }
 }

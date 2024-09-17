@@ -27,4 +27,5 @@ public class EmailService {
       e.printStackTrace(); // Log the exception
     }
   }
+
 }

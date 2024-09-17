@@ -133,6 +133,8 @@ public class FoodItemService {
 
     // Convert the food name to lowercase for consistency and save the food item
     foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
+
+
     foodItemRepo.save(foodItem);
 
     // Get restaurant and category names for response
@@ -189,6 +191,15 @@ public class FoodItemService {
     foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
+
+
+    // Check for existing food items with the same name
+    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
+    for (FoodItem subFoodItem : foodItemList) {
+      if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
+        throw new AlreadyExists(Constant.FOODITEM_ALREADY_EXISTS);
+      }
+    }
 
     try {
       if (multipartFile != null && !multipartFile.isEmpty()) {

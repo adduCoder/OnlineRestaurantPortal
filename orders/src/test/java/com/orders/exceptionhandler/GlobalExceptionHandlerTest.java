@@ -44,7 +44,7 @@ public class GlobalExceptionHandlerTest {
   public void testHandleInvalidOperation() {
     InvalidOperation ex = new InvalidOperation("Invalid operation");
     GlobalExceptionHandler.ErrorResponse response = globalExceptionHandler.handleInvalidOperation(ex);
-    assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
+    assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
     assertEquals("Invalid operation", response.getMessage());
   }
 

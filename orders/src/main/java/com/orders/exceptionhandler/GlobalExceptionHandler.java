@@ -75,10 +75,10 @@ public class GlobalExceptionHandler {
    * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND}
    */
   @ExceptionHandler(InvalidOperation.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
   @ResponseBody
   public ErrorResponse handleInvalidOperation(InvalidOperation ex) {
-    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    return new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage());
   }
 
   /**

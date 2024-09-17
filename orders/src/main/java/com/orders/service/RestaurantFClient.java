@@ -15,7 +15,4 @@ public interface RestaurantFClient {
 
   @GetMapping("/restaurant/getRestaurant/{restaurantId}")
   ResponseEntity<RestaurantOutDto> getRestaurantById(@PathVariable Integer restaurantId);
-
-
-
 }
