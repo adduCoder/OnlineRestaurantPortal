@@ -38,17 +38,22 @@ public class CategoryTest {
 
   @Test
   public void testCategoryEquality() {
-    // Test equality and hashcode
     Category anotherCategory = new Category();
-    anotherCategory.setId(1); // Same placeholder ID
-    anotherCategory.setRestaurantId(100); // Same placeholder Restaurant ID
-    anotherCategory.setName("Test Category"); // Same placeholder Name
+    anotherCategory.setId(1);
+    anotherCategory.setRestaurantId(100);
+    anotherCategory.setName("Test Category");
 
     assertEquals(category, anotherCategory);
     assertEquals(category.hashCode(), anotherCategory.hashCode());
 
-    anotherCategory.setId(2); // Different ID
+    anotherCategory.setId(2);
     assertNotEquals(category, anotherCategory);
     assertNotEquals(category.hashCode(), anotherCategory.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+    String expectedString = "Category(id=1, restaurantId=100, name=Test Category)";
+    assertEquals(expectedString, category.toString());
   }
 }

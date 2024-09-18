@@ -22,7 +22,6 @@ public class AddressRequestTest {
    */
   @BeforeEach
   public void setUp() {
-    // Initialize the AddressInDto instance
     addressInDto.setStreet(null);
     addressInDto.setState(null);
     addressInDto.setCity(null);

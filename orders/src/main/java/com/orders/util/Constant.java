@@ -54,6 +54,15 @@ public final class Constant {
   public static final String OWNER_NOT_ALLOWED = "Owner not allowed to perform operation";
 
   /**
+   * Message indicating that the cart is not found.
+   */
+  public static final String CART_NOT_FOUND = "No such cart available with this id";
+  /**
+   * Message indicating that the cart is removed .
+   */
+  public static final String CART_REMVOED = "Successfully removed from cart";
+
+  /**
    * Private constructor to prevent instantiation of the utility class.
    */
   private Constant() {

@@ -61,10 +61,9 @@ public class ApiResponseTest {
    */
   @Test
   public void testEqualsAndHashcode() {
-    final ApiResponse apiResponse1 = new ApiResponse("Task Successful"); // Placeholder value
-    final ApiResponse apiResponse2 = new ApiResponse("Task Successful"); // Placeholder value
+    final ApiResponse apiResponse1 = new ApiResponse("Task Successful");
+    final ApiResponse apiResponse2 = new ApiResponse("Task Successful");
 
-    // Test equality with another object having the same message
     assertEquals(apiResponse1, apiResponse2, "Objects with the same message should be equal");
     assertEquals(apiResponse1.hashCode(), apiResponse2.hashCode(), "Hash codes should match for equal objects");
 

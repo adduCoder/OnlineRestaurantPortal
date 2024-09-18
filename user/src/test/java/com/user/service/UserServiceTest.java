@@ -3,9 +3,9 @@ package com.user.service;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
 import com.user.entity.User;
-import com.user.exception.NotFound;
+import com.user.exception.NotFoundException;
 import com.user.exception.UserAlreadyExisted;
-import com.user.repository.UserRepo;
+import com.user.repository.UserRepository;
 import com.user.util.PasswordEncoder;
 import com.user.util.Role;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
   @Mock
-  private UserRepo userRepo;
+  private UserRepository userRepository;
 
   @Mock
   private AddressService addressService;
@@ -71,8 +71,8 @@ public class UserServiceTest {
 
   @Test
   public void addUserSuccessTest() {
-    when(userRepo.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
-    when(userRepo.save(any(User.class))).thenAnswer(invocation -> {
+    when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
       User user = invocation.getArgument(0);
       user.setId(1);
       return user;
@@ -80,29 +80,29 @@ public class UserServiceTest {
 
     userService.addUser(userInDto);
 
-    verify(userRepo, times(1)).findByEmail("test@gmail.com");
-    verify(userRepo, times(1)).save(any(User.class));
+    verify(userRepository, times(1)).findByEmail("test@gmail.com");
+    verify(userRepository, times(1)).save(any(User.class));
   }
 
   @Test
   public void addUserAlreadyExistsTest() {
-    when(userRepo.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
+    when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
     assertThrows(UserAlreadyExisted.class, () -> userService.addUser(userInDto));
   }
 
   @Test
   public void getUserSuccessTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1)).thenReturn(Optional.of(user));
     UserOutDto result = userService.getUser(1);
     assertEquals("Test User", result.getName());
     assertEquals("test@gmail.com", result.getEmail());
-    verify(userRepo, times(1)).findById(1);
+    verify(userRepository, times(1)).findById(1);
   }
 
   @Test
   public void getUserNotFoundTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFound.class, () -> userService.getUser(1));
+    when(userRepository.findById(1)).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> userService.getUser(1));
   }
 
   @Test
@@ -116,12 +116,12 @@ public class UserServiceTest {
     user2.setRole(Role.USER);
 
     List<User> userList = Arrays.asList(user, user2);
-    when(userRepo.findAll()).thenReturn(userList);
+    when(userRepository.findAll()).thenReturn(userList);
     List<UserOutDto> result = userService.getAllUser();
     assertEquals(2, result.size());
     assertEquals("Test User", result.get(0).getName());
     assertEquals("Bharat", result.get(1).getName());
-    verify(userRepo, times(1)).findAll();
+    verify(userRepository, times(1)).findAll();
   }
 
   @Test
@@ -133,39 +133,39 @@ public class UserServiceTest {
     updatedUserInDto.setPhoneNo("9876543210");
     updatedUserInDto.setRole(Role.USER);
 
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
-    when(userRepo.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.findById(1)).thenReturn(Optional.of(user));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     userService.updateUser(1, updatedUserInDto);
 
-    verify(userRepo, times(1)).findById(1);
-    verify(userRepo, times(1)).save(any(User.class));
+    verify(userRepository, times(1)).findById(1);
+    verify(userRepository, times(1)).save(any(User.class));
   }
 
   @Test
   public void updateUserNotFoundTest() {
     UserInDto userInDto = new UserInDto();
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFound.class, () -> userService.updateUser(1, userInDto));
+    when(userRepository.findById(1)).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> userService.updateUser(1, userInDto));
   }
 
   @Test
   public void deleteUserSuccessTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
-    doNothing().when(userRepo).delete(user);
+    when(userRepository.findById(1)).thenReturn(Optional.of(user));
+    doNothing().when(userRepository).delete(user);
 
     UserOutDto result = userService.deleteUser(1);
 
     assertNotNull(result);
     assertEquals("Test User", result.getName());
 
-    verify(userRepo).findById(1);
-    verify(userRepo).delete(user);
+    verify(userRepository).findById(1);
+    verify(userRepository).delete(user);
   }
 
   @Test
   public void deleteUserNotFoundTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFound.class, () -> userService.deleteUser(1));
+    when(userRepository.findById(1)).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> userService.deleteUser(1));
   }
 }

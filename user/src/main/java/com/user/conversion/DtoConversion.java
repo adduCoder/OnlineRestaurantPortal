@@ -45,12 +45,14 @@ public final class DtoConversion {
    * @return a {@link User} entity with data from the provided DTO
    */
   public static User mapToUser(final UserInDto userInDto) {
+    System.out.println("HI");
     User newUser = new User();
     newUser.setEmail(userInDto.getEmail());
     newUser.setName(userInDto.getName());
     newUser.setPassword(userInDto.getPassword());
     newUser.setPhoneNo(userInDto.getPhoneNo());
     newUser.setRole(userInDto.getRole());
+    System.out.println("bye");
     return newUser;
   }
 

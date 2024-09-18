@@ -14,13 +14,12 @@ public class FoodItemInDtoTest {
   @BeforeEach
   public void setUp() {
     foodItemInDto = new FoodItemInDto();
-    // Set up initial values with placeholders
     foodItemInDto.setFoodName("Test Food");
-    foodItemInDto.setRestaurantId(1); // Placeholder Restaurant ID
+    foodItemInDto.setRestaurantId(1);
     foodItemInDto.setDescription("Test Description");
-    foodItemInDto.setCategoryId(10); // Placeholder Category ID
+    foodItemInDto.setCategoryId(10);
     foodItemInDto.setIsAvailable(true);
-    foodItemInDto.setPrice(9.99); // Placeholder Price
+    foodItemInDto.setPrice(9.99);
   }
 
   @Test
@@ -85,7 +84,7 @@ public class FoodItemInDtoTest {
 
   @Test
   public void testSetPrice() {
-    foodItemInDto.setPrice(19.99); // Placeholder for testing
+    foodItemInDto.setPrice(19.99);
     assertEquals(19.99, foodItemInDto.getPrice());
   }
 

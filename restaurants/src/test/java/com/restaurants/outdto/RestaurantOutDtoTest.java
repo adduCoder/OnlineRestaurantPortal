@@ -10,7 +10,7 @@ public class RestaurantOutDtoTest {
   void testGettersAndSetters() {
     RestaurantOutDto dto = new RestaurantOutDto();
 
-    // Set values
+
     dto.setId(1);
     dto.setUserId(1001);
     dto.setRestaurantName("Sample Restaurant");
@@ -19,7 +19,7 @@ public class RestaurantOutDtoTest {
     dto.setDescription("Sample description of the restaurant.");
     dto.setImageData(new byte[]{10, 20, 30, 40, 50});
 
-    // Assert values
+
     assertThat(dto.getId()).isEqualTo(1);
     assertThat(dto.getUserId()).isEqualTo(1001);
     assertThat(dto.getRestaurantName()).isEqualTo("Sample Restaurant");
@@ -65,11 +65,9 @@ public class RestaurantOutDtoTest {
     dto2.setDescription("Sample description of the restaurant.");
     dto2.setImageData(new byte[]{10, 20, 30, 40, 50});
 
-    // Test equality and hashCode
     assertThat(dto1).isEqualTo(dto2);
     assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
 
-    // Change one property and test inequality
     dto2.setRestaurantName("Another Restaurant");
     assertThat(dto1).isNotEqualTo(dto2);
     assertThat(dto1.hashCode()).isNotEqualTo(dto2.hashCode());

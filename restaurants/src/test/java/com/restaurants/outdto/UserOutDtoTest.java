@@ -12,39 +12,39 @@ public class UserOutDtoTest {
   public void testGetterAndSetter() {
     UserOutDto userOutDto = new UserOutDto();
 
-    // Test id
+
     assertNull(userOutDto.getId());
     Integer id = 1;
     userOutDto.setId(id);
     assertEquals(id, userOutDto.getId());
 
-    // Test name
+
     assertNull(userOutDto.getName());
     String name = "Sample Name";
     userOutDto.setName(name);
     assertEquals(name, userOutDto.getName());
 
-    // Test email
+
     assertNull(userOutDto.getEmail());
     String email = "sample.email@example.com";
     userOutDto.setEmail(email);
     assertEquals(email, userOutDto.getEmail());
 
-    // Test walletBalance
+
     assertNull(userOutDto.getWalletBalance());
     Double walletBalance = 1000.00;
     userOutDto.setWalletBalance(walletBalance);
     assertEquals(walletBalance, userOutDto.getWalletBalance());
 
-    // Test phoneNo
+
     assertNull(userOutDto.getPhoneNo());
     String phoneNo = "1234567890";
     userOutDto.setPhoneNo(phoneNo);
     assertEquals(phoneNo, userOutDto.getPhoneNo());
 
-    // Test role
+
     assertNull(userOutDto.getRole());
-    Role role = Role.USER; // Assuming Role enum has USER constant
+    Role role = Role.USER;
     userOutDto.setRole(role);
     assertEquals(role, userOutDto.getRole());
   }
@@ -57,7 +57,7 @@ public class UserOutDtoTest {
     userOutDto.setEmail("sample.email@example.com");
     userOutDto.setWalletBalance(1000.00);
     userOutDto.setPhoneNo("1234567890");
-    userOutDto.setRole(Role.USER); // Assuming Role enum has USER constant
+    userOutDto.setRole(Role.USER);
 
     String expectedToString = "UserOutDto(id=1, name=Sample Name, email=sample.email@example.com, " +
       "walletBalance=1000.0, phoneNo=1234567890, role=USER)";

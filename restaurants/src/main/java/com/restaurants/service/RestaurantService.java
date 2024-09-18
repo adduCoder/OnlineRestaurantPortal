@@ -3,11 +3,11 @@ package com.restaurants.service;
 import com.restaurants.dto.RestaurantInDto;
 import com.restaurants.dto.RestaurantOutDto;
 import com.restaurants.dto.UserOutDto;
-import com.restaurants.dtoconversion.DtoConversion;
+import com.restaurants.conversion.DtoConversion;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.NotFound;
-import com.restaurants.exceptionhandler.OperationNotAllowed;
-import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.exception.NotFoundException;
+import com.restaurants.exception.OperationNotAllowedException;
+import com.restaurants.repository.RestaurantRepository;
 import com.restaurants.util.Constant;
 import com.restaurants.util.Role;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class RestaurantService {
    * Repository for performing CRUD operations on the Restaurant entity.
    */
   @Autowired
-  private RestaurantRepo restaurantRepo;
+  private RestaurantRepository restaurantRepository;
 
   /**
    * Feign client for interacting with user-related services.
@@ -75,8 +75,8 @@ public class RestaurantService {
    * @param restaurantInDto DTO containing the details of the restaurant to add.
    * @param multipartFile  An optional image file associated with the restaurant.
    * @return DTO of the added restaurant.
-   * @throws NotFound           If the user associated with the restaurant is not found.
-   * @throws OperationNotAllowed If the user has a role of USER (not allowed to add restaurants).
+   * @throws NotFoundException           If the user associated with the restaurant is not found.
+   * @throws OperationNotAllowedException If the user has a role of USER (not allowed to add restaurants).
    * @throws IllegalArgumentException If the image file is not in a valid format.
    */
   public RestaurantOutDto addRestaurant(final RestaurantInDto restaurantInDto, final MultipartFile multipartFile) {
@@ -87,10 +87,10 @@ public class RestaurantService {
     try {
       userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
     } catch (Exception e) {
-      throw new NotFound(Constant.USER_NOT_FOUND);
+      throw new NotFoundException(Constant.USER_NOT_FOUND);
     }
     if (userOutDto.getRole() == Role.USER) {
-      throw new OperationNotAllowed();
+      throw new OperationNotAllowedException();
     }
     if (multipartFile != null && !multipartFile.isEmpty()) {
       String contentType = multipartFile.getContentType();
@@ -106,7 +106,7 @@ public class RestaurantService {
         log.error("Error occurred while processing the image file", e);
       }
     }
-    restaurantRepo.save(restaurant);
+    restaurantRepository.save(restaurant);
     log.info("Restaurant added successfully ");
     return DtoConversion.mapToRestaurantOutDto(restaurant);
   }
@@ -119,7 +119,7 @@ public class RestaurantService {
    */
   public List<RestaurantOutDto> getAll(final Integer userId) {
     log.info("Fetching all restaurants for user ID: {}", userId);
-    List<Restaurant> restaurantList = restaurantRepo.findByUserId(userId);
+    List<Restaurant> restaurantList = restaurantRepository.findByUserId(userId);
     List<RestaurantOutDto> restaurantOutDtoList = new ArrayList<>();
     for (Restaurant restaurant:restaurantList) {
       restaurantOutDtoList.add(DtoConversion.mapToRestaurantOutDto(restaurant));
@@ -134,7 +134,7 @@ public class RestaurantService {
    * @return A list of DTOs representing all restaurants.
    */
   public List<RestaurantOutDto> getAllRestros() {
-    List<Restaurant> restaurantList = restaurantRepo.findAll();
+    List<Restaurant> restaurantList = restaurantRepository.findAll();
     List<RestaurantOutDto> restaurantOutDtoList = new ArrayList<>();
     for (Restaurant restaurant:restaurantList) {
       restaurantOutDtoList.add(DtoConversion.mapToRestaurantOutDto(restaurant));
@@ -148,24 +148,24 @@ public class RestaurantService {
    * @param restaurantId   The ID of the restaurant to update.
    * @param restaurantInDto DTO containing the updated details of the restaurant.
    * @param multipartFile  An optional image file associated with the restaurant.
-   * @throws NotFound If the restaurant with the given ID is not found.
-   * @throws NotFound  If the user associated with the restaurant is not found.
-   * @throws OperationNotAllowed If the user has a role of USER (not allowed to update restaurants).
+   * @throws NotFoundException If the restaurant with the given ID is not found.
+   * @throws NotFoundException  If the user associated with the restaurant is not found.
+   * @throws OperationNotAllowedException If the user has a role of USER (not allowed to update restaurants).
    */
   public void updateRestaurant(final Integer restaurantId,
                                final RestaurantInDto restaurantInDto, final MultipartFile multipartFile) {
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(restaurantId);
     if (!optionalRestaurant.isPresent()) {
-      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+      throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
     UserOutDto userOutDto;
     try {
       userOutDto = userFClient.getUserById(restaurantInDto.getUserId());
     } catch (Exception e) {
-      throw new NotFound(Constant.USER_NOT_FOUND);
+      throw new NotFoundException(Constant.USER_NOT_FOUND);
     }
     if (userOutDto.getRole() == Role.USER) {
-      throw new OperationNotAllowed();
+      throw new OperationNotAllowedException();
     }
 
     Restaurant restaurant = optionalRestaurant.get();
@@ -184,7 +184,7 @@ public class RestaurantService {
     } catch (IOException e) {
       log.error("Error occurred while processing the image file");
     }
-    restaurantRepo.save(restaurant);
+    restaurantRepository.save(restaurant);
   }
 
   /**
@@ -192,12 +192,12 @@ public class RestaurantService {
    *
    * @param restaurantId The ID of the restaurant to retrieve.
    * @return DTO representing the restaurant with the given ID.
-   * @throws NotFound If the restaurant with the given ID is not found.
+   * @throws NotFoundException If the restaurant with the given ID is not found.
    */
   public RestaurantOutDto getRestaurantById(final Integer restaurantId) {
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurantId);
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(restaurantId);
     if (!optionalRestaurant.isPresent()) {
-      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+      throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
     Restaurant restaurant = optionalRestaurant.get();
     RestaurantOutDto restaurantOutDto = DtoConversion.mapToRestaurantOutDto(restaurant);

@@ -7,13 +7,12 @@ import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
 import com.user.conversion.DtoConversion;
 import com.user.entity.User;
-import com.user.exception.NotFound;
+import com.user.exception.NotFoundException;
 import com.user.exception.UserAlreadyExisted;
-import com.user.repository.UserRepo;
+import com.user.repository.UserRepository;
 import com.user.util.Constant;
 import com.user.util.PasswordEncoder;
 import com.user.util.Role;
-import com.user.util.UserApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ import java.util.Optional;
  * Service class for managing users.
  * <p>
  * This service provides methods for creating, retrieving, updating, deleting users, and handling user logins.
- * It interacts with the {@link UserRepo} repository to perform CRUD operations and uses
+ * It interacts with the {@link UserRepository} repository to perform CRUD operations and uses
  * {@link DtoConversion} for converting between DTOs and entity objects. It also interacts with
  * {@link AddressService} for managing user addresses.
  * </p>
@@ -52,7 +51,7 @@ public class UserService {
    * </p>
    */
   @Autowired
-  private UserRepo userRepo;
+  private UserRepository userRepository;
 
 
   /**
@@ -88,10 +87,10 @@ public class UserService {
    */
   public UserOutDto getUser(final Integer userId) {
     log.info("Fetching user with ID: {}", userId);
-    Optional<User> optionalUser = userRepo.findById(userId);
+    Optional<User> optionalUser = userRepository.findById(userId);
     if (!optionalUser.isPresent()) {
       log.warn("No user found with ID: {}", userId);
-      throw new NotFound(Constant.NO_CUSTOMER_FOUND);
+      throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
     log.info("User found: {}", user);
@@ -105,7 +104,7 @@ public class UserService {
    */
   public List<UserOutDto> getAllUser() {
     log.info("Fetching all users");
-    List<User> userList = userRepo.findAll();
+    List<User> userList = userRepository.findAll();
     List<UserOutDto> userOutDtoList = new ArrayList<>();
     for (User user : userList) {
       userOutDtoList.add(DtoConversion.mapToUserOutDto(user));
@@ -125,13 +124,12 @@ public class UserService {
     User newUser = DtoConversion.mapToUser(userInDto);
     String decodedPassword = PasswordEncoder.decodePassword(newUser.getPassword());
     String encodedPassword = PasswordEncoder.encodePassword(decodedPassword);
-
     newUser.setPassword(encodedPassword);
 
     newUser.setEmail(stringFormatter(newUser.getEmail()));
     newUser.setName(stringFormatter(newUser.getName()));
 
-    Optional<User> existedUser = userRepo.findByEmail(newUser.getEmail());
+    Optional<User> existedUser = userRepository.findByEmail(newUser.getEmail());
 
     if (existedUser.isPresent()) {
       log.warn("User with email {} already exists", newUser.getEmail());
@@ -141,12 +139,8 @@ public class UserService {
     if (newUser.getRole().equals(Role.OWNER)) {
       newUser.setWalletBalance(null);
     }
-    userRepo.save(newUser);
-    log.info("User added successfully: {}", newUser);
-    UserApiResponse userApiResponse = new UserApiResponse();
-    userApiResponse.setMessage(Constant.USER_CREATED_SUCCESS);
-    userApiResponse.setUserId(newUser.getId());
-    userApiResponse.setRole(newUser.getRole());
+    userRepository.save(newUser);
+    log.info("Successfully added user with name: {}", newUser.getName());
   }
 
   /**
@@ -154,20 +148,20 @@ public class UserService {
    *
    * @param userId the ID of the user to be updated
    * @param userInDto the DTO containing updated user details
-   * @throws NotFound if no user with the specified ID is found
+   * @throws NotFoundException if no user with the specified ID is found
    */
   public void updateUser(final Integer userId, final UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
-    Optional<User> optionalUser = userRepo.findById(userId);
+    Optional<User> optionalUser = userRepository.findById(userId);
     if (!optionalUser.isPresent()) {
-      throw new NotFound(Constant.NO_CUSTOMER_FOUND);
+      throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
     user.setName(userInDto.getName());
     user.setEmail(userInDto.getEmail());
     user.setPhoneNo(userInDto.getPhoneNo());
-    userRepo.save(user);
-    log.info("User updated successfully: {}", user);
+    userRepository.save(user);
+    log.info("User updated successfully: {}", user.getName());
   }
 
   /**
@@ -175,22 +169,22 @@ public class UserService {
    *
    * @param userId the ID of the user to be deleted
    * @return a {@link UserOutDto} representing the deleted user
-   * @throws NotFound if no user with the specified ID is found
+   * @throws NotFoundException if no user with the specified ID is found
    */
   public UserOutDto deleteUser(final Integer userId) {
     log.info("Deleting user with ID: {}", userId);
-    Optional<User> optionalUser = userRepo.findById(userId);
+    Optional<User> optionalUser = userRepository.findById(userId);
     if (!optionalUser.isPresent()) {
-      log.warn("No user found with ID: {}", userId);
-      throw new NotFound(Constant.NO_CUSTOMER_FOUND);
+      log.error("No user found with ID: {}", userId);
+      throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
     List<AddressOutDto> addressList = addressService.getAddressByUserId(userId);
     for (AddressOutDto addressOutDto : addressList) {
       addressService.deleteAddress(addressOutDto.getAddressId());
     }
-    userRepo.delete(user);
-    log.info("User deleted successfully: {}", user);
+    userRepository.delete(user);
+    log.info("User deleted successfull: {}", user.getName());
     return DtoConversion.mapToUserOutDto(user);
   }
 
@@ -201,11 +195,12 @@ public class UserService {
    * @return a message indicating the result of the login attempt
    */
   public UserOutDto loginUser(final LoginInDto loginInDto) {
+    log.info("Trying to login with email: {} ", loginInDto.getEmail());
     String email = loginInDto.getEmail();
     email = stringFormatter(email);
     String providedPassword = loginInDto.getPassword();
 
-    Optional<User> optionalUser = userRepo.findByEmail(email);
+    Optional<User> optionalUser = userRepository.findByEmail(email);
     if (!optionalUser.isPresent()) {
       return null;
     }
@@ -215,10 +210,11 @@ public class UserService {
     String decodedStoredPassword = PasswordEncoder.decodePassword(storedPassword);
     String decodedProvidedPassword = PasswordEncoder.decodePassword(providedPassword);
     if (decodedStoredPassword.equals(decodedProvidedPassword)) {
+      log.info("Successfully Logged in as : {}", user.getEmail());
       return DtoConversion.mapToUserOutDto(user);
-    } else {
-      return null;
     }
+    log.error("Invalid Credentials");
+    return null;
   }
 
   /**
@@ -226,16 +222,19 @@ public class UserService {
    *
    * @param userId the ID of the user whose balance is to be deducted
    * @param amountInDto the DTO containing the amount to be deducted
-   * @throws NotFound if no user with the specified ID is found
+   * @throws NotFoundException if no user with the specified ID is found
    */
   public void deductMoney(final Integer userId, final AmountInDto amountInDto) {
-    Optional<User> optionalUser = userRepo.findById(userId);
+    log.info("Trying to deduct {} from user with id {} ", amountInDto.getMoney(), userId);
+    Optional<User> optionalUser = userRepository.findById(userId);
     if (!optionalUser.isPresent()) {
-      throw new NotFound(Constant.NO_CUSTOMER_FOUND);
+      log.error("User not found with id :{}", userId);
+      throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
     user.setWalletBalance(user.getWalletBalance() - amountInDto.getMoney());
-    userRepo.save(user);
+    log.info("Successfully deducted : {} from userId : {}", amountInDto.getMoney(), user.getId());
+    userRepository.save(user);
   }
 
   /**
@@ -243,25 +242,29 @@ public class UserService {
    *
    * @param userId the ID of the user whose balance is to be updated
    * @param amountInDto the DTO containing the amount to be added
-   * @throws NotFound if no user with the specified ID is found
+   * @throws NotFoundException if no user with the specified ID is found
    */
   public void addMoney(final Integer userId, final AmountInDto amountInDto) {
-    Optional<User> optionalUser = userRepo.findById(userId);
+    log.info("Trying to add {} Rs. ", amountInDto.getMoney());
+    Optional<User> optionalUser = userRepository.findById(userId);
     if (!optionalUser.isPresent()) {
-      throw new NotFound(Constant.NO_CUSTOMER_FOUND);
+      log.error("No such user found with id: {}", userId);
+      throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
     user.setWalletBalance(user.getWalletBalance() + amountInDto.getMoney());
-    userRepo.save(user);
+    log.info("Successfully added {} Rs. ", amountInDto.getMoney());
+    userRepository.save(user);
   }
 
   /**
    * Sends an email to a predefined list of recipients.
    *
    * @param text the content of the email
-   * @throws NotFound if an error occurs while sending the email
+   * @throws NotFoundException if an error occurs while sending the email
    */
   public void sendMail(final String text) {
+    log.info("Trying sending mail.");
     try {
       List<String> recipients = Arrays.asList(
         "iadityapatel1729@gmail.com",
@@ -269,11 +272,11 @@ public class UserService {
         //"vyaskhushi2407@gmail.com"
       );
       emailService.sendMail(Constant.SENDER, recipients, text);
+      log.info("Successfully added mail");
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+      log.error("No address found ");
+      throw new NotFoundException(Constant.NO_ADDRESS_FOUND);
     }
   }
-
 }
 

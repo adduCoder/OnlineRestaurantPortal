@@ -6,10 +6,10 @@ import com.restaurants.dto.FoodItemOutDto;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.NotFound;
-import com.restaurants.repository.CategoryRepo;
-import com.restaurants.repository.FoodItemRepo;
-import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.exception.NotFoundException;
+import com.restaurants.repository.CategoryRepository;
+import com.restaurants.repository.FoodItemRepository;
+import com.restaurants.repository.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,13 +35,13 @@ public class FoodItemServiceTest {
   private FoodItemService foodItemService;
 
   @Mock
-  private FoodItemRepo foodItemRepo;
+  private FoodItemRepository foodItemRepository;
 
   @Mock
-  private RestaurantRepo restaurantRepo;
+  private RestaurantRepository restaurantRepository;
 
   @Mock
-  private CategoryRepo categoryRepo;
+  private CategoryRepository categoryRepository;
 
   @Mock
   private MultipartFile multipartFile;
@@ -86,17 +86,15 @@ public class FoodItemServiceTest {
   @Test
   void testAddFoodItem() throws IOException {
     // Arrange
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
-    when(restaurantRepo.findById(1)).thenReturn(Optional.of(restaurant));
-    when(foodItemRepo.findAllByRestaurantId(1)).thenReturn(new ArrayList<>());
-    when(foodItemRepo.save(any(FoodItem.class))).thenReturn(foodItem);
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(foodItemRepository.findAllByRestaurantId(1)).thenReturn(new ArrayList<>());
+    when(foodItemRepository.save(any(FoodItem.class))).thenReturn(foodItem);
     when(multipartFile.getContentType()).thenReturn("image/jpeg");
     when(multipartFile.getBytes()).thenReturn(new byte[] {1, 2, 3});
 
-    // Act
     FoodItemOutDto result = foodItemService.add(foodItemInDto, multipartFile);
 
-    // Assert
     assertEquals("pizza", result.getFoodName());
     assertEquals("test restaurant", result.getRestaurantName());
     assertEquals("Italian", result.getCategoryName());
@@ -105,31 +103,28 @@ public class FoodItemServiceTest {
 
   @Test
   void testAddFoodItemWithInvalidImage() throws IOException {
-    // Arrange
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
-    when(restaurantRepo.findById(1)).thenReturn(Optional.of(restaurant));
-    when(foodItemRepo.findAllByRestaurantId(1)).thenReturn(new ArrayList<>());
-    when(foodItemRepo.save(any(FoodItem.class))).thenReturn(foodItem);
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(foodItemRepository.findAllByRestaurantId(1)).thenReturn(new ArrayList<>());
+    when(foodItemRepository.save(any(FoodItem.class))).thenReturn(foodItem);
     when(multipartFile.getContentType()).thenReturn("text/plain");
 
-    // Act & Assert
     assertThrows(IllegalArgumentException.class, () -> foodItemService.add(foodItemInDto, multipartFile));
   }
 
   @Test
   void testGetAllFoodItems() {
-    // Arrange
     List<FoodItem> foodItemList = new ArrayList<>();
     foodItemList.add(foodItem);
 
-    when(foodItemRepo.findAllByRestaurantId(1)).thenReturn(foodItemList);
-    when(restaurantRepo.findById(1)).thenReturn(Optional.of(restaurant));
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
+    when(foodItemRepository.findAllByRestaurantId(1)).thenReturn(foodItemList);
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
 
-    // Act
+
     List<FoodItemOutDto> result = foodItemService.getAll(1);
 
-    // Assert
+
     assertEquals(1, result.size());
     assertEquals("pizza", result.get(0).getFoodName());
     assertEquals("test restaurant", result.get(0).getRestaurantName());
@@ -139,19 +134,19 @@ public class FoodItemServiceTest {
 
   @Test
   void testUpdateFoodItem() throws IOException {
-    // Arrange
+
     foodItemInDto.setPrice(10.99);
-    when(foodItemRepo.findById(1)).thenReturn(Optional.of(foodItem));
-    when(foodItemRepo.save(any(FoodItem.class))).thenReturn(foodItem);
-    when(restaurantRepo.findById(1)).thenReturn(Optional.of(restaurant));
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
+    when(foodItemRepository.findById(1)).thenReturn(Optional.of(foodItem));
+    when(foodItemRepository.save(any(FoodItem.class))).thenReturn(foodItem);
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
     when(multipartFile.getContentType()).thenReturn("image/jpeg");
     when(multipartFile.getBytes()).thenReturn(new byte[] {1, 2, 3});
 
-    // Act
+
     FoodItemOutDto result = foodItemService.updateFoodItem(1, foodItemInDto, multipartFile);
 
-    // Assert
+
     assertEquals("pizza", result.getFoodName());
     assertEquals("test restaurant", result.getRestaurantName());
     assertEquals("Italian", result.getCategoryName());
@@ -160,22 +155,22 @@ public class FoodItemServiceTest {
 
   @Test
   void testUpdateFoodItemNotFound() {
-    // Arrange
-    when(foodItemRepo.findById(1)).thenReturn(Optional.empty());
 
-    // Act & Assert
-    assertThrows(NotFound.class, () -> foodItemService.updateFoodItem(1, foodItemInDto, null));
+    when(foodItemRepository.findById(1)).thenReturn(Optional.empty());
+
+
+    assertThrows(NotFoundException.class, () -> foodItemService.updateFoodItem(1, foodItemInDto, null));
   }
 
   @Test
   void testGetFoodItemName() {
-    // Arrange
-    when(foodItemRepo.findById(1)).thenReturn(Optional.of(foodItem));
 
-    // Act
+    when(foodItemRepository.findById(1)).thenReturn(Optional.of(foodItem));
+
+
     FoodItemNameOutDto result = foodItemService.getFoodItemName(1);
 
-    // Assert
+
     assertEquals("Pizza", result.getFoodItemName());
     assertEquals(1, result.getId());
     assertEquals(9.99, result.getPrice(), 0.01);
@@ -183,10 +178,10 @@ public class FoodItemServiceTest {
 
   @Test
   void testGetFoodItemNameNotFound() {
-    // Arrange
-    when(foodItemRepo.findById(1)).thenReturn(Optional.empty());
 
-    // Act & Assert
-    assertThrows(NotFound.class, () -> foodItemService.getFoodItemName(1));
+    when(foodItemRepository.findById(1)).thenReturn(Optional.empty());
+
+
+    assertThrows(NotFoundException.class, () -> foodItemService.getFoodItemName(1));
   }
 }

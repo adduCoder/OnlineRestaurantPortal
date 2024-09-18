@@ -60,7 +60,7 @@ public class OrderController {
   public ResponseEntity<?> createOrder(@Valid @RequestBody final OrderInDto orderInDto) {
     log.info("Received request to create an order for userId: {}", orderInDto.getUserId());
     orderService.createOrder(orderInDto);
-    log.debug("Order successfully created for userId: {}", orderInDto.getUserId());
+    log.info("Order successfully created for userId: {}", orderInDto.getUserId());
     return new ResponseEntity<>(new ApiResponse(Constant.SUCCESS), HttpStatus.CREATED);
   }
 
@@ -95,7 +95,7 @@ public class OrderController {
                                         @RequestBody final UpdateStatusInDto updateStatusInDto) {
     log.info("Received request to update status for orderId: {}", orderId);
     orderService.updateStatus(orderId, updateStatusInDto);
-    log.debug("Order status updated successfully for orderId: {}", orderId);
+    log.info("Order status updated successfully for orderId: {}", orderId);
     return new ResponseEntity<>(new ApiResponse(Constant.CART_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
@@ -113,7 +113,7 @@ public class OrderController {
   public ResponseEntity<List<OrderOutDto>> getOrdersByUser(@PathVariable final Integer userId) {
     log.info("Received request to get all orders for userId: {}", userId);
     List<OrderOutDto> orders = orderService.getOrdersByUser(userId);
-    log.debug("Retrieved {} orders for userId: {}", orders.size(), userId);
+    log.info("Retrieved {} orders for userId: {}", orders.size(), userId);
     return ResponseEntity.ok(orders);
   }
 
@@ -131,7 +131,7 @@ public class OrderController {
   public ResponseEntity<List<OrderOutDto>> getOrdersByRestaurant(@PathVariable final Integer restaurantId) {
     log.info("Received request to get all orders for restaurantId: {}", restaurantId);
     List<OrderOutDto> orders = orderService.getOrdersByRestaurant(restaurantId);
-    log.debug("Retrieved {} orders for restaurantId: {}", orders.size(), restaurantId);
+    log.info("Retrieved {} orders for restaurantId: {}", orders.size(), restaurantId);
     return ResponseEntity.ok(orders);
   }
 }

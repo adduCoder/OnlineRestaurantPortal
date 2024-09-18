@@ -4,8 +4,8 @@ import com.user.dto.AddressInDto;
 import com.user.dto.AddressOutDto;
 import com.user.dto.UserOutDto;
 import com.user.entity.Address;
-import com.user.exception.NotFound; // Import the correct exception class
-import com.user.repository.AddressRepo;
+import com.user.exception.NotFoundException; // Import the correct exception class
+import com.user.repository.AddressRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class AddressServiceTest {
 
   @Mock
-  private AddressRepo addressRepo;
+  private AddressRepository addressRepository;
 
   @Mock
   private UserService userService;
@@ -86,49 +86,49 @@ class AddressServiceTest {
   @Test
   void testCreateAddress() {
     when(userService.getUser(anyInt())).thenReturn(new UserOutDto());
-    when(addressRepo.save(any(Address.class))).thenReturn(address);
+    when(addressRepository.save(any(Address.class))).thenReturn(address);
     AddressOutDto response = addressService.createAddress(addressInDto);
-    verify(addressRepo, times(1)).save(any(Address.class));
+    verify(addressRepository, times(1)).save(any(Address.class));
   }
 
   @Test
   void testGetAddressByUserId() {
-    when(addressRepo.findAllByUserId(anyInt())).thenReturn(addressList);
+    when(addressRepository.findAllByUserId(anyInt())).thenReturn(addressList);
     List<AddressOutDto> responses = addressService.getAddressByUserId(1);
     assertEquals(1, responses.size());
     assertEquals("Test Street", responses.get(0).getStreet());
     assertEquals("Test City", responses.get(0).getCity());
     assertEquals("MP", responses.get(0).getState());
     assertEquals(452001, responses.get(0).getPinCode());
-    verify(addressRepo, times(1)).findAllByUserId(anyInt());
+    verify(addressRepository, times(1)).findAllByUserId(anyInt());
   }
 
   @Test
   void testDeleteAddress() {
-    when(addressRepo.findById(anyInt())).thenReturn(Optional.of(address));
+    when(addressRepository.findById(anyInt())).thenReturn(Optional.of(address));
     String response = addressService.deleteAddress(1);
     assertEquals("deleted Successfull!", response);
-    verify(addressRepo, times(1)).delete(any(Address.class));
+    verify(addressRepository, times(1)).delete(any(Address.class));
   }
 
   @Test
   void testDeleteAddressNotFound() {
-    when(addressRepo.findById(anyInt())).thenReturn(Optional.empty());
-    assertThrows(NotFound.class, () -> addressService.deleteAddress(1));  // Updated to throw NotFound
+    when(addressRepository.findById(anyInt())).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> addressService.deleteAddress(1));  // Updated to throw NotFound
   }
 
   @Test
   void testUpdateAddress() {
-    when(addressRepo.findById(anyInt())).thenReturn(Optional.of(address));
-    when(addressRepo.save(any(Address.class))).thenReturn(address);
+    when(addressRepository.findById(anyInt())).thenReturn(Optional.of(address));
+    when(addressRepository.save(any(Address.class))).thenReturn(address);
     AddressOutDto response = addressService.updateAddress(1, updateAddressInDto);
-    verify(addressRepo, times(1)).findById(anyInt());
-    verify(addressRepo, times(1)).save(any(Address.class));
+    verify(addressRepository, times(1)).findById(anyInt());
+    verify(addressRepository, times(1)).save(any(Address.class));
   }
 
   @Test
   void testUpdateAddressNotFound() {
-    when(addressRepo.findById(anyInt())).thenReturn(Optional.empty());
-    assertThrows(NotFound.class, () -> addressService.updateAddress(1, updateAddressInDto));  // Updated to throw NotFound
+    when(addressRepository.findById(anyInt())).thenReturn(Optional.empty());
+    assertThrows(NotFoundException.class, () -> addressService.updateAddress(1, updateAddressInDto));  // Updated to throw NotFound
   }
 }

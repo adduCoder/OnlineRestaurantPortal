@@ -125,4 +125,5 @@ public class UserOutDtoTest {
 
     assertNotEquals(userOutDto1, new Object());
   }
+
 }

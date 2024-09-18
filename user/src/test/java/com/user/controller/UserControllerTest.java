@@ -61,17 +61,17 @@ class UserControllerTest {
     MockitoAnnotations.openMocks(this);
 
     userOutDto = new UserOutDto();
-    userOutDto.setId(101); // Placeholder user ID
-    userOutDto.setName("Test User"); // Placeholder name
-    userOutDto.setEmail("testuser@example.com"); // Placeholder email
-    userOutDto.setWalletBalance(1000.0); // Placeholder wallet balance
-    userOutDto.setPhoneNo("1234567890"); // Placeholder phone number
+    userOutDto.setId(101);
+    userOutDto.setName("Test User");
+    userOutDto.setEmail("testuser@example.com");
+    userOutDto.setWalletBalance(1000.0);
+    userOutDto.setPhoneNo("1234567890");
 
     userInDto = new UserInDto();
-    userInDto.setName("Test User"); // Placeholder name
-    userInDto.setEmail("testuser@example.com"); // Placeholder email
-    userInDto.setPhoneNo("1234567890"); // Placeholder phone number
-    userInDto.setPassword("password123"); // Placeholder password
+    userInDto.setName("Test User");
+    userInDto.setEmail("testuser@example.com");
+    userInDto.setPhoneNo("1234567890");
+    userInDto.setPassword("password123");
   }
 
   /**
@@ -105,7 +105,7 @@ class UserControllerTest {
    */
   @Test
   void testAddUser() {
-    // Mock the service method
+
     doNothing().when(userService).addUser(any(UserInDto.class));
 
     ApiResponse expectedResponse = new ApiResponse("user created successfull"); // Placeholder message
@@ -126,9 +126,9 @@ class UserControllerTest {
   void testUpdateUser() {
     doNothing().when(userService).updateUser(anyInt(), any(UserInDto.class));
 
-    ApiResponse apiResponse = new ApiResponse(Constant.USER_UPDATED_SUCCESS); // Placeholder message
+    ApiResponse apiResponse = new ApiResponse(Constant.USER_UPDATED_SUCCESS);
 
-    ResponseEntity<?> response = userController.updateUser(101, userInDto); // Placeholder user ID
+    ResponseEntity<?> response = userController.updateUser(101, userInDto);
 
     ApiResponse actualResponse = (ApiResponse) response.getBody();
 
@@ -143,7 +143,7 @@ class UserControllerTest {
   @Test
   void testDeleteUser() {
     when(userService.deleteUser(anyInt())).thenReturn(userOutDto);
-    ResponseEntity<?> response = userController.deleteUser(101); // Placeholder user ID
+    ResponseEntity<?> response = userController.deleteUser(101);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(userOutDto, response.getBody());
   }
@@ -155,8 +155,8 @@ class UserControllerTest {
   @Test
   void testLoginUser() {
     LoginInDto loginInDto = new LoginInDto();
-    loginInDto.setEmail("testuser@example.com"); // Placeholder email
-    loginInDto.setPassword("password123"); // Placeholder password
+    loginInDto.setEmail("testuser@example.com");
+    loginInDto.setPassword("password123");
     when(userService.loginUser(any(LoginInDto.class))).thenReturn(userOutDto);
 
     ResponseEntity<?> response = userController.loginUser(loginInDto);
@@ -171,14 +171,14 @@ class UserControllerTest {
   @Test
   void testLoginUserWithInvalidCredentials() {
     LoginInDto loginInDto = new LoginInDto();
-    loginInDto.setEmail("testuser@example.com"); // Placeholder email
-    loginInDto.setPassword("wrongpassword"); // Placeholder incorrect password
+    loginInDto.setEmail("testuser@example.com");
+    loginInDto.setPassword("wrongpassword");
     when(userService.loginUser(any(LoginInDto.class))).thenReturn(null);
 
     ResponseEntity<?> response = userController.loginUser(loginInDto);
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     assertEquals("Invalid credentials", ((GlobalExceptionHandler.ErrorResponse)
-      response.getBody()).getMessage()); // Placeholder message
+      response.getBody()).getMessage());
   }
 
   /**

@@ -29,7 +29,6 @@ public class ExceptionHandlerTest {
 
     FieldError fieldError = new FieldError("object", "field", "Error message");
 
-    // Create a mock MethodArgumentNotValidException
     MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
 
     Map<String, Object> response = exceptionHandler.handleValidationExceptions(ex);

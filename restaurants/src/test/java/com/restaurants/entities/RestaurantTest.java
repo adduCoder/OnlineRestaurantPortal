@@ -11,15 +11,13 @@ public class RestaurantTest {
 
   @BeforeEach
   public void setUp() {
-    // Initialize the Restaurant object with placeholder data
     restaurant = new Restaurant();
-    restaurant.setId(1); // Placeholder ID
-    restaurant.setUserId(1001); // Placeholder User ID
-    restaurant.setRestaurantName("Test Restaurant"); // Placeholder Restaurant Name
-    restaurant.setAddress("123 Test St, Test City"); // Placeholder Address
-    restaurant.setContactNumber("1234567890"); // Placeholder Contact Number
-    restaurant.setDescription("A test description for restaurant"); // Placeholder Description
-    //restaurant.setImageUrl("http://example.com/testrestaurant.jpg"); // Uncomment if needed
+    restaurant.setId(1);
+    restaurant.setUserId(1001);
+    restaurant.setRestaurantName("Test Restaurant");
+    restaurant.setAddress("123 Test St, Test City");
+    restaurant.setContactNumber("1234567890");
+    restaurant.setDescription("A test description for restaurant");
   }
 
   @Test
@@ -31,7 +29,6 @@ public class RestaurantTest {
     assertEquals("123 Test St, Test City", restaurant.getAddress());
     assertEquals("1234567890", restaurant.getContactNumber());
     assertEquals("A test description for restaurant", restaurant.getDescription());
-    //assertEquals("http://example.com/testrestaurant.jpg", restaurant.getImageUrl()); // Uncomment if needed
   }
 
   @Test
@@ -51,19 +48,25 @@ public class RestaurantTest {
   public void testRestaurantEquality() {
     // Test equality and hashcode
     Restaurant anotherRestaurant = new Restaurant();
-    anotherRestaurant.setId(1); // Placeholder ID
-    anotherRestaurant.setUserId(1001); // Placeholder User ID
-    anotherRestaurant.setRestaurantName("Test Restaurant"); // Placeholder Restaurant Name
-    anotherRestaurant.setAddress("123 Test St, Test City"); // Placeholder Address
-    anotherRestaurant.setContactNumber("1234567890"); // Placeholder Contact Number
-    anotherRestaurant.setDescription("A test description for restaurant"); // Placeholder Description
-    //anotherRestaurant.setImageUrl("http://example.com/testrestaurant.jpg"); // Uncomment if needed
+    anotherRestaurant.setId(1);
+    anotherRestaurant.setUserId(1001);
+    anotherRestaurant.setRestaurantName("Test Restaurant");
+    anotherRestaurant.setAddress("123 Test St, Test City");
+    anotherRestaurant.setContactNumber("1234567890");
+    anotherRestaurant.setDescription("A test description for restaurant");
 
     assertEquals(restaurant, anotherRestaurant);
     assertEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
 
-    anotherRestaurant.setId(2); // Different ID
+    anotherRestaurant.setId(2);
     assertNotEquals(restaurant, anotherRestaurant);
     assertNotEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
   }
+
+  @Test
+  public void testToString() {
+    String expectedString = "Restaurant(id=1, userId=1001, restaurantName=Test Restaurant, address=123 Test St, Test City, contactNumber=1234567890, description=A test description for restaurant, imageData=null)";
+    assertEquals(expectedString, restaurant.toString());
+  }
+
 }

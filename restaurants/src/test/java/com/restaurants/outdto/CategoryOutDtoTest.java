@@ -14,7 +14,6 @@ public class CategoryOutDtoTest {
   @BeforeEach
   public void setUp() {
     categoryOutDto = new CategoryOutDto();
-    // Initialize the object with placeholder data
     categoryOutDto.setId(1);
     categoryOutDto.setResturantId(1001);
     categoryOutDto.setName("Test Category");
@@ -52,13 +51,6 @@ public class CategoryOutDtoTest {
     categoryOutDto.setName("Updated Category");
     assertEquals("Updated Category", categoryOutDto.getName());
   }
-
-//  @Test
-//  public void testToString() {
-//    String expected = "CategoryOutDto(id=1, resturantId=1001, name=Test Category)";
-//    assertEquals(expected, categoryOutDto.toString());
-//  }
-
   @Test
   public void testHashCode() {
     CategoryOutDto categoryOutDto1 = new CategoryOutDto();

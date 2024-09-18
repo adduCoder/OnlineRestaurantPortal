@@ -182,7 +182,6 @@ public class AddressTest {
     assertNotEquals(address, address2);
     assertNotEquals(address.hashCode(), address2.hashCode());
 
-    // Test with two new empty Address instances
     Address address3 = new Address();
     Address address4 = new Address();
     assertEquals(address3, address4);

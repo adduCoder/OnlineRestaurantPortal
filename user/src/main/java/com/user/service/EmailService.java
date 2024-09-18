@@ -29,6 +29,7 @@ public class EmailService {
    * @param text  the content of the email
    */
   public void sendMail(final String from, final List<String> to, final String text) {
+    log.info("Trying to send mail from : {}, to : {} ", from, to);
     try {
       MimeMessage message = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -39,6 +40,7 @@ public class EmailService {
     } catch (Exception e) {
       log.error("Error sending email from: {} to: {}", from, to, e);
     }
+    log.info("Successfully sended email from : {} to: {}", from, to);
   }
 }
 

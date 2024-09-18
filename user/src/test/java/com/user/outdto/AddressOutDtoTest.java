@@ -52,7 +52,6 @@ public class AddressOutDtoTest {
     assertEquals(addressOutDto, addressOutDto2);
     assertEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
 
-    // Modify one property at a time to test inequality
     addressOutDto2.setStreet("Updated Street");
     assertNotEquals(addressOutDto, addressOutDto2);
     assertNotEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
@@ -96,4 +95,5 @@ public class AddressOutDtoTest {
     addressOutDto.setPinCode(654321);
     assertEquals(654321, addressOutDto.getPinCode());
   }
+
 }

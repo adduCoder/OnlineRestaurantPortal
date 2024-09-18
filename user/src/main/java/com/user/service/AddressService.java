@@ -4,8 +4,8 @@ import com.user.dto.AddressInDto;
 import com.user.dto.AddressOutDto;
 import com.user.conversion.DtoConversion;
 import com.user.entity.Address;
-import com.user.exception.NotFound;
-import com.user.repository.AddressRepo;
+import com.user.exception.NotFoundException;
+import com.user.repository.AddressRepository;
 import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
  * Service class for managing addresses.
  * <p>
  * This service provides methods for creating, retrieving, updating, and deleting addresses.
- * It interacts with the {@link AddressRepo} repository to perform CRUD operations and uses
+ * It interacts with the {@link AddressRepository} repository to perform CRUD operations and uses
  * {@link DtoConversion} for converting between DTOs and entity objects.
  * </p>
  */
@@ -34,7 +34,7 @@ public class AddressService {
    * </p>
    */
   @Autowired
-  private AddressRepo addressRepo;
+  private AddressRepository addressRepository;
 
   /**
    * Creates a new address and saves it to the repository.
@@ -46,7 +46,7 @@ public class AddressService {
     log.info("Creating address for userId: {}", addressInDto.getUserId());
     Address address = DtoConversion.mapToAddress(addressInDto);
     //Integer userId = address.getUserId();
-    addressRepo.save(address);
+    addressRepository.save(address);
     log.info("Address created successfully for userId: {}", addressInDto.getUserId());
     return DtoConversion.mapToAddressOutDto(address);
   }
@@ -58,9 +58,8 @@ public class AddressService {
    * @return a list of {@link AddressOutDto} containing the addresses for the specified user
    */
   public List<AddressOutDto> getAddressByUserId(final Integer userId) {
-    //just to check whether user existed with that userId
     log.info("Fetching addresses for userId: {}", userId);
-    List<Address> addressList = addressRepo.findAllByUserId(userId);
+    List<Address> addressList = addressRepository.findAllByUserId(userId);
     List<AddressOutDto> addressOutDtoList = new ArrayList<>();
     for (Address address:addressList) {
       addressOutDtoList.add(DtoConversion.mapToAddressOutDto(address));
@@ -77,12 +76,12 @@ public class AddressService {
    */
   public String deleteAddress(final Integer addressId) {
     log.info("Received request to delete address with addressId: {}", addressId);
-    Optional<Address> optionalAddress = addressRepo.findById(addressId);
+    Optional<Address> optionalAddress = addressRepository.findById(addressId);
     if (!optionalAddress.isPresent()) {
-      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+      throw new NotFoundException(Constant.NO_ADDRESS_FOUND);
     }
     Address address = optionalAddress.get();
-    addressRepo.delete(address);
+    addressRepository.delete(address);
     log.info("Address with addressId: {} deleted successfully", addressId);
     return "deleted Successfull!";
   }
@@ -96,16 +95,16 @@ public class AddressService {
    */
   public AddressOutDto updateAddress(final Integer addressId, final AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
-    Optional<Address> optionalAddress = addressRepo.findById(addressId);
+    Optional<Address> optionalAddress = addressRepository.findById(addressId);
     if (!optionalAddress.isPresent()) {
-      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+      throw new NotFoundException(Constant.NO_ADDRESS_FOUND);
     }
     Address address = optionalAddress.get();
     address.setStreet(updateAddressInDto.getStreet());
     address.setState(updateAddressInDto.getState());
     address.setCity(updateAddressInDto.getCity());
     address.setPinCode(updateAddressInDto.getPinCode());
-    addressRepo.save(address);
+    addressRepository.save(address);
     log.info("Address with addressId: {} updated successfully", addressId);
     return DtoConversion.mapToAddressOutDto(address);
   }
@@ -115,15 +114,17 @@ public class AddressService {
    *
    * @param addressId the ID of the address to be retrieved
    * @return an {@link AddressOutDto} representing the retrieved address
-   * @throws NotFound if no address with the specified ID is found
+   * @throws NotFoundException if no address with the specified ID is found
    */
   public AddressOutDto getAddressByAddressId(final Integer addressId) {
-    Optional<Address> optionalAddress = addressRepo.findById(addressId);
+    log.info("Fetching address for id: {}", addressId);
+    Optional<Address> optionalAddress = addressRepository.findById(addressId);
     if (!optionalAddress.isPresent()) {
-      throw new NotFound(Constant.NO_ADDRESS_FOUND);
+      throw new NotFoundException(Constant.NO_ADDRESS_FOUND);
     }
     Address address = optionalAddress.get();
     AddressOutDto addressOutDto = DtoConversion.mapToAddressOutDto(address);
+    log.info("Successfull fetched the address : {}", addressOutDto);
     return addressOutDto;
   }
 }

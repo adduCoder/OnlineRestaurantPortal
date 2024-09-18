@@ -1,10 +1,12 @@
 package com.orders.servicetest;
 
+import com.orders.dto.ApiResponse;
 import com.orders.dto.CartInDto;
-import com.orders.dtoconversion.DtoConversion;
+import com.orders.conversion.DtoConversion;
 import com.orders.entities.Cart;
-import com.orders.repo.CartRepo;
+import com.orders.repository.CartRepository;
 import com.orders.service.CartService;
+import com.orders.util.Constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class CartServiceTest {
 
   @Mock
-  private CartRepo cartRepo;
+  private CartRepository cartRepository;
 
   @Mock
   private DtoConversion dtoConversion; // Mocking DtoConversion
@@ -47,13 +49,13 @@ public class CartServiceTest {
     existingCart.setUserId(1);
     existingCart.setQuantity(3);
 
-    when(cartRepo.findByUserIdAndRestaurantIdAndFoodItemId(1, 1, 1)).thenReturn(Optional.of(existingCart));
-    when(cartRepo.save(any(Cart.class))).thenReturn(existingCart);
+    when(cartRepository.findByUserIdAndRestaurantIdAndFoodItemId(1, 1, 1)).thenReturn(Optional.of(existingCart));
+    when(cartRepository.save(any(Cart.class))).thenReturn(existingCart);
 
     Integer result = cartService.addOrUpdateCart(cartInDto);
 
     assertEquals(1, result);
-    verify(cartRepo).save(existingCart);
+    verify(cartRepository).save(existingCart);
     assertEquals(5, existingCart.getQuantity());
   }
 
@@ -65,13 +67,28 @@ public class CartServiceTest {
     cartInDto.setFoodItemId(1);
     cartInDto.setQuantity(5);
 
-    when(cartRepo.findByUserIdAndRestaurantIdAndFoodItemId(1, 1, 1)).thenReturn(Optional.empty());
-    when(cartRepo.save(any(Cart.class))).thenReturn(new Cart());
+    when(cartRepository.findByUserIdAndRestaurantIdAndFoodItemId(1, 1, 1)).thenReturn(Optional.empty());
+    when(cartRepository.save(any(Cart.class))).thenReturn(new Cart());
 
     Integer result = cartService.addOrUpdateCart(cartInDto);
 
     assertNull(result);
-    verify(cartRepo).save(any(Cart.class));
+    verify(cartRepository).save(any(Cart.class));
+  }
+
+
+  @Test
+  public void testDeleteCartSuccessfully() {
+    Integer cartId = 1;
+    Cart cart = new Cart();
+    cart.setId(cartId);
+
+    when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+
+    ApiResponse apiResponse = cartService.deleteCart(cartId);
+
+    verify(cartRepository).deleteById(cartId);
+    assertEquals(Constant.CART_REMVOED, apiResponse.getMessage());
   }
 
 

@@ -36,7 +36,7 @@ public class UserInDtoTest {
 
   @Test
   public void testInvalidName() {
-    validUserInDto.setName("Aar"); // Invalid name (too short)
+    validUserInDto.setName("Aar");
 
     Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
     assertTrue(violations.isEmpty(), "Expected validation errors due to invalid name");

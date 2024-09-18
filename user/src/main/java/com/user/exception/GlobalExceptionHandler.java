@@ -67,16 +67,16 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Handles {@link NotFound} exceptions.
+   * Handles {@link NotFoundException} exceptions.
    * This exception is thrown when a requested resource is not found.
    *
    * @param ex the exception to handle
    * @return an {@link ErrorResponse} with status {@link HttpStatus#NOT_FOUND} and the exception message
    */
-  @ExceptionHandler(NotFound.class)
+  @ExceptionHandler(NotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleNoAddressFound(final NotFound ex) {
+  public ErrorResponse handleNoAddressFound(final NotFoundException ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 

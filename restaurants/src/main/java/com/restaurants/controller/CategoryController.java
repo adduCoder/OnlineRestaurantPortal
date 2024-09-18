@@ -44,7 +44,7 @@ public class CategoryController {
   public ResponseEntity<?> getCategoryById(@PathVariable final Integer id) {
     log.info("Fetching category with ID: {}", id);
     CategoryOutDto categoryOutDto = categoryService.getCategory(id);
-    log.info("Retrieved category: {}", categoryOutDto);
+    log.info("Retrieved category with Id: {}", id);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
   }
 
@@ -58,7 +58,7 @@ public class CategoryController {
   public ResponseEntity<?> getAllCategory(@PathVariable final Integer restaurantId) {
     log.info("Fetching all categories for restaurant with ID: {}", restaurantId);
     List<CategoryOutDto> categoryOutDtoList = categoryService.getAllCategory(restaurantId);
-    log.info("Retrieved categories: {}", categoryOutDtoList);
+    log.info("Retrieved categories with restaurantId {}", restaurantId);
     return new ResponseEntity<>(categoryOutDtoList, HttpStatus.OK);
   }
 
@@ -71,12 +71,13 @@ public class CategoryController {
    */
   @PostMapping("/add")
   public ResponseEntity<?> addCategory(@Valid @RequestBody final CategoryInDto categoryInDto) {
-    log.info("Adding new category: {}", categoryInDto);
+    log.info("Adding new category with name: {}", categoryInDto.getName());
     CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
     if (categoryOutDto == null) {
       log.error("Failed to add category: {}", categoryInDto);
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    log.info("Successfully added category with id: {}", categoryOutDto.getId());
     return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
@@ -92,6 +93,7 @@ public class CategoryController {
     final CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {} with data: {}", categoryId);
     categoryService.updateCategory(categoryId, categoryUpdateInDto);
+    log.info("Category successfully updated");
     return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_UPDATED_SUCCESS), HttpStatus.OK);
   }
 }

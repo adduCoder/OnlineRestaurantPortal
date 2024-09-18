@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +60,7 @@ public class CartController {
     log.info("Received request to add or update cart with userId: {} and restaurantId: {}",
       cartInDto.getUserId(), cartInDto.getRestaurantId());
     Integer cartId = cartService.addOrUpdateCart(cartInDto);
-    log.debug("Cart added/updated with cartId: {}", cartId);
+    log.info("Cart added/updated with cartId: {}", cartId);
     return new ResponseEntity<>(new ApiResponse(Constant.CART_ADDED_SUCCESS), HttpStatus.OK);
   }
 
@@ -77,8 +79,28 @@ public class CartController {
   public ResponseEntity<?> getAllCart(@RequestParam final Integer restaurantId, @RequestParam final Integer userId) {
     log.info("Received request to get all carts for userId: {} and restaurantId: {}", userId, restaurantId);
     List<CartOutDto> cartOutDtoList = cartService.getAllCart(userId, restaurantId);
-    log.debug("Retrieved {} carts for userId: {} and restaurantId: {}",
+    log.info("Retrieved {} carts for userId: {} and restaurantId: {}",
       cartOutDtoList.size(), userId, restaurantId);
     return new ResponseEntity<>(cartOutDtoList, HttpStatus.OK);
+  }
+
+  /**
+   * Deletes a cart by its ID.
+   * <p>
+   * This method handles a DELETE request to remove a specific cart based on its ID.
+   * It processes the request to delete the cart from the system and returns a response
+   * indicating the success or failure of the operation.
+   * </p>
+   *
+   * @param cartId The ID of the cart to be deleted. This is provided as a path variable in the URL.
+   * @return A {@link ResponseEntity} containing an {@link ApiResponse} with a success or error message,
+   *         and the HTTP status code representing the outcome of the operation.
+   */
+  @DeleteMapping("/{cartId}")
+  public ResponseEntity<?> deleteCart(@PathVariable final Integer cartId) {
+    log.info("Trying to delete cart with id: {}", cartId);
+    ApiResponse apiResponse  = cartService.deleteCart(cartId);
+    log.info("Successfully delted cart with id: {}", apiResponse);
+    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }
 }

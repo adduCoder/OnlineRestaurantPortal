@@ -1,16 +1,18 @@
 package com.orders.service;
 
+import com.orders.dto.ApiResponse;
 import com.orders.dto.CartInDto;
 import com.orders.dto.CartOutDto;
 import com.orders.dto.FoodItemNameOutDto;
 import com.orders.dto.RestaurantOutDto;
-import com.orders.dtoconversion.DtoConversion;
+import com.orders.conversion.DtoConversion;
 import com.orders.entities.Cart;
-import com.orders.repo.CartRepo;
+import com.orders.exception.CartNotFoundException;
+import com.orders.repository.CartRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.orders.util.Constant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +32,7 @@ public class CartService {
    * Repository for performing CRUD operations on Cart entities.
    */
   @Autowired
-  private CartRepo cartRepo;
+  private CartRepository cartRepository;
 
   /**
    * Feign client for interacting with the restaurant microservice.
@@ -93,8 +95,9 @@ public class CartService {
    * @return the ID of the cart item
    */
   public Integer addOrUpdateCart(final CartInDto cartInDto) {
-    log.info("Attempting to add or update cart item: {}", cartInDto);
-    Optional<Cart> existingCartOpt = cartRepo.findByUserIdAndRestaurantIdAndFoodItemId(
+    log.info("Attempting to add or update cart item for userId: {}, restaurantId: {}, foodItemId: {}",
+      cartInDto.getUserId(), cartInDto.getRestaurantId(), cartInDto.getFoodItemId());
+    Optional<Cart> existingCartOpt = cartRepository.findByUserIdAndRestaurantIdAndFoodItemId(
       cartInDto.getUserId(), cartInDto.getRestaurantId(), cartInDto.getFoodItemId());
 
     Integer cartId = null;
@@ -102,14 +105,14 @@ public class CartService {
       // If cart item exists, update with the exact quantity from the DTO (instead of incrementing)
       Cart existingCart = existingCartOpt.get();
       existingCart.setQuantity(cartInDto.getQuantity());
-      cartRepo.save(existingCart);
+      cartRepository.save(existingCart);
       cartId = existingCart.getUserId();
-      log.info("Updated existing cart item with ID: {}", cartId);
+      log.info("Updated existing cart item with cartId: {}", cartId);
     } else {
       // Otherwise, add new cart item
-      Cart savedCart = cartRepo.save(DtoConversion.mapToCart(cartInDto));
+      Cart savedCart = cartRepository.save(DtoConversion.mapToCart(cartInDto));
       cartId = savedCart.getId();
-      log.info("Added new cart item with ID: {}", cartId);
+      log.info("Added new cart item with cartId: {}", cartId);
     }
     return cartId;
   }
@@ -126,8 +129,8 @@ public class CartService {
    * @return a list of DTOs representing cart items
    */
   public List<CartOutDto> getAllCart(final Integer userId, final Integer restaurantId) {
-    log.info("Retrieving all cart items for user ID: {} and restaurant ID: {}", userId, restaurantId);
-    List<Cart> cartList = cartRepo.findByUserIdAndRestaurantId(userId, restaurantId);
+    log.info("Retrieving all cart items for userId: {} and restaurantId: {}", userId, restaurantId);
+    List<Cart> cartList = cartRepository.findByUserIdAndRestaurantId(userId, restaurantId);
     List<CartOutDto> cartOutDtoList = new ArrayList<>();
     for (Cart cart : cartList) {
       CartOutDto cartOutDto = DtoConversion.mapToCartOutDto(cart);
@@ -136,8 +139,32 @@ public class CartService {
       cartOutDto.setFoodItemName(foodItemName(cartOutDto.getFoodItemId()));
       cartOutDtoList.add(cartOutDto);
     }
-    log.info("Retrieved {} cart items", cartOutDtoList.size());
+    log.info("Retrieved {} cart items for userId: {} and restaurantId: {}", cartOutDtoList.size(), userId, restaurantId);
     return cartOutDtoList;
   }
 
+  /**
+   * Deletes a cart by its ID.
+   * <p>
+   * This method attempts to find and delete a cart with the specified ID.
+   * If the cart is not found, a {@link CartNotFoundException} is thrown.
+   * If the cart is found and deleted successfully, an {@link ApiResponse} indicating success is returned.
+   * </p>
+   *
+   * @param cartId the ID of the cart to be deleted
+   * @return an {@link ApiResponse} indicating the result of the deletion operation
+   * @throws CartNotFoundException if no cart with the specified ID is found
+   */
+  public ApiResponse deleteCart(final Integer cartId) {
+    log.info("Deleting card with id : {}", cartId);
+    Optional<Cart> optionalCart = cartRepository.findById(cartId);
+    if (!optionalCart.isPresent()) {
+      throw new CartNotFoundException();
+    }
+    Cart cart = optionalCart.get();
+    cartRepository.deleteById(cartId);
+    ApiResponse apiResponse = new ApiResponse();
+    apiResponse.setMessage(Constant.CART_REMVOED);
+    return apiResponse;
+  }
 }

@@ -23,7 +23,6 @@ public class AmountInDtoTest {
    */
   @BeforeEach
   public void setUp() {
-    // Initialize the AmountInDto instance
     amountInDto.setMoney(null);
   }
 
@@ -50,7 +49,7 @@ public class AmountInDtoTest {
    */
   @Test
   public void testToString() {
-    amountInDto.setMoney(678.90); // Placeholder value
+    amountInDto.setMoney(678.90);
     final String expectedToString = "AmountInDto(money=678.9)";
     assertEquals(expectedToString, amountInDto.toString());
   }
@@ -61,21 +60,18 @@ public class AmountInDtoTest {
   @Test
   public void testEqualsAndHashCode() {
     final AmountInDto anotherAmountInDto = new AmountInDto();
-    anotherAmountInDto.setMoney(321.65); // Placeholder value
+    anotherAmountInDto.setMoney(321.65);
 
     final AmountInDto sameAmountInDto = new AmountInDto();
-    sameAmountInDto.setMoney(321.65); // Placeholder value
+    sameAmountInDto.setMoney(321.65);
 
-    // Test equality with another object having the same value
     assertEquals(sameAmountInDto, anotherAmountInDto);
     assertEquals(sameAmountInDto.hashCode(), anotherAmountInDto.hashCode());
 
-    // Test equality with different values
-    anotherAmountInDto.setMoney(987.65); // Placeholder value
+    anotherAmountInDto.setMoney(987.65);
     assertNotEquals(sameAmountInDto, anotherAmountInDto);
     assertNotEquals(sameAmountInDto.hashCode(), anotherAmountInDto.hashCode());
 
-    // Test equality with a different class
     assertNotEquals(sameAmountInDto, new Object());
   }
 }

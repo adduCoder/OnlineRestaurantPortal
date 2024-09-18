@@ -46,20 +46,16 @@ class OrderControllerTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    // Initialize OrderInDto
     orderInDto = new OrderInDto(1, 1, 1, Arrays.asList(1, 2, 3), 100.0, OrderStatus.PENDING);
 
-    // Initialize UpdateStatusInDto
     updateStatusInDto = new UpdateStatusInDto(OrderStatus.CONFIRMED);
 
-    // Initialize OrderItemDetailOutDto
     OrderItemDetailOutDto itemDetail = new OrderItemDetailOutDto();
     itemDetail.setFoodItemId(1);
     itemDetail.setFoodItemName("Item");
     itemDetail.setQuantity(2);
     itemDetail.setPrice(50.0);
 
-    // Initialize OrderOutDto
     orderOutDto = new OrderOutDto();
     orderOutDto.setId(1);
     orderOutDto.setUserId(1);
@@ -72,13 +68,11 @@ class OrderControllerTest {
     orderOutDto.setUserName("User Name");
     orderOutDto.setOrderDetails(Collections.singletonList(itemDetail)); // Adjusted field name
 
-    // Initialize ApiResponse
     apiResponse = new ApiResponse(Constant.SUCCESS);
   }
 
   @Test
   void testCreateOrder() {
-    // Assuming the service method returns void
     doNothing().when(orderService).createOrder(any(OrderInDto.class));
     ResponseEntity<?> response = orderController.createOrder(orderInDto);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -95,7 +89,6 @@ class OrderControllerTest {
 
   @Test
   void testUpdateStatus() {
-    // Assuming the service method returns void
     doNothing().when(orderService).updateStatus(anyInt(), any(UpdateStatusInDto.class));
     ResponseEntity<?> response = orderController.updateStatus(1, updateStatusInDto);
     assertEquals(HttpStatus.OK, response.getStatusCode());

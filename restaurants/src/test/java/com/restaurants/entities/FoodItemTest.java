@@ -11,20 +11,18 @@ public class FoodItemTest {
 
   @BeforeEach
   public void setUp() {
-    // Initialize the FoodItem object with placeholder data
     foodItem = new FoodItem();
-    foodItem.setId(1); // Placeholder ID
-    foodItem.setFoodName("Test Food"); // Placeholder Food Name
-    foodItem.setRestaurantId(100); // Placeholder Restaurant ID
-    foodItem.setDescription("Test Description"); // Placeholder Description
-    foodItem.setCategoryId(20); // Placeholder Category ID
-    foodItem.setIsAvailable(true); // Placeholder Availability
-    foodItem.setPrice(9.99); // Placeholder Price
+    foodItem.setId(1);
+    foodItem.setFoodName("Test Food");
+    foodItem.setRestaurantId(100);
+    foodItem.setDescription("Test Description");
+    foodItem.setCategoryId(20);
+    foodItem.setIsAvailable(true);
+    foodItem.setPrice(9.99);
   }
 
   @Test
   public void testFoodItemFields() {
-    // Test the fields of the FoodItem entity
     assertEquals(1, foodItem.getId());
     assertEquals("Test Food", foodItem.getFoodName());
     assertEquals(100, foodItem.getRestaurantId());
@@ -36,7 +34,6 @@ public class FoodItemTest {
 
   @Test
   public void testFoodItemMutations() {
-    // Test setting new values for the FoodItem entity
     foodItem.setFoodName("Updated Food");
     assertEquals("Updated Food", foodItem.getFoodName());
 
@@ -49,21 +46,27 @@ public class FoodItemTest {
 
   @Test
   public void testFoodItemEquality() {
-    // Test equality and hashcode
     FoodItem anotherFoodItem = new FoodItem();
-    anotherFoodItem.setId(1); // Same placeholder ID
-    anotherFoodItem.setFoodName("Test Food"); // Same placeholder Food Name
-    anotherFoodItem.setRestaurantId(100); // Same placeholder Restaurant ID
-    anotherFoodItem.setDescription("Test Description"); // Same placeholder Description
-    anotherFoodItem.setCategoryId(20); // Same placeholder Category ID
-    anotherFoodItem.setIsAvailable(true); // Same placeholder Availability
-    anotherFoodItem.setPrice(9.99); // Same placeholder Price
+    anotherFoodItem.setId(1);
+    anotherFoodItem.setFoodName("Test Food");
+    anotherFoodItem.setRestaurantId(100);
+    anotherFoodItem.setDescription("Test Description");
+    anotherFoodItem.setCategoryId(20);
+    anotherFoodItem.setIsAvailable(true);
+    anotherFoodItem.setPrice(9.99);
 
     assertEquals(foodItem, anotherFoodItem);
     assertEquals(foodItem.hashCode(), anotherFoodItem.hashCode());
 
-    anotherFoodItem.setId(2); // Different ID
+    anotherFoodItem.setId(2);
     assertNotEquals(foodItem, anotherFoodItem);
     assertNotEquals(foodItem.hashCode(), anotherFoodItem.hashCode());
+  }
+
+  @Test
+  public void testToString() {
+
+    String expectedString = "FoodItem(id=1, foodName=Test Food, restaurantId=100, description=Test Description, categoryId=20, isAvailable=true, price=9.99, imageData=null)";
+    assertEquals(expectedString, foodItem.toString());
   }
 }

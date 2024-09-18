@@ -3,7 +3,7 @@ package com.restaurants.controller;
 import com.restaurants.dto.FoodItemInDto;
 import com.restaurants.dto.FoodItemNameOutDto;
 import com.restaurants.dto.FoodItemOutDto;
-import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.repository.RestaurantRepository;
 import com.restaurants.service.FoodItemService;
 import com.restaurants.util.ApiResponse;
 import com.restaurants.util.Constant;
@@ -41,7 +41,7 @@ public class FoodItemController {
 
   /** Repository for accessing restaurant data. */
   @Autowired
-  private RestaurantRepo restaurantRepo;
+  private RestaurantRepository restaurantRepository;
 
   /**
    * Retrieves all food items for a specific restaurant.
@@ -70,7 +70,9 @@ public class FoodItemController {
   public ResponseEntity<?> addFoodItem(
     @ModelAttribute @Valid final FoodItemInDto foodItemInDto,
     @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
+    log.info("Adding foodItem : {}", foodItemInDto);
     foodItemService.add(foodItemInDto, multipartFile);
+    log.info("FoodItem added successfully");
     return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
@@ -87,7 +89,7 @@ public class FoodItemController {
     foodItemInDto, @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
     log.info("Updating food item with ID: {} with data: {}", foodItemId, foodItemInDto);
     foodItemService.updateFoodItem(foodItemId, foodItemInDto, multipartFile);
-    log.info("Updated food item");
+    log.info("Fooditem updated successfully");
     return new ResponseEntity<>(new ApiResponse(Constant.FOODITEM_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
@@ -99,7 +101,9 @@ public class FoodItemController {
    */
   @GetMapping("/getName/{foodItemId}")
   public ResponseEntity<?> getFoodItemName(@PathVariable final Integer foodItemId) {
+    log.info("Fetching foodItem with id: {}", foodItemId);
     FoodItemNameOutDto foodItemNameOutDto = foodItemService.getFoodItemName(foodItemId);
+    log.info("Successfully fetched the foodItemName : {}", foodItemNameOutDto.getFoodItemName());
     return new ResponseEntity<>(foodItemNameOutDto, HttpStatus.OK);
   }
 

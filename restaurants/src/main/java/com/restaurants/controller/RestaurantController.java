@@ -53,7 +53,9 @@ public class RestaurantController {
   public ResponseEntity<?> addRestaurant(
     @Valid @ModelAttribute final RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
+    log.info("Trying to add restaurant :{}", restaurantInDto.getRestaurantName());
     restaurantService.addRestaurant(restaurantInDto, multipartFile);
+    log.info("Successfully added restaurant :{}", restaurantInDto.getRestaurantName());
     return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_ADDED_SUCCESS), HttpStatus.CREATED);
   }
 
@@ -70,7 +72,9 @@ public class RestaurantController {
     @PathVariable final Integer restaurantId,
     @Valid @ModelAttribute final RestaurantInDto restaurantInDto,
     @RequestParam(value = "multipartFile", required = false) final MultipartFile multipartFile) {
+    log.info("Trying to update restaurant : {}", restaurantInDto.getRestaurantName());
     restaurantService.updateRestaurant(restaurantId, restaurantInDto, multipartFile);
+    log.info("Successfully updated restaurant :{}", restaurantInDto.getRestaurantName());
     return new ResponseEntity<>(new ApiResponse(Constant.RESTAURANT_UPDATED_SUCCESS), HttpStatus.OK);
   }
 
@@ -82,7 +86,9 @@ public class RestaurantController {
    */
   @GetMapping("/getRestaurant/{restaurantId}")
   public ResponseEntity<?> getRestaurantById(@PathVariable final Integer restaurantId) {
+    log.info("Fetching restaurant with id: {}", restaurantId);
     RestaurantOutDto restaurantOutDto = restaurantService.getRestaurantById(restaurantId);
+    log.info("Successfully fetched restaurant : {}", restaurantOutDto.getRestaurantName());
     return new ResponseEntity<>(restaurantOutDto, HttpStatus.OK);
   }
 
@@ -97,7 +103,7 @@ public class RestaurantController {
   public ResponseEntity<?> getAllRestaurant(@PathVariable final Integer userId) {
     log.info("Fetching all restaurants for user with ID: {}", userId);
     List<RestaurantOutDto> restaurantOutDtoList = restaurantService.getAll(userId);
-    log.info("Retrieved restaurants: {}", restaurantOutDtoList);
+    log.info("Successfully fetched restaurants");
     return new ResponseEntity<>(restaurantOutDtoList, HttpStatus.OK);
   }
 
@@ -109,9 +115,9 @@ public class RestaurantController {
   @Transactional
   @GetMapping("getAll")
   public ResponseEntity<?> getAllRestaurants() {
-    log.info("fetching all restros");
+    log.info("Fetching all restros");
     List<RestaurantOutDto> restaurantOutDtoList = restaurantService.getAllRestros();
-    log.info("retrieved restrautants: {}", restaurantOutDtoList);
+    log.info("Successfully fetched restaurants");
     return new ResponseEntity<>(restaurantOutDtoList, HttpStatus.OK);
   }
 
