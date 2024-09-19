@@ -39,7 +39,7 @@ public final class Constant {
   /**
    * The message indicating that an email was successfully sent.
    */
-  public static final String SENDED_SUCCESS = "email sended successfull";
+  public static final String MAIL_SENDED_SUCCESS = "email sended successfull";
   /**
    * The default email address used for sending emails.
    */
@@ -61,6 +61,13 @@ public final class Constant {
    * The default wallet balance assigned to a user.
    */
   public static final Double DEFAULT_WALLET_BALANCE = 1000.0;
+
+  /**
+   * Fod Invalid Password.
+   */
+  public static final String INVALID_PASSWORD = "Password must be at least 4 characters having at least one uppercase ,"
+    + " one lowercase , and one digit.";
+
   /**
    * Private constructor to prevent instantiation of this utility class.
    */

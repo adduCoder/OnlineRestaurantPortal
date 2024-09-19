@@ -33,4 +33,9 @@ public class RestaurantOutDto {
    * URL of the restaurant's image.
    */
   private byte[] imageData;
+
+  public RestaurantOutDto(){}
+  public RestaurantOutDto(final String restaurantName){
+    this.restaurantName = restaurantName;
+  }
 }

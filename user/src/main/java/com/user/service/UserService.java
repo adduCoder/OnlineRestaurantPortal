@@ -3,10 +3,13 @@ package com.user.service;
 import com.user.dto.AddressOutDto;
 import com.user.dto.AmountInDto;
 import com.user.dto.LoginInDto;
+import com.user.dto.MessageOutDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
+import com.user.dto.ContactUsInDto;
 import com.user.conversion.DtoConversion;
 import com.user.entity.User;
+import com.user.exception.InvalidPasswordException;
 import com.user.exception.NotFoundException;
 import com.user.exception.UserAlreadyExisted;
 import com.user.repository.UserRepository;
@@ -93,7 +96,7 @@ public class UserService {
       throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
     User user = optionalUser.get();
-    log.info("User found: {}", user);
+    log.info("User found with id: {}", user.getId());
     return DtoConversion.mapToUserOutDto(user);
   }
 
@@ -121,8 +124,22 @@ public class UserService {
    */
   public void addUser(final UserInDto userInDto) {
     log.info("Adding new user with email: {}", userInDto.getEmail());
+
     User newUser = DtoConversion.mapToUser(userInDto);
-    String decodedPassword = PasswordEncoder.decodePassword(newUser.getPassword());
+
+    String decodedPassword;
+    try {
+      decodedPassword = PasswordEncoder.decodePassword(newUser.getPassword());
+    } catch (IllegalArgumentException e) {
+      log.info("Password does not appear to be Base64 encoded. Using plain text password.");
+      decodedPassword = newUser.getPassword();
+    }
+    System.out.println(decodedPassword);
+    if (decodedPassword == null
+      || !decodedPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{4,}$")) {
+      throw new InvalidPasswordException(Constant.INVALID_PASSWORD);
+    }
+
     String encodedPassword = PasswordEncoder.encodePassword(decodedPassword);
     newUser.setPassword(encodedPassword);
 
@@ -130,7 +147,6 @@ public class UserService {
     newUser.setName(stringFormatter(newUser.getName()));
 
     Optional<User> existedUser = userRepository.findByEmail(newUser.getEmail());
-
     if (existedUser.isPresent()) {
       log.warn("User with email {} already exists", newUser.getEmail());
       throw new UserAlreadyExisted();
@@ -139,6 +155,7 @@ public class UserService {
     if (newUser.getRole().equals(Role.OWNER)) {
       newUser.setWalletBalance(null);
     }
+
     userRepository.save(newUser);
     log.info("Successfully added user with name: {}", newUser.getName());
   }
@@ -153,13 +170,16 @@ public class UserService {
   public void updateUser(final Integer userId, final UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
     Optional<User> optionalUser = userRepository.findById(userId);
+
     if (!optionalUser.isPresent()) {
       throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
+
     User user = optionalUser.get();
     user.setName(userInDto.getName());
     user.setEmail(userInDto.getEmail());
     user.setPhoneNo(userInDto.getPhoneNo());
+
     userRepository.save(user);
     log.info("User updated successfully: {}", user.getName());
   }
@@ -174,15 +194,18 @@ public class UserService {
   public UserOutDto deleteUser(final Integer userId) {
     log.info("Deleting user with ID: {}", userId);
     Optional<User> optionalUser = userRepository.findById(userId);
+
     if (!optionalUser.isPresent()) {
       log.error("No user found with ID: {}", userId);
       throw new NotFoundException(Constant.NO_CUSTOMER_FOUND);
     }
+
     User user = optionalUser.get();
     List<AddressOutDto> addressList = addressService.getAddressByUserId(userId);
     for (AddressOutDto addressOutDto : addressList) {
       addressService.deleteAddress(addressOutDto.getAddressId());
     }
+
     userRepository.delete(user);
     log.info("User deleted successfull: {}", user.getName());
     return DtoConversion.mapToUserOutDto(user);
@@ -195,27 +218,42 @@ public class UserService {
    * @return a message indicating the result of the login attempt
    */
   public UserOutDto loginUser(final LoginInDto loginInDto) {
-    log.info("Trying to login with email: {} ", loginInDto.getEmail());
-    String email = loginInDto.getEmail();
-    email = stringFormatter(email);
+    log.info("Trying to login with email: {}", loginInDto.getEmail());
+
+    // Normalize the email
+    String email = stringFormatter(loginInDto.getEmail());
     String providedPassword = loginInDto.getPassword();
 
+    // Find user by email
     Optional<User> optionalUser = userRepository.findByEmail(email);
     if (!optionalUser.isPresent()) {
+      log.error("User with email {} does not exist", email);
       return null;
     }
-
     User user = optionalUser.get();
     String storedPassword = user.getPassword();
-    String decodedStoredPassword = PasswordEncoder.decodePassword(storedPassword);
-    String decodedProvidedPassword = PasswordEncoder.decodePassword(providedPassword);
-    if (decodedStoredPassword.equals(decodedProvidedPassword)) {
-      log.info("Successfully Logged in as : {}", user.getEmail());
-      return DtoConversion.mapToUserOutDto(user);
+    String decodedStoredPassword;
+    String decodedProvidedPassword;
+
+    try {
+      decodedStoredPassword = PasswordEncoder.decodePassword(storedPassword);
+    } catch (IllegalArgumentException e) {
+      decodedStoredPassword = storedPassword;
     }
-    log.error("Invalid Credentials");
-    return null;
+    try {
+      decodedProvidedPassword = PasswordEncoder.decodePassword(providedPassword);
+    } catch (IllegalArgumentException e) {
+      decodedProvidedPassword = providedPassword;
+    }
+    if (decodedStoredPassword.equals(decodedProvidedPassword)) {
+      log.info("Successfully logged in as: {}", email);
+      return DtoConversion.mapToUserOutDto(user);
+    } else {
+      log.error("Invalid credentials for email: {}", email);
+      return null;
+    }
   }
+
 
   /**
    * Deducts an amount from a user's wallet balance.
@@ -258,25 +296,26 @@ public class UserService {
   }
 
   /**
-   * Sends an email to a predefined list of recipients.
+   * Sends an email in response to a "Contact Us" form submission.
+   * <p>
+   * This method sends an email to the support team using the details provided
+   * in the {@code contactUsRequest}. It sends the email to a list of predefined support
+   * email addresses.
+   * </p>
    *
-   * @param text the content of the email
-   * @throws NotFoundException if an error occurs while sending the email
+   * @param contactUsInDto the request containing the customer's name, subject, and message
+   * @return a {@link ApiResponse} indicating whether the email was sent successfully
    */
-  public void sendMail(final String text) {
-    log.info("Trying sending mail.");
-    try {
-      List<String> recipients = Arrays.asList(
-        "iadityapatel1729@gmail.com",
-        "adityapatel21052022@gmail.com"
-        //"vyaskhushi2407@gmail.com"
-      );
-      emailService.sendMail(Constant.SENDER, recipients, text);
-      log.info("Successfully added mail");
-    } catch (Exception e) {
-      log.error("No address found ");
-      throw new NotFoundException(Constant.NO_ADDRESS_FOUND);
-    }
+  public MessageOutDto sendContactUsEmail(final ContactUsInDto contactUsInDto) {
+    List<String> supportEmails = Arrays.asList("iadityapatel1729@gmail.com",
+      "adityapatel2105222@gmail.com");
+
+    String subject = contactUsInDto.getSubject();
+    String customerName = contactUsInDto.getName();
+    String customMessage = contactUsInDto.getMessage();
+
+    emailService.sendContactUsEmail(supportEmails, subject, customerName, customMessage);
+    return new MessageOutDto(Constant.MAIL_SENDED_SUCCESS);
   }
 }
 

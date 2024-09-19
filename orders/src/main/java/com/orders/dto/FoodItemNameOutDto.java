@@ -23,4 +23,10 @@ public class FoodItemNameOutDto {
    * The price of the food item.
    */
   private Double price;
+
+  public FoodItemNameOutDto(String foodItemName){
+    this.foodItemName = foodItemName;
+  }
+
+  public FoodItemNameOutDto(){}
 }

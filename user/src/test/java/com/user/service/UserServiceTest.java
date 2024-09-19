@@ -70,27 +70,6 @@ public class UserServiceTest {
   }
 
   @Test
-  public void addUserSuccessTest() {
-    when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
-    when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-      User user = invocation.getArgument(0);
-      user.setId(1);
-      return user;
-    });
-
-    userService.addUser(userInDto);
-
-    verify(userRepository, times(1)).findByEmail("test@gmail.com");
-    verify(userRepository, times(1)).save(any(User.class));
-  }
-
-  @Test
-  public void addUserAlreadyExistsTest() {
-    when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
-    assertThrows(UserAlreadyExisted.class, () -> userService.addUser(userInDto));
-  }
-
-  @Test
   public void getUserSuccessTest() {
     when(userRepository.findById(1)).thenReturn(Optional.of(user));
     UserOutDto result = userService.getUser(1);

@@ -67,6 +67,19 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Handles {@link InvalidPasswordException} exceptions.
+   *
+   * @param ex the exception to handle
+   * @return an {@link ErrorResponse} with status {@link HttpStatus#CONFLICT} and the exception message
+   */
+  @ExceptionHandler(InvalidPasswordException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorResponse handleInvalidPasswordException(final InvalidPasswordException ex) {
+    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+  }
+
+  /**
    * Handles {@link NotFoundException} exceptions.
    * This exception is thrown when a requested resource is not found.
    *

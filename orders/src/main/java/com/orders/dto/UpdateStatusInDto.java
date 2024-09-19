@@ -18,6 +18,7 @@ public class UpdateStatusInDto {
    * This field denotes the updated status that will be applied to the order.
    * </p>
    */
+
   private OrderStatus orderStatus;
 
   /**

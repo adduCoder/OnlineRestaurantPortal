@@ -2,7 +2,9 @@ package com.user.controller;
 
 import com.user.dto.AmountInDto;
 import com.user.dto.ApiResponse;
+import com.user.dto.ContactUsInDto;
 import com.user.dto.LoginInDto;
+import com.user.dto.MessageOutDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
 import com.user.exception.GlobalExceptionHandler;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -160,18 +161,25 @@ public class UserController {
   }
 
   /**
-   * Sends an email.
+   * Sends a 'Contact Us' email.
    *
-   * @param text the email content
-   * @return ResponseEntity with a success message and HTTP status OK
+   * This method handles the processing of a 'Contact Us' form submitted by a user. The user provides their
+   * details via the `ContactUsInDto` object, and the system sends the email through the service layer.
+   * Upon successful processing, the method returns a response containing a message with an HTTP status of OK.
+   *
+   * @param contactUsDto the data transfer object containing the user's 'Contact Us' form details,
+   *                     including name, email, and message
+   * @return ResponseEntity containing a success message and HTTP status OK
    */
-  @PostMapping("/send")
-  public ResponseEntity<?> sendEmail(@RequestParam final String text) {
-    log.info("Sending email with content: {}", text);
-    userService.sendMail(text);
-    log.info("Email sent successfully");
-    return new ResponseEntity<>(new ApiResponse(Constant.SENDED_SUCCESS), HttpStatus.OK);
+  @PostMapping("/contactus")
+  public ResponseEntity<MessageOutDto> sendContactUsEmail(final @RequestBody @Valid ContactUsInDto contactUsDto) {
+    log.info("Sending contact us email from user");
+    MessageOutDto response = userService.sendContactUsEmail(contactUsDto);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
 }
+
+
 
 
