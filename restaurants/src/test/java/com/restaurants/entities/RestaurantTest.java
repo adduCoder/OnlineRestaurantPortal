@@ -11,15 +11,13 @@ public class RestaurantTest {
 
   @BeforeEach
   public void setUp() {
-    // Initialize the Restaurant object
     restaurant = new Restaurant();
     restaurant.setId(1);
     restaurant.setUserId(1001);
-    restaurant.setRestaurantName("The Spice House");
-    restaurant.setAddress("123 Main St, Springfield");
-    restaurant.setContactNumber("9876543210");
-    restaurant.setDescription("A place for authentic spices and cuisine");
-    //restaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    restaurant.setRestaurantName("Test Restaurant");
+    restaurant.setAddress("123 Test St, Test City");
+    restaurant.setContactNumber("1234567890");
+    restaurant.setDescription("A test description for restaurant");
   }
 
   @Test
@@ -27,24 +25,23 @@ public class RestaurantTest {
     // Test the fields of the Restaurant entity
     assertEquals(1, restaurant.getId());
     assertEquals(1001, restaurant.getUserId());
-    assertEquals("The Spice House", restaurant.getRestaurantName());
-    assertEquals("123 Main St, Springfield", restaurant.getAddress());
-    assertEquals("9876543210", restaurant.getContactNumber());
-    assertEquals("A place for authentic spices and cuisine", restaurant.getDescription());
-    //assertEquals("http://example.com/spicehouse.jpg", restaurant.getImageUrl());
+    assertEquals("Test Restaurant", restaurant.getRestaurantName());
+    assertEquals("123 Test St, Test City", restaurant.getAddress());
+    assertEquals("1234567890", restaurant.getContactNumber());
+    assertEquals("A test description for restaurant", restaurant.getDescription());
   }
 
   @Test
   public void testRestaurantMutations() {
     // Test setting new values for the Restaurant entity
-    restaurant.setRestaurantName("The Herb Garden");
-    assertEquals("The Herb Garden", restaurant.getRestaurantName());
+    restaurant.setRestaurantName("Updated Restaurant");
+    assertEquals("Updated Restaurant", restaurant.getRestaurantName());
 
-    restaurant.setAddress("456 Elm St, Metropolis");
-    assertEquals("456 Elm St, Metropolis", restaurant.getAddress());
+    restaurant.setAddress("456 Update Ave, Update City");
+    assertEquals("456 Update Ave, Update City", restaurant.getAddress());
 
-    restaurant.setContactNumber("8765432109");
-    assertEquals("8765432109", restaurant.getContactNumber());
+    restaurant.setContactNumber("0987654321");
+    assertEquals("0987654321", restaurant.getContactNumber());
   }
 
   @Test
@@ -53,11 +50,10 @@ public class RestaurantTest {
     Restaurant anotherRestaurant = new Restaurant();
     anotherRestaurant.setId(1);
     anotherRestaurant.setUserId(1001);
-    anotherRestaurant.setRestaurantName("The Spice House");
-    anotherRestaurant.setAddress("123 Main St, Springfield");
-    anotherRestaurant.setContactNumber("9876543210");
-    anotherRestaurant.setDescription("A place for authentic spices and cuisine");
-    //anotherRestaurant.setImageUrl("http://example.com/spicehouse.jpg");
+    anotherRestaurant.setRestaurantName("Test Restaurant");
+    anotherRestaurant.setAddress("123 Test St, Test City");
+    anotherRestaurant.setContactNumber("1234567890");
+    anotherRestaurant.setDescription("A test description for restaurant");
 
     assertEquals(restaurant, anotherRestaurant);
     assertEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
@@ -66,4 +62,11 @@ public class RestaurantTest {
     assertNotEquals(restaurant, anotherRestaurant);
     assertNotEquals(restaurant.hashCode(), anotherRestaurant.hashCode());
   }
+
+  @Test
+  public void testToString() {
+    String expectedString = "Restaurant(id=1, userId=1001, restaurantName=Test Restaurant, address=123 Test St, Test City, contactNumber=1234567890, description=A test description for restaurant, imageData=null)";
+    assertEquals(expectedString, restaurant.toString());
+  }
+
 }

@@ -4,7 +4,8 @@ import com.restaurants.dto.CategoryOutDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class CategoryOutDtoTest {
 
@@ -13,10 +14,9 @@ public class CategoryOutDtoTest {
   @BeforeEach
   public void setUp() {
     categoryOutDto = new CategoryOutDto();
-    // Initialize the object with valid data
     categoryOutDto.setId(1);
-    categoryOutDto.setResturantId(101);
-    categoryOutDto.setName("Appetizers");
+    categoryOutDto.setResturantId(1001);
+    categoryOutDto.setName("Test Category");
   }
 
   @Test
@@ -32,47 +32,40 @@ public class CategoryOutDtoTest {
 
   @Test
   public void testGetResturantId() {
-    assertEquals(101, categoryOutDto.getResturantId());
+    assertEquals(1001, categoryOutDto.getResturantId());
   }
 
   @Test
   public void testSetResturantId() {
-    categoryOutDto.setResturantId(202);
-    assertEquals(202, categoryOutDto.getResturantId());
+    categoryOutDto.setResturantId(2002);
+    assertEquals(2002, categoryOutDto.getResturantId());
   }
 
   @Test
   public void testGetName() {
-    assertEquals("Appetizers", categoryOutDto.getName());
+    assertEquals("Test Category", categoryOutDto.getName());
   }
 
   @Test
   public void testSetName() {
-    categoryOutDto.setName("Desserts");
-    assertEquals("Desserts", categoryOutDto.getName());
+    categoryOutDto.setName("Updated Category");
+    assertEquals("Updated Category", categoryOutDto.getName());
   }
-
-  @Test
-  public void testToString() {
-    String expected = "CategoryOutDto(id=1, resturantId=101, name=Appetizers)";
-    assertEquals(expected, categoryOutDto.toString());
-  }
-
   @Test
   public void testHashCode() {
     CategoryOutDto categoryOutDto1 = new CategoryOutDto();
     categoryOutDto1.setId(1);
-    categoryOutDto1.setResturantId(101);
-    categoryOutDto1.setName("Appetizers");
+    categoryOutDto1.setResturantId(1001);
+    categoryOutDto1.setName("Test Category");
 
     CategoryOutDto categoryOutDto2 = new CategoryOutDto();
     categoryOutDto2.setId(1);
-    categoryOutDto2.setResturantId(101);
-    categoryOutDto2.setName("Appetizers");
+    categoryOutDto2.setResturantId(1001);
+    categoryOutDto2.setName("Test Category");
 
     assertEquals(categoryOutDto1.hashCode(), categoryOutDto2.hashCode());
 
-    categoryOutDto2.setName("Main Course");
+    categoryOutDto2.setName("Updated Category");
     assertNotEquals(categoryOutDto1.hashCode(), categoryOutDto2.hashCode());
   }
 
@@ -80,17 +73,17 @@ public class CategoryOutDtoTest {
   public void testEquals() {
     CategoryOutDto categoryOutDto1 = new CategoryOutDto();
     categoryOutDto1.setId(1);
-    categoryOutDto1.setResturantId(101);
-    categoryOutDto1.setName("Appetizers");
+    categoryOutDto1.setResturantId(1001);
+    categoryOutDto1.setName("Test Category");
 
     CategoryOutDto categoryOutDto2 = new CategoryOutDto();
     categoryOutDto2.setId(1);
-    categoryOutDto2.setResturantId(101);
-    categoryOutDto2.setName("Appetizers");
+    categoryOutDto2.setResturantId(1001);
+    categoryOutDto2.setName("Test Category");
 
     assertEquals(categoryOutDto1, categoryOutDto2);
 
-    categoryOutDto2.setName("Main Course");
+    categoryOutDto2.setName("Updated Category");
     assertNotEquals(categoryOutDto1, categoryOutDto2);
 
     assertEquals(categoryOutDto1, categoryOutDto1);

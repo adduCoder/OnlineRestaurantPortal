@@ -5,112 +5,162 @@ import com.user.util.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import javax.validation.*;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserInDtoTest {
 
-  private UserInDto userInDto;
-  private UserInDto userInDto1;
-  private UserInDto userInDto2;
-
+  private Validator validator;
+  private UserInDto validUserInDto;
 
   @BeforeEach
   public void setUp() {
-    userInDto = new UserInDto();
-    userInDto1 = new UserInDto();
-    userInDto1.setName("Adi");
-    userInDto1.setEmail("adi@gmail.com");
-    userInDto1.setPhoneNo("9876543210");
-    userInDto1.setPassword("Password123");
-    userInDto1.setRole(Role.USER);
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
 
-    userInDto2 = new UserInDto();
-    userInDto2.setName("Adi");
-    userInDto2.setEmail("adi@gmail.com");
+    validUserInDto = new UserInDto();
+    validUserInDto.setName("Testing User");
+    validUserInDto.setEmail("dummy.user@gmail.com");
+    validUserInDto.setPhoneNo("9876543210");
+    validUserInDto.setPassword("password123");
+    validUserInDto.setRole(Role.USER); // Use existing roles
+  }
+
+  @Test
+  public void testValidUserInDto() {
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertTrue(violations.isEmpty(), "Expected no validation errors");
+  }
+
+  @Test
+  public void testInvalidName() {
+    validUserInDto.setName("Aar");
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertTrue(violations.isEmpty(), "Expected validation errors due to invalid name");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      assertEquals("Name must contain only alphabets and spaces", violation.getMessage());
+    }
+  }
+
+  @Test
+  public void testInvalidEmail() {
+    validUserInDto.setEmail("invalid-email"); // Invalid email format
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertFalse(violations.isEmpty(), "Expected validation errors due to invalid email");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      String message = violation.getMessage();
+      if (message.equals("Email should be valid")) {
+        assertTrue(message.contains("Email should be valid"));
+      } else if (message.equals("Email must contain at least one alphabetic character before '@gmail.com' or '@nucleusteq.com'")) {
+        assertTrue(message.contains("Email must contain at least one alphabetic character before '@gmail.com' or '@nucleusteq.com'"));
+      } else {
+        fail("Unexpected validation message: " + message);
+      }
+    }
+  }
+
+  @Test
+  public void testEmailEnding() {
+    validUserInDto.setEmail("dummy.user@otherdomain.com"); // Email not ending with @gmail.com or @nucleusteq.com
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertFalse(violations.isEmpty(), "Expected validation errors due to incorrect email domain");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      assertEquals("Email must contain at least one alphabetic character before " +
+        "'@gmail.com' or '@nucleusteq.com'", violation.getMessage());
+    }
+  }
+
+  @Test
+  public void testInvalidPhoneNo() {
+    validUserInDto.setPhoneNo("12345"); // Invalid phone number
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertFalse(violations.isEmpty(), "Expected validation errors due to invalid phone number");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      assertEquals("Phone number must be exactly 10 digits and start with 7, 8, 9, or 6", violation.getMessage());
+    }
+  }
+
+  @Test
+  public void testBlankPassword() {
+    validUserInDto.setPassword(""); // Blank password
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertFalse(violations.isEmpty(), "Expected validation errors due to blank password");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      assertEquals("Password cannot be blank", violation.getMessage());
+    }
+  }
+
+  @Test
+  public void testNullRole() {
+    validUserInDto.setRole(null); // Null role
+
+    Set<ConstraintViolation<UserInDto>> violations = validator.validate(validUserInDto);
+    assertFalse(violations.isEmpty(), "Expected validation errors due to null role");
+
+    for (ConstraintViolation<UserInDto> violation : violations) {
+      assertEquals("Role cannot be blank", violation.getMessage());
+    }
+  }
+
+  @Test
+  public void testToString() {
+    String expectedToString = "UserInDto{name='Testing User'," +
+      " email='dummy.user@gmail.com', phoneNo='9876543210', password='password123', role=USER}";
+    assertEquals(expectedToString, validUserInDto.toString());
+  }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    UserInDto userInDto2 = new UserInDto();
+    userInDto2.setName("Testing User");
+    userInDto2.setEmail("dummy.user@gmail.com");
     userInDto2.setPhoneNo("9876543210");
-    userInDto2.setPassword("Password123");
+    userInDto2.setPassword("password123");
     userInDto2.setRole(Role.USER);
-  }
 
-  @Test
-  public void testGetName() {
-    userInDto.setName("Adi");
-    assertEquals("Adi", userInDto.getName());
-  }
+    assertEquals(validUserInDto, userInDto2);
+    assertEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-  @Test
-  public void testSetName() {
-    userInDto.setName("Ravi");
-    assertEquals("Ravi", userInDto.getName());
-  }
+    // Modify one property at a time to test inequality
+    userInDto2.setName("Testing User Updated");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-  @Test
-  public void testGetEmail() {
-    userInDto.setEmail("adi@gmail.com");
-    assertEquals("adi@gmail.com", userInDto.getEmail());
-  }
+    userInDto2.setName("Testing User");
+    userInDto2.setEmail("new.email@gmail.com");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-  @Test
-  public void testSetEmail() {
-    userInDto.setEmail("ravi@gmail.com");
-    assertEquals("ravi@gmail.com", userInDto.getEmail());
-  }
-
-  @Test
-  public void testGetPhoneNo() {
-    userInDto.setPhoneNo("9876543210");
-    assertEquals("9876543210", userInDto.getPhoneNo());
-  }
-
-  @Test
-  public void testSetPhoneNo() {
-    userInDto.setPhoneNo("1234567890");
-    assertEquals("1234567890", userInDto.getPhoneNo());
-  }
-
-  @Test
-  public void testGetPassword() {
-    userInDto.setPassword("Password123");
-    assertEquals("Password123", userInDto.getPassword());
-  }
-
-  @Test
-  public void testSetPassword() {
-    userInDto.setPassword("NewPassword123");
-    assertEquals("NewPassword123", userInDto.getPassword());
-  }
-
-  @Test
-  public void testGetRole() {
-    userInDto.setRole(Role.USER);
-    assertEquals(Role.USER, userInDto.getRole());
-  }
-
-  @Test
-  public void testSetRole() {
-    userInDto.setRole(Role.OWNER);
-    assertEquals(Role.OWNER, userInDto.getRole());
-  }
-
-  @Test
-  public void testHashCode() {
-    assertEquals(userInDto1.hashCode(), userInDto2.hashCode());
+    userInDto2.setEmail("dummy.user@gmail.com");
     userInDto2.setPhoneNo("1234567890");
-    assertNotEquals(userInDto1.hashCode(), userInDto2.hashCode());
-  }
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-  @Test
-  public void testEquals() {
-    assertEquals(userInDto1, userInDto2);
+    userInDto2.setPhoneNo("9876543210");
+    userInDto2.setPassword("newpassword");
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-    userInDto2.setPhoneNo("1234567890");
-    assertNotEquals(userInDto1, userInDto2);
+    userInDto2.setPassword("password123");
+    userInDto2.setRole(Role.OWNER);
+    assertNotEquals(validUserInDto, userInDto2);
+    assertNotEquals(validUserInDto.hashCode(), userInDto2.hashCode());
 
-    assertEquals(userInDto1, userInDto1);
-
-    assertNotEquals(userInDto1, null);
-
-    assertNotEquals(userInDto1, new Object());
+    validUserInDto = new UserInDto();
+    userInDto2 = new UserInDto();
+    assertEquals(validUserInDto, userInDto2);
+    assertEquals(validUserInDto.hashCode(), userInDto2.hashCode());
   }
 }

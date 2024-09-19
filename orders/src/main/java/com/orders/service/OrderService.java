@@ -2,25 +2,26 @@ package com.orders.service;
 
 import com.orders.dto.AddressOutDto;
 import com.orders.dto.AmountInDto;
-import com.orders.dto.OrderInDto;
-import com.orders.dto.RestaurantOutDto;
-import com.orders.dto.UpdateStatusInDto;
 import com.orders.dto.FoodItemNameOutDto;
+import com.orders.dto.OrderInDto;
 import com.orders.dto.OrderItemDetailOutDto;
 import com.orders.dto.OrderOutDto;
+import com.orders.dto.RestaurantOutDto;
+import com.orders.dto.UpdateStatusInDto;
 import com.orders.dto.UserOutDto;
-import com.orders.dtoconversion.DtoConversion;
+import com.orders.conversion.DtoConversion;
 import com.orders.entities.Cart;
 import com.orders.entities.Order;
 import com.orders.entities.OrderStatus;
-import com.orders.exceptionhandler.InsufficientBalance;
-import com.orders.exceptionhandler.OrderNotFound;
-import com.orders.exceptionhandler.SessionExpiredException;
-import com.orders.exceptionhandler.UserNotFound;
-import com.orders.repo.CartRepo;
-import com.orders.repo.OrderRepo;
-import com.orders.dto.ApiResponse;
+import com.orders.exception.InsufficientBalanceException;
+import com.orders.exception.InvalidOperationException;
+import com.orders.exception.OrderNotFoundException;
+import com.orders.exception.SessionExpiredException;
+import com.orders.exception.UserNotFoundException;
+import com.orders.repository.CartRepository;
+import com.orders.repository.OrderRepository;
 import com.orders.util.Constant;
+import com.orders.util.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,57 +33,93 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class responsible for managing orders in the system.
+ */
 @Service
 @Slf4j
 public class OrderService {
+  /**
+   * Repository for managing order entities.
+   */
   @Autowired
-  private OrderRepo orderRepo;
+  private OrderRepository orderRepository;
 
+  /**
+   * Repository for managing cart entities.
+   */
   @Autowired
-  private CartRepo cartRepo;
+  private CartRepository cartRepository;
 
+  /**
+   * Feign client for interacting with user-related services.
+   */
   @Autowired
   private UserFClient userFClient;
 
+
+  /**
+   * Feign client for interacting with restaurant-related services.
+   */
   @Autowired
   private RestaurantFClient restaurantFClient;
 
-  public String getRestaurantName(Integer restaurantId){
+
+  /**
+   * Retrieves the restaurant name by its ID.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return the name of the restaurant
+   */
+  public String getRestaurantName(final Integer restaurantId) {
     String response = "NA";
     RestaurantOutDto restaurantOutDto = null;
     try {
       restaurantOutDto = restaurantFClient.getRestaurantById(restaurantId).getBody();
       response = restaurantOutDto.getRestaurantName();
-    }
-    catch (Exception e) {
-      log.info("exception in fetching data from restro microservice using fclient");
+      log.info("Fetched restaurant name for ID: {} - Name: {}", restaurantId, response);
+    } catch (Exception e) {
+      log.error("Exception fetching restaurant data for ID: {} - {}", restaurantId, e.getMessage());
     }
     return response;
   }
 
-  public String getAddress(Integer addressId){
+
+  /**
+   * Retrieves the address details by address ID.
+   *
+   * @param addressId the ID of the address
+   * @return a formatted address string
+   */
+  public String getAddress(final Integer addressId) {
     String response = "NA";
     AddressOutDto addressOutDto = null;
-    try{
+    try  {
       addressOutDto = userFClient.getAddressByAddressId(addressId).getBody();
-      response = addressOutDto.getStreet()+" "+addressOutDto.getCity()+" "+addressOutDto.getState();
-    }
-    catch (Exception e){
-      System.out.println(e);
+      response = addressOutDto.getStreet() + "  " + addressOutDto.getCity() + " " + addressOutDto.getState();
+      log.info("Fetched address details for ID: {} - Address: {}", addressId, response);
+    } catch (Exception e) {
+      log.error("Exception fetching address data for ID: {} - {}", addressId, e.getMessage());
     }
     return response;
   }
 
 
-  public String getUserName(Integer userId){
+  /**
+   * Retrieves the user name by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the name of the user
+   */
+  public String getUserName(final Integer userId) {
     String response = "NA";
     UserOutDto userOutDto = null;
-    try{
+    try {
       userOutDto = userFClient.getUserById(userId);
       response = userOutDto.getName();
-    }
-    catch (Exception e){
-      System.out.println(e);
+      log.info("Fetched user name for ID: {} - Name: {}", userId, response);
+    } catch (Exception e) {
+      log.error("Exception fetching user data for ID: {} - {}", userId, e.getMessage());
     }
     return response;
   }
@@ -94,21 +131,22 @@ public class OrderService {
    * @param cartIds the list of cart IDs
    * @return a string representing the order details
    */
-  public String toOrderDetails(List<Integer> cartIds) {
+  public String toOrderDetails(final List<Integer> cartIds) {
     StringBuilder result = new StringBuilder();
     for (Integer cartId : cartIds) {
-      Optional<Cart> optionalCart = cartRepo.findById(cartId);
+      Optional<Cart> optionalCart = cartRepository.findById(cartId);
       if (!optionalCart.isPresent()) {
         log.warn("Cart with ID {} not found", cartId);
         continue;
       }
       Cart cart = optionalCart.get();
       result.append(cart.getFoodItemId()).append(":").append(cart.getQuantity()).append(",");
+      log.info("Added to order details - Cart ID: {} - Food Item ID: {} - Quantity: {}",
+        cartId, cart.getFoodItemId(), cart.getQuantity());
     }
     if (result.length() > 0) {
       result.setLength(result.length() - 1);  // Remove the last comma
     }
-    System.out.println(result);
     log.info("Order details converted: {}", result.toString());
     return result.toString();
   }
@@ -120,12 +158,12 @@ public class OrderService {
    * @param orderDetails the string representing the order details
    * @return a list of OrderItemDetailOutDto
    */
-  public List<OrderItemDetailOutDto> orderDetailsForOrderOutDto(String orderDetails) {
+  public List<OrderItemDetailOutDto> orderDetailsForOrderOutDto(final String orderDetails) {
     List<OrderItemDetailOutDto> itemDetails = new ArrayList<>();
     String[] items = orderDetails.split(",");
 
     for (String item : items) {
-      log.warn("Skipping empty or malformed order detail: {}", item);
+      log.error("Skipping empty or malformed order detail: {}", item);
       if (item.trim().isEmpty()) {
         continue; // Skip empty or malformed entries
       }
@@ -161,8 +199,11 @@ public class OrderService {
           detailOutDto.setQuantity(quantity);
           detailOutDto.setPrice(foodItemNameOutDto.getPrice());
           itemDetails.add(detailOutDto);
+          log.info("Added item detail - Food Item ID: {} - "
+              + "Name: {} - Quantity: {} - Price: {}", foodItemId,
+            foodItemNameOutDto.getFoodItemName(), quantity, foodItemNameOutDto.getPrice());
         } else {
-          log.warn("Food item name is null for ID: {}", foodItemId);
+          log.error("Food item name is null for ID: {}", foodItemId);
         }
       } catch (Exception e) {
         log.error("Error fetching food item name for ID: {} - {}", foodItemId, e.getMessage());
@@ -177,34 +218,38 @@ public class OrderService {
    *
    * @param orderInDto the DTO containing order details
    */
-  public void createOrder(OrderInDto orderInDto) {
+  public void createOrder(final OrderInDto orderInDto) {
     UserOutDto userOutDto = null;
     try {
       userOutDto = userFClient.getUserById(orderInDto.getUserId());
     } catch (Exception e) {
       log.error("User not found: {}", e.getMessage());
-      throw new UserNotFound();
+      throw new UserNotFoundException();
     }
+
+    if (userOutDto.getRole() == Role.OWNER) {
+      log.error("Invalid operation: User ID {} is an OWNER and cannot place orders.", orderInDto.getUserId());
+      throw new InvalidOperationException(Constant.OWNER_NOT_ALLOWED);
+    }
+
     if (userOutDto != null && userOutDto.getWalletBalance() < orderInDto.getTotalAmount()) {
       log.error("Insufficient balance for user ID: {}. Order total: {}", orderInDto.getUserId(), orderInDto.getTotalAmount());
-      throw new InsufficientBalance();
+      throw new InsufficientBalanceException(Constant.INSUFFICIENT_AMOUNT + " " + "Current Balance : "
+        + userOutDto.getWalletBalance() + " Order Amount: " + orderInDto.getTotalAmount());
     }
 
     Order order = DtoConversion.mapToOrder(orderInDto);
     order.setOrderDetails(toOrderDetails(orderInDto.getCartIds()));
 
     AmountInDto amountInDto = new AmountInDto();
-    System.out.println(order.getTotalAmount());
     amountInDto.setMoney(order.getTotalAmount());
-    // Call Feign client to refund the money
     userFClient.deductMoneyFromUser(order.getUserId(), amountInDto);
-    orderRepo.save(order);
-    //once the order is placed we delete the corresponding cart entries
+    orderRepository.save(order);
     log.info("Deducting money from user ID: {}. Amount: {}", order.getUserId(), amountInDto.getMoney());
     for (Integer cartId : orderInDto.getCartIds()) {
-      if (cartRepo.existsById(cartId)) {
+      if (cartRepository.existsById(cartId)) {
         log.info("Deleted cart entry with ID: {}", cartId);
-        cartRepo.deleteById(cartId);  // Delete if cart exists
+        cartRepository.deleteById(cartId);
       } else {
         log.warn("Cart with ID {} does not exist, skipping deletion", cartId);
       }
@@ -216,11 +261,11 @@ public class OrderService {
    * @param orderId the ID of the order
    * @return the OrderOutDto containing order details
    */
-  public OrderOutDto getOrder(Integer orderId) {
-    Optional<Order> optionalOrder = orderRepo.findById(orderId);
+  public OrderOutDto getOrder(final Integer orderId) {
+    Optional<Order> optionalOrder = orderRepository.findById(orderId);
     if (!optionalOrder.isPresent()) {
       log.error("Order not found with ID: {}", orderId);
-      throw new OrderNotFound();
+      throw new OrderNotFoundException();
     }
     Order order = optionalOrder.get();
     OrderOutDto orderOutDto = DtoConversion.mapToOrderOutDto(order);
@@ -232,21 +277,24 @@ public class OrderService {
     return orderOutDto;
   }
 
-
   /**
-   * Updates the status of an order. If the order is cancelled and more than 30 seconds have passed,
-   * it throws a SessionExpiredException. Refunds the total amount if the order is cancelled.
+   * Updates the status of an order based on the provided order ID and status update details.
+   * If the status is set to CANCELLED and the time difference between the current time and the
+   * order's last update exceeds 30 seconds, a session expiration exception is thrown. Otherwise,
+   * the refund amount is processed and added back to the user's account.
    *
-   * @param orderId the ID of the order
-   * @param updateStatusInDto the DTO containing the new status
-   * @return an ApiResponse indicating the update result
+   * @param orderId the ID of the order to be updated
+   * @param updateStatusInDto the DTO containing the new status for the order
+   * @throws OrderNotFoundException if the order with the specified ID does not exist
+   * @throws UserNotFoundException if the user associated with the order cannot be found
+   * @throws SessionExpiredException if the order is attempted to be cancelled after the allowed time
    */
-  public void updateStatus(Integer orderId, UpdateStatusInDto updateStatusInDto) {
+  public void updateStatus(final Integer orderId, final UpdateStatusInDto updateStatusInDto) {
     log.info("Updating status for order ID: {}", orderId);
-    Optional<Order> optionalOrder = orderRepo.findById(orderId);
+    Optional<Order> optionalOrder = orderRepository.findById(orderId);
     if (!optionalOrder.isPresent()) {
       log.error("Order not found with ID: {}", orderId);
-      throw new OrderNotFound();
+      throw new OrderNotFoundException();
     }
     System.out.println("2 service");
     Order order = optionalOrder.get();
@@ -256,7 +304,7 @@ public class OrderService {
       userOutDto = userFClient.getUserById(userId);
     } catch (Exception e) {
       log.error("User not found: {}", e.getMessage());
-      throw new UserNotFound();
+      throw new UserNotFoundException();
     }
     if (updateStatusInDto.getOrderStatus() == OrderStatus.CANCELLED) {
       long timeDifferenceInSeconds = Duration.between(order.getLastUpdatedAt(), LocalDateTime.now()).getSeconds();
@@ -271,7 +319,7 @@ public class OrderService {
       userFClient.addMoneyToUser(order.getUserId(), amountInDto);
     }
     order.setOrderStatus(updateStatusInDto.getOrderStatus());
-    orderRepo.save(order);
+    orderRepository.save(order);
     log.info("Order status updated successfully for ID: {}", orderId);
   }
 
@@ -281,8 +329,8 @@ public class OrderService {
    * @param userId the ID of the user
    * @return a list of OrderOutDto for the user
    */
-  public List<OrderOutDto> getOrdersByUser(Integer userId) {
-    List<Order> orderList = orderRepo.findByUserId(userId);
+  public List<OrderOutDto> getOrdersByUser(final Integer userId) {
+    List<Order> orderList = orderRepository.findByUserId(userId);
     List<OrderOutDto> orderOutDtoList = new ArrayList<>();
     for (Order order : orderList) {
       OrderOutDto orderOutDto = DtoConversion.mapToOrderOutDto(order);
@@ -301,8 +349,8 @@ public class OrderService {
    * @param restaurantId the ID of the restaurant
    * @return a list of OrderOutDto for the restaurant
    */
-  public List<OrderOutDto> getOrdersByRestaurant(Integer restaurantId) {
-    List<Order> orderList = orderRepo.findByRestaurantId(restaurantId);
+  public List<OrderOutDto> getOrdersByRestaurant(final Integer restaurantId) {
+    List<Order> orderList = orderRepository.findByRestaurantId(restaurantId);
     List<OrderOutDto> orderOutDtoList = new ArrayList<>();
     for (Order order : orderList) {
       OrderOutDto orderOutDto = DtoConversion.mapToOrderOutDto(order);

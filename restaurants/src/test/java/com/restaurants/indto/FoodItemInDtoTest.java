@@ -14,24 +14,23 @@ public class FoodItemInDtoTest {
   @BeforeEach
   public void setUp() {
     foodItemInDto = new FoodItemInDto();
-    // Set up initial values
-    foodItemInDto.setFoodName("Pizza");
+    foodItemInDto.setFoodName("Test Food");
     foodItemInDto.setRestaurantId(1);
-    foodItemInDto.setDescription("Delicious");
+    foodItemInDto.setDescription("Test Description");
     foodItemInDto.setCategoryId(10);
     foodItemInDto.setIsAvailable(true);
-    foodItemInDto.setPrice(12.99);
+    foodItemInDto.setPrice(9.99);
   }
 
   @Test
   public void testGetFoodName() {
-    assertEquals("Pizza", foodItemInDto.getFoodName());
+    assertEquals("Test Food", foodItemInDto.getFoodName());
   }
 
   @Test
   public void testSetFoodName() {
-    foodItemInDto.setFoodName("Burger");
-    assertEquals("Burger", foodItemInDto.getFoodName());
+    foodItemInDto.setFoodName("Updated Food");
+    assertEquals("Updated Food", foodItemInDto.getFoodName());
   }
 
   @Test
@@ -41,19 +40,19 @@ public class FoodItemInDtoTest {
 
   @Test
   public void testSetRestaurantId() {
-    foodItemInDto.setRestaurantId(2);
+    foodItemInDto.setRestaurantId(2); // Placeholder for testing
     assertEquals(2, foodItemInDto.getRestaurantId());
   }
 
   @Test
   public void testGetDescription() {
-    assertEquals("Delicious", foodItemInDto.getDescription());
+    assertEquals("Test Description", foodItemInDto.getDescription());
   }
 
   @Test
   public void testSetDescription() {
-    foodItemInDto.setDescription("Tasty");
-    assertEquals("Tasty", foodItemInDto.getDescription());
+    foodItemInDto.setDescription("Updated Description");
+    assertEquals("Updated Description", foodItemInDto.getDescription());
   }
 
   @Test
@@ -63,7 +62,7 @@ public class FoodItemInDtoTest {
 
   @Test
   public void testSetCategoryId() {
-    foodItemInDto.setCategoryId(20);
+    foodItemInDto.setCategoryId(20); // Placeholder for testing
     assertEquals(20, foodItemInDto.getCategoryId());
   }
 
@@ -80,63 +79,60 @@ public class FoodItemInDtoTest {
 
   @Test
   public void testGetPrice() {
-    assertEquals(12.99, foodItemInDto.getPrice());
+    assertEquals(9.99, foodItemInDto.getPrice());
   }
 
   @Test
   public void testSetPrice() {
-    foodItemInDto.setPrice(9.99);
-    assertEquals(9.99, foodItemInDto.getPrice());
+    foodItemInDto.setPrice(19.99);
+    assertEquals(19.99, foodItemInDto.getPrice());
   }
-
-
-
 
   @Test
   public void testHashCode() {
     FoodItemInDto foodItemInDto1 = new FoodItemInDto();
-    foodItemInDto1.setFoodName("Pizza");
+    foodItemInDto1.setFoodName("Test Food");
     foodItemInDto1.setRestaurantId(1);
-    foodItemInDto1.setDescription("Delicious");
+    foodItemInDto1.setDescription("Test Description");
     foodItemInDto1.setCategoryId(10);
     foodItemInDto1.setIsAvailable(true);
-    foodItemInDto1.setPrice(12.99);
+    foodItemInDto1.setPrice(9.99);
 
     FoodItemInDto foodItemInDto2 = new FoodItemInDto();
-    foodItemInDto2.setFoodName("Pizza");
+    foodItemInDto2.setFoodName("Test Food");
     foodItemInDto2.setRestaurantId(1);
-    foodItemInDto2.setDescription("Delicious");
+    foodItemInDto2.setDescription("Test Description");
     foodItemInDto2.setCategoryId(10);
     foodItemInDto2.setIsAvailable(true);
-    foodItemInDto2.setPrice(12.99);
+    foodItemInDto2.setPrice(9.99);
 
     assertEquals(foodItemInDto1.hashCode(), foodItemInDto2.hashCode());
 
-    foodItemInDto2.setFoodName("Burger");
+    foodItemInDto2.setFoodName("Updated Food");
     assertNotEquals(foodItemInDto1.hashCode(), foodItemInDto2.hashCode());
   }
 
   @Test
   public void testEquals() {
     FoodItemInDto foodItemInDto1 = new FoodItemInDto();
-    foodItemInDto1.setFoodName("Pizza");
+    foodItemInDto1.setFoodName("Test Food");
     foodItemInDto1.setRestaurantId(1);
-    foodItemInDto1.setDescription("Delicious");
+    foodItemInDto1.setDescription("Test Description");
     foodItemInDto1.setCategoryId(10);
     foodItemInDto1.setIsAvailable(true);
-    foodItemInDto1.setPrice(12.99);
+    foodItemInDto1.setPrice(9.99);
 
     FoodItemInDto foodItemInDto2 = new FoodItemInDto();
-    foodItemInDto2.setFoodName("Pizza");
+    foodItemInDto2.setFoodName("Test Food");
     foodItemInDto2.setRestaurantId(1);
-    foodItemInDto2.setDescription("Delicious");
+    foodItemInDto2.setDescription("Test Description");
     foodItemInDto2.setCategoryId(10);
     foodItemInDto2.setIsAvailable(true);
-    foodItemInDto2.setPrice(12.99);
+    foodItemInDto2.setPrice(9.99);
 
     assertEquals(foodItemInDto1, foodItemInDto2);
 
-    foodItemInDto2.setFoodName("Burger");
+    foodItemInDto2.setFoodName("Updated Food");
     assertNotEquals(foodItemInDto1, foodItemInDto2);
 
     assertEquals(foodItemInDto1, foodItemInDto1);

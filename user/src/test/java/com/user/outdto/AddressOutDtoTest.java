@@ -1,54 +1,99 @@
 package com.user.outdto;
 
 import com.user.dto.AddressOutDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Test class for {@link AddressOutDto}.
- * <p>
- * This class contains test cases to verify the correct behavior of the {@link AddressOutDto} class,
- * specifically focusing on getters, setters, and the correctness of its data.
- * </p>
- */
 public class AddressOutDtoTest {
 
-  @Test
-  void testAddressOutDto() {
-    // Create an instance of AddressOutDto
-    AddressOutDto address = new AddressOutDto();
+  private AddressOutDto addressOutDto;
 
-    // Set values
-    address.setAddressId(1);
-    address.setUserId(101);
-    address.setStreet("Tower Square");
-    address.setCity("Indore");
-    address.setState("MP");
-    address.setPinCode(452001);
-
-    // Assert that the values are set and retrieved correctly
-    assertEquals(1, address.getAddressId(), "Address ID should be 1");
-    assertEquals(101, address.getUserId(), "User ID should be 101");
-    assertEquals("Tower Square", address.getStreet(), "Street should be 'Tower Square'");
-    assertEquals("Indore", address.getCity(), "City should be 'Indore'");
-    assertEquals("MP", address.getState(), "State should be 'MP'");
-    assertEquals(452001, address.getPinCode(), "PIN code should be 452001");
-
-    // Test toString() method
-    String expectedString = "AddressOutDto(addressId=1, userId=101, street=Tower Square, city=Indore, state=MP, pinCode=452001)";
-    assertEquals(expectedString, address.toString(), "toString() should return the expected string");
-
-    // Test equals() and hashCode() methods
-    AddressOutDto anotherAddress = new AddressOutDto();
-    anotherAddress.setAddressId(1);
-    anotherAddress.setUserId(101);
-    anotherAddress.setStreet("Tower Square");
-    anotherAddress.setCity("Indore");
-    anotherAddress.setState("MP");
-    anotherAddress.setPinCode(452001);
-
-    assertEquals(address, anotherAddress, "Two AddressOutDto objects with the same values should be equal");
-    assertEquals(address.hashCode(), anotherAddress.hashCode(),
-      "Hash codes should be equal for two AddressOutDto objects with the same values");
+  @BeforeEach
+  public void setUp() {
+    addressOutDto = new AddressOutDto();
+    addressOutDto.setAddressId(1);
+    addressOutDto.setUserId(100);
+    addressOutDto.setStreet("Test Street");
+    addressOutDto.setCity("Test City");
+    addressOutDto.setState("Test State");
+    addressOutDto.setPinCode(123456);
   }
+
+  @Test
+  public void testGetterAndSetter() {
+    assertEquals(1, addressOutDto.getAddressId());
+    assertEquals(100, addressOutDto.getUserId());
+    assertEquals("Test Street", addressOutDto.getStreet());
+    assertEquals("Test City", addressOutDto.getCity());
+    assertEquals("Test State", addressOutDto.getState());
+    assertEquals(123456, addressOutDto.getPinCode());
+  }
+
+  @Test
+  public void testToString() {
+    // Adjust this string to match the actual output of the toString method
+    String expectedToString = "AddressOutDto(addressId=1, userId=100, street=Test Street," +
+      " city=Test City, state=Test State, pinCode=123456)";
+    assertEquals(expectedToString, addressOutDto.toString());
+  }
+
+  @Test
+  public void testEqualsAndHashCode() {
+    AddressOutDto addressOutDto2 = new AddressOutDto();
+    addressOutDto2.setAddressId(1);
+    addressOutDto2.setUserId(100);
+    addressOutDto2.setStreet("Test Street");
+    addressOutDto2.setCity("Test City");
+    addressOutDto2.setState("Test State");
+    addressOutDto2.setPinCode(123456);
+
+    assertEquals(addressOutDto, addressOutDto2);
+    assertEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
+
+    addressOutDto2.setStreet("Updated Street");
+    assertNotEquals(addressOutDto, addressOutDto2);
+    assertNotEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
+
+    addressOutDto2.setStreet("Test Street");
+    addressOutDto2.setCity("Updated City");
+    assertNotEquals(addressOutDto, addressOutDto2);
+    assertNotEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
+
+    addressOutDto2.setCity("Test City");
+    addressOutDto2.setState("Updated State");
+    assertNotEquals(addressOutDto, addressOutDto2);
+    assertNotEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
+
+    addressOutDto2.setState("Test State");
+    addressOutDto2.setPinCode(654321);
+    assertNotEquals(addressOutDto, addressOutDto2);
+    assertNotEquals(addressOutDto.hashCode(), addressOutDto2.hashCode());
+  }
+
+  @Test
+  public void testUpdateStreet() {
+    addressOutDto.setStreet("Updated Street");
+    assertEquals("Updated Street", addressOutDto.getStreet());
+  }
+
+  @Test
+  public void testUpdateCity() {
+    addressOutDto.setCity("Updated City");
+    assertEquals("Updated City", addressOutDto.getCity());
+  }
+
+  @Test
+  public void testUpdateState() {
+    addressOutDto.setState("Updated State");
+    assertEquals("Updated State", addressOutDto.getState());
+  }
+
+  @Test
+  public void testUpdatePinCode() {
+    addressOutDto.setPinCode(654321);
+    assertEquals(654321, addressOutDto.getPinCode());
+  }
+
 }

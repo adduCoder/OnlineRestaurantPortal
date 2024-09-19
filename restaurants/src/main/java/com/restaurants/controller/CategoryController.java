@@ -30,6 +30,7 @@ import java.util.List;
 @RequestMapping("/category")
 @CrossOrigin(origins = "http://localhost:3000") // Adjust this to your frontend URL
 public class CategoryController {
+  /** Service for handling category operations. */
   @Autowired
   private CategoryService categoryService;
 
@@ -40,10 +41,10 @@ public class CategoryController {
    * @return ResponseEntity containing the category details and HTTP status
    */
   @GetMapping("/get/{id}")
-  public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
+  public ResponseEntity<?> getCategoryById(@PathVariable final Integer id) {
     log.info("Fetching category with ID: {}", id);
     CategoryOutDto categoryOutDto = categoryService.getCategory(id);
-    log.info("Retrieved category: {}", categoryOutDto);
+    log.info("Retrieved category with Id: {}", id);
     return new ResponseEntity<>(categoryOutDto, HttpStatus.OK);
   }
 
@@ -54,12 +55,13 @@ public class CategoryController {
    * @return ResponseEntity containing a list of categories and HTTP status
    */
   @GetMapping("/getAll/{restaurantId}")
-  public ResponseEntity<?> getAllCategory(@PathVariable Integer restaurantId) {
+  public ResponseEntity<?> getAllCategory(@PathVariable final Integer restaurantId) {
     log.info("Fetching all categories for restaurant with ID: {}", restaurantId);
     List<CategoryOutDto> categoryOutDtoList = categoryService.getAllCategory(restaurantId);
-    log.info("Retrieved categories: {}", categoryOutDtoList);
+    log.info("Retrieved categories with restaurantId {}", restaurantId);
     return new ResponseEntity<>(categoryOutDtoList, HttpStatus.OK);
   }
+
 
   /**
    * Adds a new category.
@@ -68,13 +70,14 @@ public class CategoryController {
    * @return ResponseEntity containing the details of the added category and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryInDto categoryInDto) {
-    log.info("Adding new category: {}", categoryInDto);
+  public ResponseEntity<?> addCategory(@Valid @RequestBody final CategoryInDto categoryInDto) {
+    log.info("Adding new category with name: {}", categoryInDto.getName());
+
     CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
-    if (categoryOutDto == null) {
-      log.error("Failed to add category: {}", categoryInDto);
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+
+    // No need for the null check, as SpotBugs suggests this is guaranteed to be non-null.
+    log.info("Successfully added category with id: {}", categoryOutDto.getId());
+
     return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
@@ -82,13 +85,15 @@ public class CategoryController {
    * Updates an existing category.
    *
    * @param categoryId the ID of the category to update
-   * @return ResponseEntity containing the updated category details and HTTP status
+   * @param categoryUpdateInDto the updated category information
+   * @return ResponseEntity containing a message of successful update and HTTP status
    */
   @PutMapping("/update/{categoryId}")
-  public ResponseEntity<?> updateCategory(@Valid @PathVariable Integer categoryId, @Valid @RequestBody
-    CategoryUpdateInDto categoryUpdateInDto) {
+  public ResponseEntity<?> updateCategory(@Valid @PathVariable final Integer categoryId, @Valid @RequestBody
+    final CategoryUpdateInDto categoryUpdateInDto) {
     log.info("Updating category with ID: {} with data: {}", categoryId);
     categoryService.updateCategory(categoryId, categoryUpdateInDto);
+    log.info("Category successfully updated");
     return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_UPDATED_SUCCESS), HttpStatus.OK);
   }
 }

@@ -3,11 +3,11 @@ package com.user.dto;
 import com.user.util.Role;
 import lombok.Data;
 
-@Data
 /**
  * Data Transfer Object (DTO) for representing user information in responses.
  * This class encapsulates the details of a user that are returned in response to user-related requests.
  */
+@Data
 public class UserOutDto {
   /**
    * The unique identifier for the user.

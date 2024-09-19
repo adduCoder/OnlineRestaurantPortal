@@ -1,11 +1,16 @@
 package com.restaurants.service;
 
-import com.restaurants.entities.Category;
 import com.restaurants.dto.CategoryInDto;
 import com.restaurants.dto.CategoryOutDto;
-import com.restaurants.repository.CategoryRepo;
-import org.junit.jupiter.api.Test;
+import com.restaurants.dto.CategoryUpdateInDto;
+import com.restaurants.entities.Category;
+import com.restaurants.entities.Restaurant;
+import com.restaurants.exception.AlreadyExistsException;
+import com.restaurants.exception.NotFoundException;
+import com.restaurants.repository.CategoryRepository;
+import com.restaurants.repository.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,15 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @SpringJUnitConfig
 @SpringBootTest
 public class CategoryServiceTest {
 
   @Mock
-  private CategoryRepo categoryRepo;
+  private CategoryRepository categoryRepository;
+
+  @Mock
+  private RestaurantRepository restaurantRepository;
 
   @InjectMocks
   private CategoryService categoryService;
@@ -35,48 +45,59 @@ public class CategoryServiceTest {
   }
 
   @Test
-  public void testAddCategory() {
+  public void testAddCategoryRestaurantNotFound() {
     CategoryInDto categoryInDto = new CategoryInDto();
     categoryInDto.setRestaurantId(1);
     categoryInDto.setName("Category1");
 
-    Category category = new Category();
-    category.setId(1);
-    category.setName("Category1");
-    category.setRestaurantId(1);
+    when(restaurantRepository.findById(1)).thenReturn(Optional.empty());
 
-    when(categoryRepo.save(any(Category.class))).thenReturn(category);
+    assertThrows(NotFoundException.class, () -> categoryService.addCategory(categoryInDto));
+  }
 
-    CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
+  @Test
+  public void testAddCategoryAlreadyExists() {
+    CategoryInDto categoryInDto = new CategoryInDto();
+    categoryInDto.setRestaurantId(1);
+    categoryInDto.setName("Category1");
 
-    assertNotNull(categoryOutDto);
-    assertEquals(1, categoryOutDto.getId());
-    assertEquals("Category1", categoryOutDto.getName());
-    assertEquals(1, categoryOutDto.getResturantId());
+    Restaurant restaurant = new Restaurant();
+    restaurant.setId(1);
+    restaurant.setRestaurantName("Restaurant1");
+
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(categoryRepository.findByNameAndRestaurantId("category1", 1)).thenReturn(Optional.of(new Category()));
+
+    assertThrows(AlreadyExistsException.class, () -> categoryService.addCategory(categoryInDto));
   }
 
   @Test
   public void testGetCategory() {
     Category category = new Category();
     category.setId(1);
-    category.setName("Category1");
+    category.setName("category1");
     category.setRestaurantId(1);
 
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
+    Restaurant restaurant = new Restaurant();
+    restaurant.setId(1);
+    restaurant.setRestaurantName("Restaurant1");
+
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
 
     CategoryOutDto categoryOutDto = categoryService.getCategory(1);
 
     assertNotNull(categoryOutDto);
     assertEquals(1, categoryOutDto.getId());
-    assertEquals("Category1", categoryOutDto.getName());
-    assertEquals(1, categoryOutDto.getResturantId());
+    assertEquals("category1", categoryOutDto.getName());
+    assertEquals("Restaurant1", categoryOutDto.getRestaurantName());
   }
 
   @Test
   public void testGetCategoryNotFound() {
-    when(categoryRepo.findById(1)).thenReturn(Optional.empty());
+    when(categoryRepository.findById(1)).thenReturn(Optional.empty());
 
-    assertThrows(CategoryNotFound.class, () -> categoryService.getCategory(1));
+    assertThrows(NotFoundException.class, () -> categoryService.getCategory(1));
   }
 
   @Test
@@ -84,55 +105,71 @@ public class CategoryServiceTest {
     List<Category> categoryList = new ArrayList<>();
     Category category1 = new Category();
     category1.setId(1);
-    category1.setName("Category1");
+    category1.setName("category1");
     category1.setRestaurantId(1);
     categoryList.add(category1);
 
     Category category2 = new Category();
     category2.setId(2);
-    category2.setName("Category2");
+    category2.setName("category2");
     category2.setRestaurantId(1);
     categoryList.add(category2);
 
-    when(categoryRepo.findAllByRestaurantId(1)).thenReturn(categoryList);
+    Restaurant restaurant = new Restaurant();
+    restaurant.setId(1);
+    restaurant.setRestaurantName("Restaurant1");
+
+    when(restaurantRepository.findById(1)).thenReturn(Optional.of(restaurant));
+    when(categoryRepository.findAllByRestaurantId(1)).thenReturn(categoryList);
 
     List<CategoryOutDto> categoryOutDtoList = categoryService.getAllCategory(1);
 
     assertNotNull(categoryOutDtoList);
     assertEquals(2, categoryOutDtoList.size());
-    assertEquals("Category1", categoryOutDtoList.get(0).getName());
-    assertEquals("Category2", categoryOutDtoList.get(1).getName());
+    assertEquals("category1", categoryOutDtoList.get(0).getName());
+    assertEquals("category2", categoryOutDtoList.get(1).getName());
+    assertEquals("Restaurant1", categoryOutDtoList.get(0).getRestaurantName());
+    assertEquals("Restaurant1", categoryOutDtoList.get(1).getRestaurantName());
   }
 
   @Test
-  public void testUpdateCategory() {
-    CategoryInDto categoryInDto = new CategoryInDto();
-    categoryInDto.setRestaurantId(2);
-    categoryInDto.setName("UpdatedCategory");
+  public void testGetAllCategoryRestaurantNotFound() {
+    when(restaurantRepository.findById(1)).thenReturn(Optional.empty());
 
-    Category category = new Category();
-    category.setId(1);
-    category.setName("OldCategory");
-    category.setRestaurantId(1);
-
-    when(categoryRepo.findById(1)).thenReturn(Optional.of(category));
-    when(categoryRepo.save(any(Category.class))).thenReturn(category);
-
-    CategoryOutDto categoryOutDto = categoryService.updateCategory(1, categoryInDto);
-
-    assertNotNull(categoryOutDto);
-    assertEquals(1, categoryOutDto.getId());
-    assertEquals("UpdatedCategory", categoryOutDto.getName());
+    assertThrows(NotFoundException.class, () -> categoryService.getAllCategory(1));
   }
 
   @Test
   public void testUpdateCategoryNotFound() {
-    CategoryInDto categoryInDto = new CategoryInDto();
-    categoryInDto.setRestaurantId(2);
-    categoryInDto.setName("UpdatedCategory");
+    CategoryUpdateInDto categoryUpdateInDto = new CategoryUpdateInDto();
+    categoryUpdateInDto.setName("UpdatedCategory");
 
-    when(categoryRepo.findById(1)).thenReturn(Optional.empty());
+    when(categoryRepository.findById(1)).thenReturn(Optional.empty());
 
-    assertThrows(CategoryNotFound.class, () -> categoryService.updateCategory(1, categoryInDto));
+    assertThrows(NotFoundException.class, () -> categoryService.updateCategory(1, categoryUpdateInDto));
+  }
+
+  @Test
+  public void testUpdateCategoryAlreadyExists() {
+    CategoryUpdateInDto categoryUpdateInDto = new CategoryUpdateInDto();
+    categoryUpdateInDto.setName("UpdatedCategory");
+
+    Category existingCategory = new Category();
+    existingCategory.setId(1);
+    existingCategory.setName("category1");
+    existingCategory.setRestaurantId(1);
+
+    Category duplicateCategory = new Category();
+    duplicateCategory.setId(2);
+    duplicateCategory.setName("updatedcategory");
+    duplicateCategory.setRestaurantId(1);
+
+    List<Category> categoryList = new ArrayList<>();
+    categoryList.add(duplicateCategory);
+
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(existingCategory));
+    when(categoryRepository.findAllByRestaurantId(1)).thenReturn(categoryList);
+
+    assertThrows(AlreadyExistsException.class, () -> categoryService.updateCategory(1, categoryUpdateInDto));
   }
 }

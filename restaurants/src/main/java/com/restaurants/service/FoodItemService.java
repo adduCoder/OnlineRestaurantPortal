@@ -3,18 +3,17 @@ package com.restaurants.service;
 import com.restaurants.dto.FoodItemInDto;
 import com.restaurants.dto.FoodItemNameOutDto;
 import com.restaurants.dto.FoodItemOutDto;
-import com.restaurants.dtoconversion.DtoConversion;
+import com.restaurants.conversion.DtoConversion;
 import com.restaurants.entities.Category;
 import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
-import com.restaurants.exceptionhandler.AlreadyExists;
-import com.restaurants.exceptionhandler.NotFound;
-import com.restaurants.repository.CategoryRepo;
-import com.restaurants.repository.FoodItemRepo;
-import com.restaurants.repository.RestaurantRepo;
+import com.restaurants.exception.AlreadyExistsException;
+import com.restaurants.exception.NotFoundException;
+import com.restaurants.repository.CategoryRepository;
+import com.restaurants.repository.FoodItemRepository;
+import com.restaurants.repository.RestaurantRepository;
 import com.restaurants.util.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,96 +21,128 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Service class for managing food items.
+ * <p>
+ * This service provides methods for adding, updating, retrieving, and deleting food items in a restaurant.
+ * It also handles image uploads and validates food item names and categories.
+ * </p>
+ */
 @Slf4j
 @Service
 public class FoodItemService {
 
-  @Autowired
-  private FoodItemRepo foodItemRepo;
 
+  /**
+   * Repository for accessing food item data.
+   */
   @Autowired
-  private RestaurantRepo restaurantRepo;
+  private FoodItemRepository foodItemRepository;
 
+  /**
+   * Repository for accessing restaurant data.
+   */
   @Autowired
-  private CategoryRepo categoryRepo;
+  private RestaurantRepository restaurantRepository;
 
-  private boolean isValidImageFormat(String contentType) {
-    return contentType != null &&
-      (contentType.equals("image/png") ||
-        contentType.equals("image/jpeg") ||
-        contentType.equals("image/jpg"));
+  /**
+   * Repository for accessing category data.
+   */
+  @Autowired
+  private CategoryRepository categoryRepository;
+
+  /**
+   * Validates the format of the uploaded image.
+   *
+   * @param contentType the MIME type of the uploaded file
+   * @return {@code true} if the image format is valid; {@code false} otherwise
+   */
+  private boolean isValidImageFormat(final String contentType) {
+    return contentType != null
+      && (contentType.equals("image/png")
+      || contentType.equals("image/jpeg")
+      || contentType.equals("image/jpg"));
   }
 
   /**
-   * Get restaurant name by FoodItem.
+   * Fetches the restaurant name associated with the given food item.
+   *
+   * @param foodItem the food item for which to fetch the restaurant name
+   * @return the name of the restaurant, or "Not Available" if not found
    */
-  public String getRestaurantName(FoodItem foodItem) {
+  public String getRestaurantName(final FoodItem foodItem) {
     log.info("Fetching restaurant name for restaurant ID: {}", foodItem.getRestaurantId());
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItem.getRestaurantId());
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(foodItem.getRestaurantId());
     String result = "Not Available";
     log.info("Restaurant name found: {}", result);
     if (optionalRestaurant.isPresent()) {
       Restaurant restaurant = optionalRestaurant.get();
       result = restaurant.getRestaurantName();
-    }
-    else {
+    } else {
       log.warn("Restaurant not found for ID: {}", foodItem.getRestaurantId());
     }
     return result;
   }
 
   /**
-   * Get category name by FoodItem.
+   * Fetches the category name associated with the given food item.
+   *
+   * @param foodItem the food item for which to fetch the category name
+   * @return the name of the category, or "Not Available" if not found
    */
-  public String getCategoryName(FoodItem foodItem) {
+  public String getCategoryName(final FoodItem foodItem) {
     log.info("Fetching category name for category ID: {}", foodItem.getCategoryId());
-    Optional<Category> optionalCategory = categoryRepo.findById(foodItem.getCategoryId());
+    Optional<Category> optionalCategory = categoryRepository.findById(foodItem.getCategoryId());
     String result = "Not Available";
     if (optionalCategory.isPresent()) {
       Category category = optionalCategory.get();
       result = category.getName();
       log.info("Category name found: {}", result);
-    }
-    else {
+    } else {
       log.warn("Category not found for ID: {}", foodItem.getCategoryId());
     }
     return result;
   }
 
   /**
-   * Add a new food item.
+   * Adds a new food item to the system.
+   *
+   * @param foodItemInDto The DTO containing the details of the food item to be added.
+   * @param multipartFile The image file associated with the food item.
+   * @return A DTO containing the details of the added food item.
+   * @throws NotFoundException If the restaurant or category is not found.
+   * @throws AlreadyExistsException If a food item with the same name already exists in the restaurant.
    */
-  public FoodItemOutDto add(FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
+  public FoodItemOutDto add(final FoodItemInDto foodItemInDto, final MultipartFile multipartFile) {
     log.info("Adding new food item with name: {}", foodItemInDto.getFoodName());
     foodItemInDto.setFoodName(foodItemInDto.getFoodName().trim());
 
-    // Mapping DTO to FoodItem entity
     FoodItem foodItem = DtoConversion.mapToFoodItem(foodItemInDto);
 
-    // Check if the restaurant exists
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
-      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+      throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
 
-    // Check if the category exists and belongs to the restaurant
-    Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
+    Optional<Category> optionalCategory = categoryRepository.findById(foodItemInDto.getCategoryId());
     if (!optionalCategory.isPresent()) {
-      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
+      throw new NotFoundException(Constant.CATEGORY_NOT_FOUND);
     } else {
       Category category = optionalCategory.get();
-      if (category.getRestaurantId() != foodItemInDto.getRestaurantId()) {
-        throw new NotFound(Constant.CATEGORY_NOT_FOUND);
+      if (!Objects.equals(category.getRestaurantId(), foodItemInDto.getRestaurantId())) {
+        throw new NotFoundException(Constant.CATEGORY_NOT_FOUND);
       }
     }
 
     // Check for existing food items with the same name
-    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(foodItemInDto.getRestaurantId());
+    List<FoodItem> foodItemList = foodItemRepository.findAllByRestaurantId(foodItemInDto.getRestaurantId());
     for (FoodItem subFoodItem : foodItemList) {
-      if (subFoodItem.getFoodName().equals(foodItemInDto.getFoodName().toLowerCase())) {
-        throw new AlreadyExists(Constant.FOODITEM_ALREADY_EXISTS);
+      if (subFoodItem.getFoodName().equals(foodItem.getFoodName())) {
+        throw new AlreadyExistsException(Constant.FOODITEM_ALREADY_EXISTS);
       }
     }
 
@@ -133,8 +164,10 @@ public class FoodItemService {
     }
 
     // Convert the food name to lowercase for consistency and save the food item
-    foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
-    foodItemRepo.save(foodItem);
+    foodItem.setFoodName(foodItem.getFoodName().toLowerCase(Locale.ENGLISH));
+
+
+    foodItemRepository.save(foodItem);
 
     // Get restaurant and category names for response
     String restaurantName = getRestaurantName(foodItem);
@@ -145,15 +178,19 @@ public class FoodItemService {
   }
 
   /**
-   * Get all food items for a restaurant.
+   * Retrieves all food items for a specific restaurant.
+   *
+   * @param restaurantId The ID of the restaurant for which to retrieve food items.
+   * @return A list of DTOs representing all food items for the specified restaurant.
+   * @throws NotFoundException If the restaurant is not found.
    */
-  public List<FoodItemOutDto> getAll(Integer restaurantId) {
+  public List<FoodItemOutDto> getAll(final Integer restaurantId) {
     log.info("Fetching all food items for restaurant ID: {}", restaurantId);
-    Optional<Restaurant> optionalRestaurant=restaurantRepo.findById(restaurantId);
-    if(!optionalRestaurant.isPresent()){
-      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(restaurantId);
+    if (!optionalRestaurant.isPresent()) {
+      throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
-    List<FoodItem> foodItemList = foodItemRepo.findAllByRestaurantId(restaurantId);
+    List<FoodItem> foodItemList = foodItemRepository.findAllByRestaurantId(restaurantId);
     List<FoodItemOutDto> foodItemOutDtoList = new ArrayList<>();
     for (FoodItem foodItem : foodItemList) {
       String restaurantName = getRestaurantName(foodItem);
@@ -164,30 +201,51 @@ public class FoodItemService {
     return foodItemOutDtoList;
   }
 
-  public FoodItemOutDto updateFoodItem(Integer foodItemId, FoodItemInDto foodItemInDto, MultipartFile multipartFile) {
+  /**
+   * Updates an existing food item in the system.
+   *
+   * @param foodItemId The ID of the food item to be updated.
+   * @param foodItemInDto The DTO containing the updated details of the food item.
+   * @param multipartFile The updated image file associated with the food item, if any.
+   * @return A DTO containing the details of the updated food item.
+   * @throws NotFoundException If the food item, restaurant, or category is not found.
+   * @throws AlreadyExistsException If a food item with the same name already exists in the restaurant.
+   */
+  public FoodItemOutDto updateFoodItem(final Integer foodItemId, final FoodItemInDto foodItemInDto,
+                                       final MultipartFile multipartFile) {
     log.info("Updating food item with ID: {}", foodItemId);
 
-    // Retrieve the existing food item
-    Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
+    Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(foodItemId);
     if (!optionalFoodItem.isPresent()) {
       log.error("Food item not found with ID: {}", foodItemId);
-      throw new NotFound(Constant.FOODITEM_NOT_FOUND);
+      throw new NotFoundException(Constant.FOODITEM_NOT_FOUND);
     }
 
     // Validate the existence of the restaurant and category
-    Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(foodItemInDto.getRestaurantId());
+    Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(foodItemInDto.getRestaurantId());
     if (!optionalRestaurant.isPresent()) {
-      throw new NotFound(Constant.RESTAURANT_NOT_FOUND);
+      throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
-    Optional<Category> optionalCategory = categoryRepo.findById(foodItemInDto.getCategoryId());
+    Optional<Category> optionalCategory = categoryRepository.findById(foodItemInDto.getCategoryId());
     if (!optionalCategory.isPresent()) {
-      throw new NotFound(Constant.CATEGORY_NOT_FOUND);
+      throw new NotFoundException(Constant.CATEGORY_NOT_FOUND);
+    }
+
+    FoodItem foodItemFromDto = DtoConversion.mapToFoodItem(foodItemInDto);
+
+    List<FoodItem> foodItemList = foodItemRepository.findAllByRestaurantId(foodItemInDto.getRestaurantId());
+    for (FoodItem subFoodItem : foodItemList) {
+      if (subFoodItem.getFoodName().equals(foodItemFromDto.getFoodName())) {
+        System.out.println(subFoodItem.getFoodName());
+        System.out.println(foodItemFromDto.getFoodName());
+        throw new AlreadyExistsException(Constant.FOODITEM_ALREADY_EXISTS);
+      }
     }
 
     // Update food item details
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());
-    foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
+    foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase(Locale.ENGLISH));
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
 
@@ -202,16 +260,13 @@ public class FoodItemService {
 
         foodItem.setImageData(multipartFile.getBytes());
         log.info("Image uploaded successfully for food item: {}", foodItemInDto.getFoodName());
-      } else {
-        // Optional: Handle cases where no file is uploaded by keeping the current image data
-        // foodItem.setImageData(null); // Uncomment if you want to clear the image data when no file is provided
       }
     } catch (IOException e) {
       log.error("Error occurred while processing the image file for food item: {}", foodItemInDto.getFoodName(), e);
     }
 
     // Save the updated food item
-    foodItemRepo.save(foodItem);
+    foodItemRepository.save(foodItem);
 
     // Retrieve restaurant and category names
     String restaurantName = getRestaurantName(foodItem);
@@ -221,10 +276,17 @@ public class FoodItemService {
     return DtoConversion.mapToFoodItemOutDto(foodItem, restaurantName, categoryName);
   }
 
-  public FoodItemNameOutDto getFoodItemName(Integer foodItemId) {
-    Optional<FoodItem> optionalFoodItem = foodItemRepo.findById(foodItemId);
+  /**
+   * Retrieves the details of a specific food item by its ID.
+   *
+   * @param foodItemId The ID of the food item to retrieve.
+   * @return A DTO containing the name, ID, and price of the food item.
+   * @throws NotFoundException If no food item with the given ID is found.
+   */
+  public FoodItemNameOutDto getFoodItemName(final Integer foodItemId) {
+    Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(foodItemId);
     if (!optionalFoodItem.isPresent()) {
-      throw new NotFound(Constant.FOODITEM_NOT_FOUND);
+      throw new NotFoundException(Constant.FOODITEM_NOT_FOUND);
     }
     FoodItem foodItem = optionalFoodItem.get();
     FoodItemNameOutDto foodItemNameOutDto = new FoodItemNameOutDto();

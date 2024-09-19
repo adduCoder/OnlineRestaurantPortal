@@ -2,10 +2,12 @@ package com.user.controller;
 
 import com.user.dto.AmountInDto;
 import com.user.dto.ApiResponse;
+import com.user.dto.ContactUsInDto;
 import com.user.dto.LoginInDto;
+import com.user.dto.MessageOutDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
-import com.user.exceptionhandler.GlobalExceptionHandler;
+import com.user.exception.GlobalExceptionHandler;
 import com.user.service.UserService;
 import com.user.util.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -34,7 +35,9 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-
+  /**
+   * Service to handle business logic for user management.
+   */
   @Autowired
   private UserService userService;
 
@@ -45,9 +48,10 @@ public class UserController {
    * @return ResponseEntity containing the user details and HTTP status
    */
   @GetMapping("/get/{userId}")
-  public ResponseEntity<?> getUser(@PathVariable Integer userId) {
+  public ResponseEntity<UserOutDto> getUser(@PathVariable final Integer userId) {
     log.info("Fetching user with ID: {}", userId);
     UserOutDto userOutDto = userService.getUser(userId);
+    log.info("User with ID: {} fetched successfully", userId);
     return new ResponseEntity<>(userOutDto, HttpStatus.OK);
   }
 
@@ -57,7 +61,7 @@ public class UserController {
    * @return ResponseEntity containing a list of all users and HTTP status
    */
   @GetMapping("/getAll")
-  public ResponseEntity<?> getAllUser() {
+  public ResponseEntity<List<UserOutDto>> getAllUser() {
     log.info("Getting All Users");
     List<UserOutDto> allUserOutDto = userService.getAllUser();
     log.info("Fetched {} users", allUserOutDto.size());
@@ -71,10 +75,10 @@ public class UserController {
    * @return ResponseEntity containing the ID of the created user and HTTP status
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addUser(@Valid @RequestBody UserInDto userInDto) {
-    log.info("Adding new user with email: {}", userInDto.getEmail());
+  public ResponseEntity<?> addUser(@Valid @RequestBody final UserInDto userInDto) {
+    log.info("Received request to add new user with email: {}", userInDto.getEmail());
     userService.addUser(userInDto);
-    log.info("User added successfully");
+    log.info("User with email: {} added successfully", userInDto.getEmail());
     return new ResponseEntity<>(new ApiResponse(Constant.USER_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 
@@ -86,7 +90,7 @@ public class UserController {
    * @return ResponseEntity containing the updated user details and HTTP status
    */
   @PutMapping("/update/{userId}")
-  public ResponseEntity<?> updateUser(@PathVariable Integer userId, @Valid @RequestBody UserInDto userInDto) {
+  public ResponseEntity<?> updateUser(@PathVariable final Integer userId, @Valid @RequestBody final UserInDto userInDto) {
     log.info("Updating user with ID: {}", userId);
     userService.updateUser(userId, userInDto);
     log.info("User updated successfully with ID: {}", userId);
@@ -99,7 +103,7 @@ public class UserController {
    * @return ResponseEntity containing the deleted user details and HTTP status
    */
   @DeleteMapping("/delete/{userId}")
-  public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
+  public ResponseEntity<?> deleteUser(@PathVariable final Integer userId) {
     log.info("Deleting user with ID: {}", userId);
     UserOutDto userOutDto = userService.deleteUser(userId);
     log.info("User deleted successfully with ID: {}", userId);
@@ -113,7 +117,7 @@ public class UserController {
    * @return ResponseEntity containing a login response and HTTP status
    */
   @PostMapping("/login")
-  public ResponseEntity<?> loginUser(@Valid @RequestBody LoginInDto loginInDto) {
+  public ResponseEntity<?> loginUser(@Valid @RequestBody final LoginInDto loginInDto) {
     log.info("Received login request for email: {}", loginInDto.getEmail());
     UserOutDto userOutDto = userService.loginUser(loginInDto);
     if (userOutDto != null) {
@@ -126,23 +130,56 @@ public class UserController {
     }
   }
 
+  /**
+   * Deducts money from the user's account.
+   *
+   * @param userId the ID of the user
+   * @param amountInDto the amount to deduct
+   * @return ResponseEntity with HTTP status OK if successful
+   */
   @PutMapping("/deduct/{userId}")
-  public ResponseEntity<?> deductMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto) {
+  public ResponseEntity<?> deductMoney(@PathVariable final Integer userId, @RequestBody final AmountInDto amountInDto) {
+    log.info("Request to deduct money for user ID: {} with amount: {}", userId, amountInDto.getMoney());
     userService.deductMoney(userId, amountInDto);
+    log.info("Money deducted successfully for user ID: {}", userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Adds money to the user's account.
+   *
+   * @param userId the ID of the user
+   * @param amountInDto the amount to add
+   * @return ResponseEntity with HTTP status OK if successful
+   */
   @PutMapping("/addMoney/{userId}")
-  public ResponseEntity<?> addMoney(@PathVariable Integer userId, @RequestBody AmountInDto amountInDto) {
+  public ResponseEntity<?> addMoney(@PathVariable final Integer userId, @RequestBody final AmountInDto amountInDto) {
+    log.info("Request to add money for user ID: {} with amount: {}", userId, amountInDto.getMoney());
     userService.addMoney(userId, amountInDto);
+    log.info("Money added successfully for user ID: {}", userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-  @PostMapping("/send")
-  public ResponseEntity<?> sendEmail(@RequestParam String text) {
-    userService.sendMail(text);
-    return new ResponseEntity<>(new ApiResponse(Constant.SENDED_SUCCESS), HttpStatus.OK);
+
+  /**
+   * Sends a 'Contact Us' email.
+   *
+   * This method handles the processing of a 'Contact Us' form submitted by a user. The user provides their
+   * details via the `ContactUsInDto` object, and the system sends the email through the service layer.
+   * Upon successful processing, the method returns a response containing a message with an HTTP status of OK.
+   *
+   * @param contactUsDto the data transfer object containing the user's 'Contact Us' form details,
+   *                     including name, email, and message
+   * @return ResponseEntity containing a success message and HTTP status OK
+   */
+  @PostMapping("/contactus")
+  public ResponseEntity<MessageOutDto> sendContactUsEmail(final @RequestBody @Valid ContactUsInDto contactUsDto) {
+    log.info("Sending contact us email from user");
+    MessageOutDto response = userService.sendContactUsEmail(contactUsDto);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
 }
+
+
 
 

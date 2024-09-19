@@ -30,17 +30,22 @@ import java.util.List;
 @RequestMapping ("/address")
 public class AddressController {
 
+  /**
+   * Service to handle business logic for address management.
+   */
   @Autowired
   private AddressService addressService;
 
 
-   /**
-   * Adds a new address.
+
+  /**
+   * Adds a new address for a user.
    *
-   * @return ResponseEntity containing the details of the added address and HTTP status
+   * @param addressInDto the details of the address to be added
+   * @return a response entity with a success message and HTTP status CREATED (201)
    */
   @PostMapping("/add")
-  public ResponseEntity<?> addAddress(@Valid @RequestBody AddressInDto addressInDto) {
+  public ResponseEntity<?> addAddress(@Valid @RequestBody final AddressInDto addressInDto) {
     log.info("Received request to add address for userId: {}", addressInDto.getUserId());
     addressService.createAddress(addressInDto);
     log.info("Address added successfully for userId: {}", addressInDto.getUserId());
@@ -49,44 +54,46 @@ public class AddressController {
     return new ResponseEntity<>(addressOutResponse, HttpStatus.CREATED);
   }
 
-   /**
-   * Retrieves addresses for a specific user.
+  /**
+   * Retrieves all addresses for a specific user.
    *
-   * @param userId the ID of the user for whom to fetch addresses
-   * @return ResponseEntity containing a list of addresses and HTTP status
+   * @param userId the ID of the user whose addresses need to be retrieved
+   * @return a list of addresses for the specified user and HTTP status OK (200)
    */
   @GetMapping("/get/{userId}")
-  public ResponseEntity<?> getAddressByUserId(@PathVariable Integer userId) {
+  public ResponseEntity<?> getAddressByUserId(@PathVariable final Integer userId) {
     log.info("Fetching addresses for userId: {}", userId);
-    List<AddressOutDto> AddressOutDtoList = addressService.getAddressByUserId(userId);
-    log.info("Fetched {} addresses for userId: {}", AddressOutDtoList.size(), userId);
-    return new ResponseEntity<>(AddressOutDtoList, HttpStatus.OK);
+    List<AddressOutDto> addressOutDtoList = addressService.getAddressByUserId(userId);
+    log.info("Fetched {} addresses for userId: {}", addressOutDtoList.size(), userId);
+    return new ResponseEntity<>(addressOutDtoList, HttpStatus.OK);
   }
 
-   /**
+
+  /**
    * Deletes an address by its ID.
    *
-   * @param addressId the ID of the address to delete
-   * @return ResponseEntity containing a result message and HTTP status
+   * @param addressId the ID of the address to be deleted
+   * @return a response entity with a success message and HTTP status OK (200)
    */
   @DeleteMapping("/delete/{addressId}")
-  public ResponseEntity<?> deleteAddress(@PathVariable Integer addressId) {
+  public ResponseEntity<?> deleteAddress(@PathVariable final Integer addressId) {
     log.info("Received request to delete address with addressId: {}", addressId);
     String result = addressService.deleteAddress(addressId);
     log.info("Address with addressId: {} deleted successfully", addressId);
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+
   /**
-   * Updates an existing address.
+   * Updates an existing address by its ID.
    *
-   * @param addressId the ID of the address to update
-   * @param updateAddressInDto the new address information
-   * @return ResponseEntity containing the updated address details and HTTP status
+   * @param addressId            the ID of the address to be updated
+   * @param updateAddressInDto   the new address details
+   * @return a response entity with a success message and HTTP status OK (200)
    */
   @PutMapping("/update/{addressId}")
-  public ResponseEntity<?> updateAddress(@PathVariable Integer addressId,
-                                         @Valid @RequestBody AddressInDto updateAddressInDto) {
+  public ResponseEntity<?> updateAddress(@PathVariable final Integer addressId,
+                                         @Valid @RequestBody final AddressInDto updateAddressInDto) {
     log.info("Received request to update address with addressId: {}", addressId);
     addressService.updateAddress(addressId, updateAddressInDto);
     AddressOutResponse addressOutResponse = new AddressOutResponse();
@@ -95,9 +102,18 @@ public class AddressController {
     return new ResponseEntity<>(addressOutResponse, HttpStatus.OK);
   }
 
+
+  /**
+   * Retrieves an address by its ID.
+   *
+   * @param addressId the ID of the address to be retrieved
+   * @return the details of the address and HTTP status OK (200)
+   */
   @GetMapping("/getByAddress/{addressId}")
-  public ResponseEntity<?> getAddressByAddressId(@PathVariable Integer addressId) {
+  public ResponseEntity<?> getAddressByAddressId(@PathVariable final Integer addressId) {
+    log.info("Fetching address with addressId: {}", addressId);
     AddressOutDto addressOutDto = addressService.getAddressByAddressId(addressId);
+    log.info("Fetched address with addressId: {}", addressId);
     return new ResponseEntity<>(addressOutDto, HttpStatus.OK);
   }
 

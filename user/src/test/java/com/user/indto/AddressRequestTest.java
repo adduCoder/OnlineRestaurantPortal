@@ -7,125 +7,177 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/**
+ * Unit tests for {@link AddressInDto} class.
+ * These tests verify the correctness of getter and setter methods,
+ * the {@link AddressInDto#toString()} method, and the equals and hashCode methods.
+ */
 public class AddressRequestTest {
 
-  private com.user.dto.AddressInDto AddressInDto;
+  /** The {@link AddressInDto} instance used in the tests. */
+  private final AddressInDto addressInDto = new AddressInDto();
 
+  /**
+   * Sets up a new {@link AddressInDto} instance before each test.
+   */
   @BeforeEach
   public void setUp() {
-    AddressInDto = new AddressInDto();
+    addressInDto.setStreet(null);
+    addressInDto.setState(null);
+    addressInDto.setCity(null);
+    addressInDto.setPinCode(null);
+    addressInDto.setUserId(null);
   }
 
+  /**
+   * Tests the getter method for the street field.
+   */
   @Test
   public void testGetStreet() {
-    AddressInDto.setStreet("MG Road");
-    assertEquals("MG Road", AddressInDto.getStreet());
+    addressInDto.setStreet("Sample Street");
+    assertEquals("Sample Street", addressInDto.getStreet());
   }
 
+  /**
+   * Tests the setter method for the street field.
+   */
   @Test
   public void testSetStreet() {
-    AddressInDto.setStreet("Brigade Road");
-    assertEquals("Brigade Road", AddressInDto.getStreet());
+    addressInDto.setStreet("Another Sample Street");
+    assertEquals("Another Sample Street", addressInDto.getStreet());
   }
 
+  /**
+   * Tests the getter method for the state field.
+   */
   @Test
   public void testGetState() {
-    AddressInDto.setState("Karnataka");
-    assertEquals("Karnataka", AddressInDto.getState());
+    addressInDto.setState("StateA");
+    assertEquals("StateA", addressInDto.getState());
   }
 
+  /**
+   * Tests the setter method for the state field.
+   */
   @Test
   public void testSetState() {
-    AddressInDto.setState("Maharashtra");
-    assertEquals("Maharashtra", AddressInDto.getState());
+    addressInDto.setState("StateB");
+    assertEquals("StateB", addressInDto.getState());
   }
 
+  /**
+   * Tests the getter method for the city field.
+   */
   @Test
   public void testGetCity() {
-    AddressInDto.setCity("Bangalore");
-    assertEquals("Bangalore", AddressInDto.getCity());
+    addressInDto.setCity("CityX");
+    assertEquals("CityX", addressInDto.getCity());
   }
 
+  /**
+   * Tests the setter method for the city field.
+   */
   @Test
   public void testSetCity() {
-    AddressInDto.setCity("Mumbai");
-    assertEquals("Mumbai", AddressInDto.getCity());
+    addressInDto.setCity("CityY");
+    assertEquals("CityY", addressInDto.getCity());
   }
 
+  /**
+   * Tests the getter method for the pinCode field.
+   */
   @Test
   public void testGetPinCode() {
-    AddressInDto.setPinCode(560001);
-    assertEquals(560001, AddressInDto.getPinCode());
+    addressInDto.setPinCode(111111);
+    assertEquals(111111, addressInDto.getPinCode());
   }
 
+  /**
+   * Tests the setter method for the pinCode field.
+   */
   @Test
   public void testSetPinCode() {
-    AddressInDto.setPinCode(400001);
-    assertEquals(400001, AddressInDto.getPinCode());
+    addressInDto.setPinCode(222222);
+    assertEquals(222222, addressInDto.getPinCode());
   }
 
+  /**
+   * Tests the getter method for the userId field.
+   */
   @Test
   public void testGetUserId() {
-    AddressInDto.setUserId(1);
-    assertEquals(1, AddressInDto.getUserId());
+    addressInDto.setUserId(10);
+    assertEquals(10, addressInDto.getUserId());
   }
 
+  /**
+   * Tests the setter method for the userId field.
+   */
   @Test
   public void testSetUserId() {
-    AddressInDto.setUserId(2);
-    assertEquals(2, AddressInDto.getUserId());
+    addressInDto.setUserId(20);
+    assertEquals(20, addressInDto.getUserId());
   }
 
+  /**
+   * Tests the {@link AddressInDto#toString()} method.
+   */
   @Test
   public void testToString() {
-    AddressInDto.setStreet("MG Road");
-    AddressInDto.setState("Karnataka");
-    AddressInDto.setCity("Bangalore");
-    AddressInDto.setPinCode(560001);
-    AddressInDto.setUserId(1);
-    String expected = "AddressInDto(street=MG Road, state=Karnataka, city=Bangalore, pinCode=560001, userId=1)";
-    assertEquals(expected, AddressInDto.toString());
+    addressInDto.setStreet("Sample Street");
+    addressInDto.setState("StateA");
+    addressInDto.setCity("CityX");
+    addressInDto.setPinCode(111111);
+    addressInDto.setUserId(10);
+    String expected = "AddressInDto(street=Sample Street, state=StateA, city=CityX, pinCode=111111, userId=10)";
+    assertEquals(expected, addressInDto.toString());
   }
 
+  /**
+   * Tests the {@link AddressInDto#hashCode()} method.
+   */
   @Test
   public void testHashCode() {
-    AddressInDto AddressInDto1 = new AddressInDto();
-    AddressInDto1.setStreet("MG Road");
-    AddressInDto1.setState("Karnataka");
-    AddressInDto1.setCity("Bangalore");
-    AddressInDto1.setPinCode(560001);
-    AddressInDto1.setUserId(1);
+    final AddressInDto addressInDto1 = new AddressInDto();
+    addressInDto1.setStreet("Sample Street");
+    addressInDto1.setState("StateA");
+    addressInDto1.setCity("CityX");
+    addressInDto1.setPinCode(111111);
+    addressInDto1.setUserId(10);
 
-    AddressInDto AddressInDto2 = new AddressInDto();
-    AddressInDto2.setStreet("MG Road");
-    AddressInDto2.setState("Karnataka");
-    AddressInDto2.setCity("Bangalore");
-    AddressInDto2.setPinCode(560001);
-    AddressInDto2.setUserId(1);
+    final AddressInDto addressInDto2 = new AddressInDto();
+    addressInDto2.setStreet("Sample Street");
+    addressInDto2.setState("StateA");
+    addressInDto2.setCity("CityX");
+    addressInDto2.setPinCode(111111);
+    addressInDto2.setUserId(10);
 
-    assertEquals(AddressInDto1.hashCode(), AddressInDto2.hashCode());
+    assertEquals(addressInDto1.hashCode(), addressInDto2.hashCode());
   }
 
+  /**
+   * Tests the {@link AddressInDto#equals(Object)} method.
+   */
   @Test
   public void testEquals() {
-    AddressInDto AddressInDto1 = new AddressInDto();
-    AddressInDto1.setStreet("MG Road");
-    AddressInDto1.setState("Karnataka");
-    AddressInDto1.setCity("Bangalore");
-    AddressInDto1.setPinCode(560001);
-    AddressInDto1.setUserId(1);
+    final AddressInDto addressInDto1 = new AddressInDto();
+    addressInDto1.setStreet("Sample Street");
+    addressInDto1.setState("StateA");
+    addressInDto1.setCity("CityX");
+    addressInDto1.setPinCode(111111);
+    addressInDto1.setUserId(10);
 
-    AddressInDto AddressInDto2 = new AddressInDto();
-    AddressInDto2.setStreet("MG Road");
-    AddressInDto2.setState("Karnataka");
-    AddressInDto2.setCity("Bangalore");
-    AddressInDto2.setPinCode(560001);
-    AddressInDto2.setUserId(1);
+    final AddressInDto addressInDto2 = new AddressInDto();
+    addressInDto2.setStreet("Sample Street");
+    addressInDto2.setState("StateA");
+    addressInDto2.setCity("CityX");
+    addressInDto2.setPinCode(111111);
+    addressInDto2.setUserId(10);
 
-    assertEquals(AddressInDto1, AddressInDto2);
+    assertEquals(addressInDto1, addressInDto2);
 
-    AddressInDto2.setCity("Mumbai");
-    assertNotEquals(AddressInDto1, AddressInDto2);
+    addressInDto2.setCity("Different City");
+    assertNotEquals(addressInDto1, addressInDto2);
   }
 
 }

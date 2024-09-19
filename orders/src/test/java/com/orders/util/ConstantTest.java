@@ -36,8 +36,4 @@ public class ConstantTest {
     assertEquals("Successfully added", Constant.SUCCESS);
   }
 
-  @Test
-  public void testHi() {
-    assertEquals("HII", Constant.hi);
-  }
 }

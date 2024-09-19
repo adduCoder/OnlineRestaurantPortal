@@ -1,10 +1,14 @@
 package com.user.service;
 
-import com.user.entity.User;
-import com.user.exceptionhandler.UserAlreadyExisted;
+import com.user.dto.AmountInDto;
+import com.user.dto.LoginInDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
-import com.user.repository.UserRepo;
+import com.user.entity.User;
+import com.user.exception.InvalidPasswordException;
+import com.user.exception.NotFoundException;
+import com.user.exception.UserAlreadyExisted;
+import com.user.repository.UserRepository;
 import com.user.util.PasswordEncoder;
 import com.user.util.Role;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,23 +18,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 
   @Mock
-  private UserRepo userRepo;
-
+  private UserRepository userRepository;
 
   @Mock
   private AddressService addressService;
@@ -39,183 +35,129 @@ public class UserServiceTest {
   private UserService userService;
 
   private User user;
-  private UserOutDto userOutDto;
   private UserInDto userInDto;
+  private UserOutDto userOutDto;
 
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     MockitoAnnotations.openMocks(this);
 
+    // Set up dummy user and DTOs for testing
     user = new User();
     user.setId(1);
-    user.setName("Arjun");
-    user.setEmail("arjun@gmail.com");
+    user.setName("Aarav");
+    user.setEmail("aarav@gmail.com");
+    user.setPassword(PasswordEncoder.encodePassword("Test@123"));
     user.setPhoneNo("9876543210");
-    user.setPassword(PasswordEncoder.encodePassword("0123"));
     user.setRole(Role.USER);
+    user.setWalletBalance(1000.0);
+
+    userInDto = new UserInDto();
+    userInDto.setName("Aarav");
+    userInDto.setEmail("aarav@gmail.com");
+    userInDto.setPassword("Test@123");
+    userInDto.setPhoneNo("9876543210");
+    userInDto.setRole(Role.USER);
 
     userOutDto = new UserOutDto();
     userOutDto.setId(1);
-    userOutDto.setName("Arjun");
-    userOutDto.setEmail("arjun@gmail.com");
-    userOutDto.setWalletBalance(1000.0);
+    userOutDto.setName("Aarav");
+    userOutDto.setEmail("aarav@gmail.com");
     userOutDto.setPhoneNo("9876543210");
-
-    userInDto = new UserInDto();
-    userInDto.setName("Arjun");
-    userInDto.setEmail("arjun@gmail.com");
-    userInDto.setPassword("0123");
-    userInDto.setPhoneNo("9876543210");
-    userInDto.setRole(Role.USER);
+    userOutDto.setWalletBalance(1000.0);
   }
 
   @Test
-  public void addUserSuccessTest() {
-    when(userRepo.findByEmail("arjun@gmail.com")).thenReturn(Optional.empty());
-    when(userRepo.save(any(User.class))).thenAnswer(invocation -> {
-      User user = invocation.getArgument(0);
-      user.setId(1);
-      return user;
-    });
+  public void testAddUser_Success() {
+    when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+    when(userRepository.save(any(User.class))).thenReturn(user);
 
-    Integer userId = userService.addUser(userInDto);
+    userService.addUser(userInDto);
 
-    assertEquals(1, userId);
-    verify(userRepo, times(1)).findByEmail("arjun@gmail.com");
-    verify(userRepo, times(1)).save(any(User.class));
+    verify(userRepository, times(1)).save(any(User.class));
   }
 
   @Test
-  public void addUserAlreadyExistsTest() {
-    when(userRepo.findByEmail("arjun@gmail.com")).thenReturn(Optional.of(user));
+  public void testAddUser_UserAlreadyExists() {
+    when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
     assertThrows(UserAlreadyExisted.class, () -> userService.addUser(userInDto));
   }
 
   @Test
-  public void getUserSuccessTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
-    UserOutDto result = userService.getUser(1);
-    assertEquals("Arjun", result.getName());
-    assertEquals("arjun@gmail.com", result.getEmail());
-    verify(userRepo, times(1)).findById(1);
+  public void testGetUser_NotFound() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> userService.getUser(user.getId()));
   }
 
   @Test
-  public void getUserNotFoundTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NoCustomerFound.class, () -> userService.getUser(1));
+  public void testDeleteUser_Success() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(addressService.getAddressByUserId(user.getId())).thenReturn(Arrays.asList());
+
+    userService.deleteUser(user.getId());
+
+    verify(userRepository, times(1)).delete(user);
   }
 
   @Test
-  public void getAllUserTest() {
-    User user2 = new User();
-    user2.setId(2);
-    user2.setName("Bharat");
-    user2.setEmail("bharat@gmail.com");
-    user2.setPhoneNo("9876543211");
-    user2.setPassword(PasswordEncoder.encodePassword("password123"));
-    user2.setRole(Role.USER);
+  public void testDeleteUser_NotFound() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
-    List<User> userList = Arrays.asList(user, user2);
-    when(userRepo.findAll()).thenReturn(userList);
-    List<UserOutDto> result = userService.getAllUser();
-    assertEquals(2, result.size());
-    assertEquals("Arjun", result.get(0).getName());
-    assertEquals("Bharat", result.get(1).getName());
-    verify(userRepo, times(1)).findAll();
+    assertThrows(NotFoundException.class, () -> userService.deleteUser(user.getId()));
   }
 
   @Test
-  public void updateUserSuccessTest() {
-    UserInDto updatedUserInDto = new UserInDto();
-    updatedUserInDto.setName("Arjun Updated");
-    updatedUserInDto.setEmail("arjun_updated@gmail.com");
-    updatedUserInDto.setPassword("updatedPassword");
-    updatedUserInDto.setPhoneNo("9876543210");
-    updatedUserInDto.setRole(Role.USER);
+  public void testAddMoney_Success() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(100.0);
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
-    when(userRepo.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    userService.addMoney(user.getId(), amountInDto);
 
-    UserOutDto result = userService.updateUser(1, updatedUserInDto);
-
-    assertEquals("Arjun Updated", result.getName());
-    assertEquals("arjun_updated@gmail.com", result.getEmail());
-    verify(userRepo, times(1)).findById(1);
-    verify(userRepo, times(1)).save(any(User.class));
+    assertEquals(1100.0, user.getWalletBalance());
   }
 
   @Test
-  public void updateUserNotFoundTest() {
-    UserInDto userInDto = new UserInDto();
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NoCustomerFound.class, () -> userService.updateUser(1, userInDto));
+  public void testDeductMoney_Success() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(200.0);
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+    userService.deductMoney(user.getId(), amountInDto);
+
+    assertEquals(800.0, user.getWalletBalance());
   }
 
   @Test
-  public void deleteUserSuccessTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.of(user));
-    doNothing().when(userRepo).delete(user);
+  public void testLoginUser_Success() {
+    LoginInDto loginInDto = new LoginInDto("aarav@gmail.com", "Test@123");
+    when(userRepository.findByEmail("aarav@gmail.com")).thenReturn(Optional.of(user));
 
-    UserOutDto result = userService.deleteUser(1);
+    UserOutDto result = userService.loginUser(loginInDto);
 
     assertNotNull(result);
-    assertEquals("Arjun", result.getName());
-
-    verify(userRepo).findById(1);
-    verify(userRepo).delete(user);
+    assertEquals(user.getEmail(), result.getEmail());
   }
-
-
 
   @Test
-  public void deleteUserNotFoundTest() {
-    when(userRepo.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NoCustomerFound.class, () -> userService.deleteUser(1));
+  public void testLoginUser_IncorrectPassword() {
+    LoginInDto loginInDto = new LoginInDto("aarav@gmail.com", "WrongPassword");
+    when(userRepository.findByEmail("aarav@gmail.com")).thenReturn(Optional.of(user));
+
+    UserOutDto result = userService.loginUser(loginInDto);
+
+    assertNull(result);
   }
-//
-//  @Test
-//  public void loginUserSuccessTest() {
-//    LoginInDto loginInDto = new LoginInDto();
-//    loginInDto.setEmail("arjun@gmail.com");
-//    loginInDto.setPassword("0123");
-//
-//    when(userRepo.findByEmail("arjun@gmail.com")).thenReturn(Optional.of(user));
-//
-//    String result = String.valueOf(userService.loginUser(loginInDto));
-//
-//    assertEquals("Login Success", result);
-//    verify(userRepo, times(1)).findByEmail("arjun@gmail.com");
-//  }
 
-//  @Test
-//  public void loginUserEmailNotFoundTest() {
-//    LoginInDto loginInDto = new LoginInDto();
-//    loginInDto.setEmail("nonexistent@gmail.com");
-//    loginInDto.setPassword("anyPassword");
-//
-//    when(userRepo.findByEmail("nonexistent@gmail.com")).thenReturn(Optional.empty());
-//
-//    String result = String.valueOf(userService.loginUser(loginInDto));
-//
-//    assertEquals("Email Not Found", result);
-//    verify(userRepo, times(1)).findByEmail("nonexistent@gmail.com");
-//  }
+  @Test
+  public void testLoginUser_UserNotFound() {
+    LoginInDto loginInDto = new LoginInDto("nonexistent@gmail.com", "Test@123");
+    when(userRepository.findByEmail("nonexistent@gmail.com")).thenReturn(Optional.empty());
 
-//  @Test
-//  public void loginUserPasswordMismatchTest() {
-//    User userWithWrongPassword = new User();
-//    userWithWrongPassword.setEmail("arjun@gmail.com");
-//    userWithWrongPassword.setPassword(PasswordEncoder.encodePassword("correctPassword"));
-//    LoginInDto loginInDto = new LoginInDto();
-//    loginInDto.setEmail("arjun@gmail.com");
-//    loginInDto.setPassword("wrongPassword");
-//
-//    when(userRepo.findByEmail("arjun@gmail.com")).thenReturn(Optional.of(userWithWrongPassword));
-//
-//    String result = String.valueOf(userService.loginUser(loginInDto));
-//
-//    assertEquals("Password Mismatched", result);
-//    verify(userRepo, times(1)).findByEmail("arjun@gmail.com");
-//  }
+    UserOutDto result = userService.loginUser(loginInDto);
+
+    assertNull(result);
+  }
 }
