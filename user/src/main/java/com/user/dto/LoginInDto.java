@@ -29,5 +29,23 @@ public class LoginInDto {
    */
   @NotBlank(message = "Password cannot be blank")
   private String password;
+
+  /**
+   * Constructs a new LoginInDto with the specified email and password.
+   *
+   * @param email the email address of the user
+   * @param password the password of the user
+   */
+  public LoginInDto(final String email, final String password) {
+    this.email = email;
+    this.password = password;
+  }
+
+
+  /**
+   * Default constructor for LoginInDto.
+   */
+  public LoginInDto() {
+  }
 }
 

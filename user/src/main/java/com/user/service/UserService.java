@@ -304,7 +304,7 @@ public class UserService {
    * </p>
    *
    * @param contactUsInDto the request containing the customer's name, subject, and message
-   * @return a {@link ApiResponse} indicating whether the email was sent successfully
+   * @return a {@link MessageOutDto} indicating whether the email was sent successfully
    */
   public MessageOutDto sendContactUsEmail(final ContactUsInDto contactUsInDto) {
     List<String> supportEmails = Arrays.asList("iadityapatel1729@gmail.com",

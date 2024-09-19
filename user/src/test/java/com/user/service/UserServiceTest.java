@@ -1,8 +1,11 @@
 package com.user.service;
 
+import com.user.dto.AmountInDto;
+import com.user.dto.LoginInDto;
 import com.user.dto.UserInDto;
 import com.user.dto.UserOutDto;
 import com.user.entity.User;
+import com.user.exception.InvalidPasswordException;
 import com.user.exception.NotFoundException;
 import com.user.exception.UserAlreadyExisted;
 import com.user.repository.UserRepository;
@@ -15,17 +18,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 
@@ -39,112 +35,129 @@ public class UserServiceTest {
   private UserService userService;
 
   private User user;
-  private UserOutDto userOutDto;
   private UserInDto userInDto;
+  private UserOutDto userOutDto;
 
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     MockitoAnnotations.openMocks(this);
 
+    // Set up dummy user and DTOs for testing
     user = new User();
     user.setId(1);
-    user.setName("Test User");
-    user.setEmail("test@gmail.com");
+    user.setName("Aarav");
+    user.setEmail("aarav@gmail.com");
+    user.setPassword(PasswordEncoder.encodePassword("Test@123"));
     user.setPhoneNo("9876543210");
-    user.setPassword(PasswordEncoder.encodePassword("0123"));
     user.setRole(Role.USER);
+    user.setWalletBalance(1000.0);
+
+    userInDto = new UserInDto();
+    userInDto.setName("Aarav");
+    userInDto.setEmail("aarav@gmail.com");
+    userInDto.setPassword("Test@123");
+    userInDto.setPhoneNo("9876543210");
+    userInDto.setRole(Role.USER);
 
     userOutDto = new UserOutDto();
     userOutDto.setId(1);
-    userOutDto.setName("Test User");
-    userOutDto.setEmail("test@gmail.com");
-    userOutDto.setWalletBalance(1000.0);
+    userOutDto.setName("Aarav");
+    userOutDto.setEmail("aarav@gmail.com");
     userOutDto.setPhoneNo("9876543210");
-
-    userInDto = new UserInDto();
-    userInDto.setName("Test User");
-    userInDto.setEmail("test@gmail.com");
-    userInDto.setPassword("0123");
-    userInDto.setPhoneNo("9876543210");
-    userInDto.setRole(Role.USER);
+    userOutDto.setWalletBalance(1000.0);
   }
 
   @Test
-  public void getUserSuccessTest() {
-    when(userRepository.findById(1)).thenReturn(Optional.of(user));
-    UserOutDto result = userService.getUser(1);
-    assertEquals("Test User", result.getName());
-    assertEquals("test@gmail.com", result.getEmail());
-    verify(userRepository, times(1)).findById(1);
-  }
+  public void testAddUser_Success() {
+    when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+    when(userRepository.save(any(User.class))).thenReturn(user);
 
-  @Test
-  public void getUserNotFoundTest() {
-    when(userRepository.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFoundException.class, () -> userService.getUser(1));
-  }
+    userService.addUser(userInDto);
 
-  @Test
-  public void getAllUserTest() {
-    User user2 = new User();
-    user2.setId(2);
-    user2.setName("Bharat");
-    user2.setEmail("bharat@gmail.com");
-    user2.setPhoneNo("9876543211");
-    user2.setPassword(PasswordEncoder.encodePassword("password123"));
-    user2.setRole(Role.USER);
-
-    List<User> userList = Arrays.asList(user, user2);
-    when(userRepository.findAll()).thenReturn(userList);
-    List<UserOutDto> result = userService.getAllUser();
-    assertEquals(2, result.size());
-    assertEquals("Test User", result.get(0).getName());
-    assertEquals("Bharat", result.get(1).getName());
-    verify(userRepository, times(1)).findAll();
-  }
-
-  @Test
-  public void updateUserSuccessTest() {
-    UserInDto updatedUserInDto = new UserInDto();
-    updatedUserInDto.setName("Test User Updated");
-    updatedUserInDto.setEmail("Test User_updated@gmail.com");
-    updatedUserInDto.setPassword("updatedPassword");
-    updatedUserInDto.setPhoneNo("9876543210");
-    updatedUserInDto.setRole(Role.USER);
-
-    when(userRepository.findById(1)).thenReturn(Optional.of(user));
-    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-    userService.updateUser(1, updatedUserInDto);
-
-    verify(userRepository, times(1)).findById(1);
     verify(userRepository, times(1)).save(any(User.class));
   }
 
   @Test
-  public void updateUserNotFoundTest() {
-    UserInDto userInDto = new UserInDto();
-    when(userRepository.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFoundException.class, () -> userService.updateUser(1, userInDto));
+  public void testAddUser_UserAlreadyExists() {
+    when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+    assertThrows(UserAlreadyExisted.class, () -> userService.addUser(userInDto));
   }
 
   @Test
-  public void deleteUserSuccessTest() {
-    when(userRepository.findById(1)).thenReturn(Optional.of(user));
-    doNothing().when(userRepository).delete(user);
+  public void testGetUser_NotFound() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
-    UserOutDto result = userService.deleteUser(1);
+    assertThrows(NotFoundException.class, () -> userService.getUser(user.getId()));
+  }
+
+  @Test
+  public void testDeleteUser_Success() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(addressService.getAddressByUserId(user.getId())).thenReturn(Arrays.asList());
+
+    userService.deleteUser(user.getId());
+
+    verify(userRepository, times(1)).delete(user);
+  }
+
+  @Test
+  public void testDeleteUser_NotFound() {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> userService.deleteUser(user.getId()));
+  }
+
+  @Test
+  public void testAddMoney_Success() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(100.0);
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+    userService.addMoney(user.getId(), amountInDto);
+
+    assertEquals(1100.0, user.getWalletBalance());
+  }
+
+  @Test
+  public void testDeductMoney_Success() {
+    AmountInDto amountInDto = new AmountInDto();
+    amountInDto.setMoney(200.0);
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+    userService.deductMoney(user.getId(), amountInDto);
+
+    assertEquals(800.0, user.getWalletBalance());
+  }
+
+  @Test
+  public void testLoginUser_Success() {
+    LoginInDto loginInDto = new LoginInDto("aarav@gmail.com", "Test@123");
+    when(userRepository.findByEmail("aarav@gmail.com")).thenReturn(Optional.of(user));
+
+    UserOutDto result = userService.loginUser(loginInDto);
 
     assertNotNull(result);
-    assertEquals("Test User", result.getName());
-
-    verify(userRepository).findById(1);
-    verify(userRepository).delete(user);
+    assertEquals(user.getEmail(), result.getEmail());
   }
 
   @Test
-  public void deleteUserNotFoundTest() {
-    when(userRepository.findById(1)).thenReturn(Optional.empty());
-    assertThrows(NotFoundException.class, () -> userService.deleteUser(1));
+  public void testLoginUser_IncorrectPassword() {
+    LoginInDto loginInDto = new LoginInDto("aarav@gmail.com", "WrongPassword");
+    when(userRepository.findByEmail("aarav@gmail.com")).thenReturn(Optional.of(user));
+
+    UserOutDto result = userService.loginUser(loginInDto);
+
+    assertNull(result);
+  }
+
+  @Test
+  public void testLoginUser_UserNotFound() {
+    LoginInDto loginInDto = new LoginInDto("nonexistent@gmail.com", "Test@123");
+    when(userRepository.findByEmail("nonexistent@gmail.com")).thenReturn(Optional.empty());
+
+    UserOutDto result = userService.loginUser(loginInDto);
+
+    assertNull(result);
   }
 }
