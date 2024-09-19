@@ -1,5 +1,6 @@
 package com.user.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 /**
  * Utility class for encoding and decoding passwords using Base64.
@@ -13,7 +14,7 @@ public final class PasswordEncoder {
    * @return the Base64 encoded representation of the password
    */
   public static String encodePassword(final String password) {
-    return Base64.getEncoder().encodeToString(password.getBytes());
+    return Base64.getEncoder().encodeToString(password.getBytes(StandardCharsets.UTF_8));
   }
 
   /**
@@ -24,6 +25,6 @@ public final class PasswordEncoder {
    */
   public static String decodePassword(final String encodedPassword) {
     byte[] decodedBytes = Base64.getDecoder().decode(encodedPassword);
-    return new String(decodedBytes);
+    return new String(decodedBytes, StandardCharsets.UTF_8);
   }
 }

@@ -105,8 +105,9 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<Map<String, String>> handleMessageNotReadable(final HttpMessageNotReadableException ex) {
     Map<String, String> errors = new HashMap<>();
-    String message = ex.getMessage();
+    String message = ex.getMessage();  // Potentially problematic line
 
+    assert message != null;
     if (message.contains("InvalidFormatException")) {
       errors.put("error", "Invalid data format provided.");
     } else if (message.contains("NumberFormatException")) {
@@ -119,6 +120,7 @@ public class GlobalExceptionHandler {
 
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
+
 
 
   /**

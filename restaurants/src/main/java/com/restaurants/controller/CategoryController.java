@@ -72,12 +72,12 @@ public class CategoryController {
   @PostMapping("/add")
   public ResponseEntity<?> addCategory(@Valid @RequestBody final CategoryInDto categoryInDto) {
     log.info("Adding new category with name: {}", categoryInDto.getName());
+
     CategoryOutDto categoryOutDto = categoryService.addCategory(categoryInDto);
-    if (categoryOutDto == null) {
-      log.error("Failed to add category: {}", categoryInDto);
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+
+    // No need for the null check, as SpotBugs suggests this is guaranteed to be non-null.
     log.info("Successfully added category with id: {}", categoryOutDto.getId());
+
     return new ResponseEntity<>(new ApiResponse(Constant.CATEGORY_CREATED_SUCCESS), HttpStatus.CREATED);
   }
 

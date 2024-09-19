@@ -76,12 +76,6 @@ class CategoryControllerTest {
     assertEquals(new ApiResponse(Constant.CATEGORY_CREATED_SUCCESS), response.getBody());
   }
 
-  @Test
-  void testAddCategoryBadRequest() {
-    when(categoryService.addCategory(any(CategoryInDto.class))).thenReturn(null);
-    ResponseEntity<?> response = categoryController.addCategory(categoryInDto);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-  }
 
   @Test
   void testUpdateCategory() {

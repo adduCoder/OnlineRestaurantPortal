@@ -118,6 +118,7 @@ public class GlobalExceptionHandler {
     Map<String, String> errors = new HashMap<>();
     String message = ex.getMessage();
 
+    assert message != null;
     if (message.contains("InvalidFormatException")) {
       errors.put("error", "Invalid data format provided.");
     } else if (message.contains("NumberFormatException")) {

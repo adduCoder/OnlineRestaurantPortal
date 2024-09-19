@@ -48,7 +48,7 @@ public class UserController {
    * @return ResponseEntity containing the user details and HTTP status
    */
   @GetMapping("/get/{userId}")
-  public ResponseEntity<?> getUser(@PathVariable final Integer userId) {
+  public ResponseEntity<UserOutDto> getUser(@PathVariable final Integer userId) {
     log.info("Fetching user with ID: {}", userId);
     UserOutDto userOutDto = userService.getUser(userId);
     log.info("User with ID: {} fetched successfully", userId);
@@ -61,7 +61,7 @@ public class UserController {
    * @return ResponseEntity containing a list of all users and HTTP status
    */
   @GetMapping("/getAll")
-  public ResponseEntity<?> getAllUser() {
+  public ResponseEntity<List<UserOutDto>> getAllUser() {
     log.info("Getting All Users");
     List<UserOutDto> allUserOutDto = userService.getAllUser();
     log.info("Fetched {} users", allUserOutDto.size());

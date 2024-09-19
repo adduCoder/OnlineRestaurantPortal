@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -131,7 +133,7 @@ public class FoodItemService {
       throw new NotFoundException(Constant.CATEGORY_NOT_FOUND);
     } else {
       Category category = optionalCategory.get();
-      if (category.getRestaurantId() != foodItemInDto.getRestaurantId()) {
+      if (!Objects.equals(category.getRestaurantId(), foodItemInDto.getRestaurantId())) {
         throw new NotFoundException(Constant.CATEGORY_NOT_FOUND);
       }
     }
@@ -162,7 +164,7 @@ public class FoodItemService {
     }
 
     // Convert the food name to lowercase for consistency and save the food item
-    foodItem.setFoodName(foodItem.getFoodName().toLowerCase());
+    foodItem.setFoodName(foodItem.getFoodName().toLowerCase(Locale.ENGLISH));
 
 
     foodItemRepository.save(foodItem);
@@ -243,7 +245,7 @@ public class FoodItemService {
     // Update food item details
     FoodItem foodItem = optionalFoodItem.get();
     foodItem.setPrice(foodItemInDto.getPrice());
-    foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase());
+    foodItem.setFoodName(foodItemInDto.getFoodName().toLowerCase(Locale.ENGLISH));
     foodItem.setIsAvailable(foodItemInDto.getIsAvailable());
     foodItem.setDescription(foodItemInDto.getDescription());
 

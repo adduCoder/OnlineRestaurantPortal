@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -78,7 +79,7 @@ public class UserService {
     }
     String formattedString = currentString.trim();
     formattedString = formattedString.replaceAll("\\s+", " ");
-    return formattedString.toLowerCase();
+    return formattedString.toLowerCase(Locale.ROOT);
   }
 
 

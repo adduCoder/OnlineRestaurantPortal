@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -74,12 +75,13 @@ public class CategoryService {
       throw new NotFoundException(Constant.RESTAURANT_NOT_FOUND);
     }
     Optional<Category> existedOptionalCategory =
-      categoryRepository.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(), categoryInDto.getRestaurantId());
+      categoryRepository.findByNameAndRestaurantId(categoryInDto.getName().toLowerCase(Locale.ENGLISH),
+        categoryInDto.getRestaurantId());
     if (existedOptionalCategory.isPresent()) {
       throw new AlreadyExistsException(Constant.CATEGORY_ALREADY_EXISTS);
     }
     log.info("Category added successfully");
-    categoryInDto.setName(categoryInDto.getName().toLowerCase());
+    categoryInDto.setName(categoryInDto.getName().toLowerCase(Locale.ENGLISH));
     Category savedCategory = categoryRepository.save(DtoConversion.mapToCategory(categoryInDto));
     return DtoConversion.mapToCategoryOutDto(savedCategory);
   }
@@ -147,7 +149,7 @@ public class CategoryService {
     Category category = optionalCategory.get();
     List<Category> categoryList = categoryRepository.findAllByRestaurantId(category.getRestaurantId());
     for (Category subCategory:categoryList) {
-      if (subCategory.getName().equals(categoryUpdateInDto.getName().toLowerCase())) {
+      if (subCategory.getName().equals(categoryUpdateInDto.getName().toLowerCase(Locale.ENGLISH))) {
         throw new AlreadyExistsException(Constant.CATEGORY_ALREADY_EXISTS);
       }
     }

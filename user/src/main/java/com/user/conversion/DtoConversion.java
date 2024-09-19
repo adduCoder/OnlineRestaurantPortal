@@ -7,6 +7,8 @@ import com.user.dto.UserOutDto;
 import com.user.entity.Address;
 import com.user.entity.User;
 
+import java.util.Locale;
+
 /**
  * Utility class for converting between DTOs (Data Transfer Objects) and entities.
  * This class provides static methods to convert between different representations
@@ -35,7 +37,7 @@ public final class DtoConversion {
     }
     String formattedString = currentString.trim();
     formattedString = formattedString.replaceAll("\\s+", " ");
-    return formattedString.toLowerCase();
+    return formattedString.toLowerCase(Locale.ROOT);
   }
 
   /**

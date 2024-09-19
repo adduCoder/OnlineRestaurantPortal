@@ -11,6 +11,8 @@ import com.restaurants.entities.FoodItem;
 import com.restaurants.entities.Restaurant;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Locale;
+
 
 /**
  * Utility class for converting between DTOs and entities.
@@ -36,7 +38,7 @@ public final class DtoConversion {
     }
     String formattedString = currentString.trim();
     formattedString = formattedString.replaceAll("\\s+", " ");
-    return formattedString.toLowerCase();
+    return formattedString.toLowerCase(Locale.ENGLISH);
   }
 
   /**
